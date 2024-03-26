@@ -19,13 +19,11 @@
             </div>
             <div>
                 <v-icon>mdi-timer-sand</v-icon>
-                <strong>Manday: {{ taskManday }} (hours)</strong>
+                <strong>Manday: {{ taskManday }} (Days)</strong>
             </div>
         </v-card-text>
         <v-card-actions>
-            <v-btn text @click="DeleteTask">
-                Delete
-            </v-btn>
+            <v-btn text color="red" @click="DeleteTask">delete</v-btn>
             <v-spacer></v-spacer>
             <v-btn class="ma-2" icon @click="show = !show">
                 <v-icon v-if="!show">mdi-chevron-down</v-icon>

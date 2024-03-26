@@ -805,6 +805,17 @@ export default {
         );
       });
     },
+    formattedScreensPlanStart() {
+      if(this.screens.screen_plan_start) {
+        if (!this.screens.screen_plan_start) return ''; // Check if planStart date is defined
+        const date = new Date(thisscreens.screen_plan_start); // Create a Date object from planStart
+        const day = date.getDate(); // Get the day of the month
+        const month = date.getMonth() + 1; // Get the month (0-indexed, hence +1)
+        const year = date.getFullYear(); // Get the full year
+        // Format the date as "day/month/year"
+        return `${day}/${month}/${year}`;
+      }
+    },
   },
 };
 </script>

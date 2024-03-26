@@ -65,6 +65,7 @@ export default {
             dialog: false,
             assigneeOptions: ["John Doe", "Jane Smith", "Tom Brown", "Alice Green"],
             newTasks: {
+                
                 task_id: "",
                 task_name: "",
                 task_detail: "",

@@ -14,15 +14,7 @@
           " />
       </v-col>
 
-      <!-- <div>
-    <h1>Check Users in Project</h1>
-    <button @click="checkUsers">Check Users</button>
-    <div v-if="usersLoaded">
-      <p v-if="users.length > 0">มีผู้ใช้ในโปรเจกต์</p>
-      <p v-else>ไม่มีผู้ใช้ในโปรเจกต์</p>
-    </div>
-  </div> -->
-
+    
     </v-row>
     <!-- Data Table -->
     <v-data-table :headers="headers" :items="filteredSystems" :items-per-page="5" class="elevation-1">
@@ -118,58 +110,7 @@
         </v-dialog>
       </template>
 
-      <!-- Manage systems users dialog -->
-    <v-dialog v-model="dialogUserSystems" max-width="800px">
-      <v-card>
-        <v-card-title>User Systems</v-card-title>
-        <v-card-text>
-          <v-text-field v-model="search" label="Search" dense hide-details solo flat></v-text-field>
-          <v-data-table :headers="userSystemsHeaders" :items="filteredUserProjects">
-            <template v-slot:item="{ item }">
-              <tr>
-                <td>{{ item.id }}</td>
-                <td>{{ item.user_firstname }}</td>
-                <td>{{ item.user_lastname }}</td>
-                <td>{{ item.user_position }}</td>
-               
-                <td>
-                  <!-- Add trash icon here -->
-                  <v-icon @click="tse(s, item)">mdi-delete</v-icon>
-                </td>
-              </tr>
-            </template>
-          </v-data-table>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn color="blue darken-1" text @click="dialogUserSystems = false">Close</v-btn>
-          <!-- Button to open nested dialog -->
-          <v-btn color="blue darken-1" text @click="testsss">Assign User</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-<!-- Nested Dialog for Assigning User -->
-    <v-dialog v-model="dialogAssignUser" max-width="500px">
-      <v-card>
-        <v-card-title>Assign User</v-card-title>
-        <v-card-text>
-          <!-- New field for selecting users -->
-          <v-select v-model="selectedUsersAF" :items="ssss" label="Select SA" item-text="displayText"
-            item-value="id" multiple></v-select>
-
-          <v-select v-model="selectedUsersAF" :items="ssss" label="Select DEV" item-text="displayText"
-            item-value="id" multiple></v-select>
-
-          <v-select v-model="selectedUsersAF" :items="ssss" label="Select IMP" item-text="displayText"
-            item-value="id" multiple></v-select>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn color="blue darken-1" text @click="closeNestedDialog">Cancel</v-btn>
-          <!-- Button to assign selected users -->
-          <v-btn color="blue darken-1" text @click="assignUserAF">Assign</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+      <!-- Define the table rows -->
 
       <template v-slot:item.actions="{ item }">
         <v-icon class="me-2" size="20" px @click="openEditDialog(item)">mdi-pencil-circle</v-icon>
@@ -241,42 +182,6 @@ export default {
     };
   },
   methods: {
-//     async checkUsers() {
-//   try {
-//     const project_id = this.$route.params.id;
-//     await this.fetchUserProjects(project_id); // เรียกใช้ฟังก์ชัน fetchUserProjects เพื่อดึงข้อมูลผู้ใช้
-    
-//     // ตรวจสอบว่ามีข้อมูลผู้ใช้หรือไม่
-//     if (this.userProjects && this.userProjects.length > 0) {
-//       // มีผู้ใช้ในโปรเจกต์นี้
-//       console.log("มีผู้ใช้ในโปรเจกต์นี้");
-//       // แสดงรายชื่อผู้ใช้ที่มีในโปรเจกต์
-//       this.userProjects.forEach(user => {
-//         console.log(user.user_id,user.user_firstname); // ประเภทของข้อมูล user_id อาจเป็นอย่างอื่นตามโครงสร้างของข้อมูลที่ได้รับ
-//       });
-//     } else {
-//       // ไม่มีผู้ใช้ในโปรเจกต์นี้
-//       console.log("ไม่มีผู้ใช้ในโปรเจกต์นี้");
-//     }
-//   } catch (error) {
-//     console.error("Error checking users:", error);
-//   }
-// },
-
-// async fetchUserProjects(project_id) {
-//     try {
-//       const response = await fetch(`http://localhost:7777/user_projects/getUserProjectsByProjectId/${project_id}`);
-//       if (!response.ok) {
-//         throw new Error("Failed to fetch user projects");
-//       }
-//       const data = await response.json();
-//       // ตั้งค่า userProjects เป็นข้อมูลที่ได้รับมา
-//       this.userProjects = data;
-//     } catch (error) {
-//       console.error("Error fetching user projects:", error);
-//     }
-//   },
-  // http://localhost:7777/user_projects/getUserProjectsByProjectId/${projectId
   
     async fetchUserProjectsByProjectId(projectId) {
     try {

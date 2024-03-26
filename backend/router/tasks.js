@@ -28,7 +28,7 @@ router.post('/createTasks', async (req, res) => {
         const {
             task_id,
             task_name,
-            tasks_detail,
+            task_detail,
             task_manday,
             task_status,
             screen_id,
@@ -41,7 +41,7 @@ router.post('/createTasks', async (req, res) => {
         const id = generateId(); // Using generateId() function to generate ID
 
         const query =
-            'INSERT INTO Tasks (id, task_id, task_name, tasks_detail, task_status, screen_id, project_id, system_id, task_plan_start, task_plan_end) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            'INSERT INTO Tasks (id, task_id, task_name, task_detail, task_status, screen_id, project_id, system_id, task_plan_start, task_plan_end) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
 
         await new Promise((resolve, reject) => {
             connection.query(
@@ -50,7 +50,7 @@ router.post('/createTasks', async (req, res) => {
                     id,
                     task_id,
                     task_name,
-                    tasks_detail,
+                    task_detail,
                     task_manday,
                     task_status,
                     screen_id,
@@ -341,7 +341,7 @@ router.put('/updateTasks/:id', async (req, res) => {
         const {
             task_name,
             task_status,
-            tasks_detail,
+            task_detail,
             task_progress,
             task_plan_start,
             task_plan_end,
@@ -363,9 +363,9 @@ router.put('/updateTasks/:id', async (req, res) => {
             updatedTaskFields.task_status = task_status;
         }
 
-        // Check and add tasks_detail if provided
-        if (tasks_detail !== undefined) {
-            updatedTaskFields.tasks_detail = tasks_detail;
+        // Check and add task_detail if provided
+        if (task_detail !== undefined) {
+            updatedTaskFields.task_detail = task_detail;
         }
 
         // Check and add task_progress if provided
