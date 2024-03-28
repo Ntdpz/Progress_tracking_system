@@ -153,8 +153,81 @@ export default {
       this.dialogAddTaskForm = true;
     },
     // create task
-    async handleSaveTask(taskData) {
-      // Logic for saving task...
+
+     async handleSaveTask(taskData) {
+      // using taskData received from the dialog
+      console.log("Received task data:", taskData);
+
+      const screenId = this.$route.params.id;
+      console.log("Screen ID:", screenId); // Log the screenId value
+
+      const screenResponse = await fetch(
+        `http://localhost:7777/screens/getOne/${screenId}`
+      );
+      const screenData = await screenResponse.json();
+      const screen = screenData[0];
+
+      // Validate and format task plan start date
+      let startDate = new Date(taskData.task_plan_start);
+      if (isNaN(startDate.getTime())) {
+        console.error("Invalid start date:", taskData.task_plan_start);
+        // Handle the invalid date case
+        return;
+      }
+      let formattedStartDate = startDate.toISOString().split("T")[0];
+
+      // Validate and format task plan end date
+      let endDate = new Date(taskData.task_plan_end);
+      if (isNaN(endDate.getTime())) {
+        console.error("Invalid end date:", taskData.task_plan_end);
+        // Handle the invalid date case
+        return;
+      }
+      let formattedEndDate = endDate.toISOString().split("T")[0];
+
+      const requestData = {
+        task_name: taskData.task_name,
+        task_id: taskData.task_id,
+        task_manday: taskData.task_manday,
+        person_in_charge: taskData.person_in_charge,
+        task_detail: taskData.task_detail,
+        task_plan_start: formattedStartDate,
+        task_plan_end: formattedEndDate,
+        screen_id: screenId,
+        system_id: screen.system_id,
+        project_id: screen.project_id,
+      };
+
+      try {
+        const response = await fetch(
+          "http://localhost:7777/tasks/createTasks",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestData), // Use requestData instead of this.newTask
+          }
+        );
+
+        if (response.ok) {
+          Swal.fire({
+            icon: "success",
+            title: "Task created successfully",
+          });
+          this.dialogAddTaskForm = false;
+          this.fetchTasks();
+        } else {
+          throw new Error("Failed to create new task");
+        }
+      } catch (error) {
+        console.error("Error creating new task:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Error creating new task",
+          text: "Please try again",
+        });
+      }
     },
     // delete task confirmation dialog
     confirmDeleteTask(task) {
