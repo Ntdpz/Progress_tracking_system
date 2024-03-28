@@ -41,7 +41,8 @@ router.post('/createTasks', async (req, res) => {
         const id = generateId(); // Using generateId() function to generate ID
 
         const query =
-            'INSERT INTO Tasks (id, task_id, task_name, task_detail, task_status, screen_id, project_id, system_id, task_plan_start, task_plan_end) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            'INSERT INTO Tasks (id, task_id, task_name, task_detail, task_manday, task_status, screen_id, project_id, system_id, task_plan_start, task_plan_end) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+
 
         await new Promise((resolve, reject) => {
             connection.query(

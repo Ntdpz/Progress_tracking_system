@@ -69,7 +69,7 @@ export default {
             return this.task.task_name;
         },
         tasksDetail() {
-            return this.task.tasks_detail;
+            return this.task.task_detail;
         },
         taskManday() {
             return this.task.task_manday;
