@@ -74,6 +74,9 @@ export default {
         taskManday() {
             return this.task.task_manday;
         },
+        assignee() {
+            return this.task.task_member;
+        },
         // Compute the formatted planStart date
         formattedTaskPlanStart() {
             if (!this.task.task_plan_start) return ''; // Check if planStart date is defined

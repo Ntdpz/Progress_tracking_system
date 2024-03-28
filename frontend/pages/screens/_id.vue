@@ -21,8 +21,8 @@
         <v-row>
           <v-col cols="4" md="2">
             <h3>Screen Name: {{ ScreenName }}</h3>
-            <!-- <p>Complete Task 3/5</p>
-            <v-progress-linear height="10" color="blue" background-color="grey" :value="60"></v-progress-linear> -->
+            <p>Complete Task {{ taskCompleted }}/{{ allTask }} </p>
+            <v-progress-linear height="10" color="blue" background-color="grey" :value="60"></v-progress-linear>
           </v-col>
           <v-col cols="8" md="10" class="text-right">
             <v-btn color="primary" @click="openCreateTaskDialog">Add Task</v-btn>
@@ -85,6 +85,8 @@ export default {
       // Task
       editedTask: {},
       ScreenName: "",
+      taskCompleted: 0,
+      allTask: 3,
       tasks: [],
       searchQuery: "",
       //Create new task
