@@ -73,6 +73,7 @@ export default {
         return {
             dialog: false,
            teammemberOptions:[],
+           screenName: "",
             newTasks: {
                 task_id: "",
                 task_name: "",
