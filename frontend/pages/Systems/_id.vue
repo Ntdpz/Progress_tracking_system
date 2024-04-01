@@ -52,10 +52,7 @@
                   placeholder="Select a picture" prepend-icon="mdi-camera" v-model="newScreen.photo">
                 </v-file-input>
 
-                <v-btn type="submit" @click="
-          createScreenDialog = false;
-        createScreen();
-        ">Create</v-btn>
+                <v-btn type="submit" @click="createScreenDialog = false; createScreen();">Create</v-btn>
                 <v-btn @click="createScreenDialog = false">Cancel</v-btn>
               </v-form>
             </v-card-text>
@@ -151,7 +148,7 @@
       </template>
     </v-data-table>
 
- <!-- <div>
+    <!-- <div>
       <h1>Check Users in Project</h1>
       <button @click="checkUsers">Check Users</button>
       <div v-if="usersLoaded">
@@ -159,7 +156,7 @@
         <p v-else>ไม่มีผู้ใช้ในโปรเจกต์</p>
       </div>
     </div> -->
-    
+
   </div>
 </template>
 
@@ -326,13 +323,12 @@ export default {
         );
 
         // Check if the screen was created successfully
-        // Check if the screen was created successfully
         if (response.ok) {
           await Swal.fire({
             icon: "success",
             title: "Screen Created!",
             text: "The new screen has been created successfully.",
-            timer: 3000, // Set the timer to 3 seconds (3000 milliseconds)
+            showConfirmButton: false, // Set showConfirmButton to false to keep the alert visible
           });
         } else {
           throw new Error("Failed to create screen");
@@ -347,7 +343,7 @@ export default {
           icon: "error",
           title: "Error",
           text: "Failed to create the screen. Please try again.",
-          timer: 3000, // Set the timer to 3 seconds (3000 milliseconds)
+          showConfirmButton: false, // Set showConfirmButton to false to keep the alert visible
         });
         // ... continue
       }
