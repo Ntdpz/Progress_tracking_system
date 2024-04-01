@@ -18,41 +18,41 @@
                     </v-row>
                     <v-row>
                         <v-col cols="12">
-                            <!-- Change label from "Assignee" to "Teammember" -->
+                            <!-- Use v-select to display team member options -->
                             <v-select v-model="newTasks.task_member_id" :items="teammemberOptions"
                                 label="Teammember"></v-select>
                         </v-col>
                     </v-row>
-                        <v-row>
-                            <v-col cols="12">
-                                <v-text-field v-model="newTasks.task_manday" label="Estimate Working Days"
-                                    type="number" step="0.1"></v-text-field>
-                            </v-col>
-                        </v-row>
-                        <v-row>
-                            <v-col cols="12">
-                                <v-text-field v-model="newTasks.task_plan_start" label="Task Plan Start"
-                                    type="date"></v-text-field>
-                            </v-col>
-                        </v-row>
-                        <v-row>
-                            <v-col cols="12">
-                                <v-text-field v-model="newTasks.task_plan_end" label="Task Plan End"
-                                    type="date"></v-text-field>
-                            </v-col>
-                        </v-row>
-                        <!-- task status -->
-                        <v-row>
-                            <v-col cols="12">
-                                <v-select v-model="newTasks.task_status"
-                                    :items="['Not Started', 'In Progress', 'Completed']" label="Task Status"></v-select>
-                            </v-col>
-                        </v-row>
-                        <v-row>
-                            <v-col cols="12">
-                                <v-textarea v-model="newTasks.task_detail" label="Task Detail"></v-textarea>
-                            </v-col>
-                        </v-row>
+                    <v-row>
+                        <v-col cols="12">
+                            <v-text-field v-model="newTasks.task_manday" label="Estimate Working Days" type="number"
+                                step="0.1"></v-text-field>
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col cols="12">
+                            <v-text-field v-model="newTasks.task_plan_start" label="Task Plan Start"
+                                type="date"></v-text-field>
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col cols="12">
+                            <v-text-field v-model="newTasks.task_plan_end" label="Task Plan End"
+                                type="date"></v-text-field>
+                        </v-col>
+                    </v-row>
+                    <!-- task status -->
+                    <v-row>
+                        <v-col cols="12">
+                            <v-select v-model="newTasks.task_status"
+                                :items="['Not Started', 'In Progress', 'Completed']" label="Task Status"></v-select>
+                        </v-col>
+                    </v-row>
+                    <v-row>
+                        <v-col cols="12">
+                            <v-textarea v-model="newTasks.task_detail" label="Task Detail"></v-textarea>
+                        </v-col>
+                    </v-row>
                 </v-container>
             </v-card-text>
             <v-card-actions>
@@ -93,11 +93,29 @@ export default {
             this.$emit("input", newDialog);
         },
     },
+    mounted() {
+        this.fetchScreenDetail();
+    },
     methods: {
+        async fetchScreenDetail() {
+            try {
+                const screenId = this.$route.params.id;
+                const response = await fetch(`http://localhost:7777/screens/getOne/${screenId}`);
+                const screenData = await response.json(); // Assuming the API response is JSON
+                this.ScreenName = screenData.screen_name; // Set ScreenName or other properties
+
+                // Call fetchUsersByScreenID with the actual screen ID
+                this.fetchUsersByScreenID(screenId);
+            } catch (error) {
+                console.error('Error fetching screen details:', error);
+            }
+        },
         async fetchUsersByScreenID(screenId) {
             try {
-                const response = await axios.get(`http://localhost:7777/user_screens/getUsersByScreenID/${screenId}`);
-                this.teammemberOptions = response.data.map(user => ({
+                const response = await fetch(`http://localhost:7777/user_screens/getOneScreenID/${screenId}`);
+                const users = await response.json(); // Assuming the API response is JSON
+                // Format user data into teammemberOptions array
+                this.teammemberOptions = users.map(user => ({
                     id: user.id,
                     name: `${user.user_firstname} (${user.user_position})`
                 }));

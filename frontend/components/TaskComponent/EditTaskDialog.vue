@@ -22,8 +22,8 @@
                     <!-- Assignee input -->
                     <v-row>
                         <v-col cols="12">
-                            <v-select v-model="editedTask.assignee" :items="assigneeOptions"
-                                label="Assignee"></v-select>
+                            <v-select v-model="newTasks.task_member" :items="teammemberOptions"
+                                label="Teammember"></v-select>
                         </v-col>
                     </v-row>
                     <!-- Estimate Working Hours input -->
@@ -73,7 +73,7 @@ export default {
         return {
             dialog: false, // Define dialog property
             dialogTitle: 'Edit Task',
-            assigneeOptions: ["John Doe", "Jane Smith", "Tom Brown", "Alice Green"],
+            teammemberOptions:[],
         };
     },
     watch: {
@@ -85,6 +85,8 @@ export default {
         },
     },
     methods: {
+        // Fetch teammember options
+        
         saveTask() {
             this.$emit("update-task", this.editedTask);
             this.dialog = false;
