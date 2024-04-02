@@ -1,18 +1,5 @@
 <template>
   <div class="screen-details">
-    <!-- Search bar -->
-    <v-row no-gutters>
-      <v-col cols="12">
-        <input type="text" v-model="searchQuery" placeholder="Search..." style="
-            margin-bottom: 10px;
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-          " />
-      </v-col>
-    </v-row>
 
     <!--data table -->
     <v-data-table :headers="headers" :items="filteredScreens" :items-per-page="5" class="elevation-1">
@@ -20,12 +7,31 @@
         <v-toolbar flat>
           <v-toolbar-title>Screen Management - System : {{ systemNameENG }}</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" dark @click="goToCreateScreen">New Screen</v-btn>
-          <v-btn color="primary" dark @click="goToHistoryScreens" style="margin-left: 10px">Show History Screen</v-btn>
-          <!-- <v-btn color="primary" dark @click="goToHistoryScreen"
-            >Show HistoryScreen</v-btn> -->
         </v-toolbar>
+
+        <!-- Search bar -->
+        <v-row no-gutters justify-content="flex-end" align-items="flex-end">
+          <v-col cols="12" class="text-center">
+            <input type="text" v-model="searchQuery" placeholder="Search..." style="
+      margin-bottom: 10px;
+      width: 70%; 
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    " />
+
+            <v-btn color="primary" class="text-none mb-4" @click="goToCreateScreen"
+              style="margin-left: 50px; width: 10%; height: 70%">
+              Create Screen
+            </v-btn>
+            <v-btn color="error" @click="goToHistoryScreens" style="margin-left: 10px; width: 10%; height: 70%"
+              class="text-none mb-4">
+              <v-icon>mdi-delete</v-icon> &nbsp;Bin
+            </v-btn>
+          </v-col>
+        </v-row>
+
 
         <!-- Create Screen Dialog -->
         <v-dialog v-model="createScreenDialog" max-width="600" ref="createScreenDialog">
@@ -40,12 +46,12 @@
                 <v-text-field v-model="newScreen.screen_plan_end" label="Plant End" type="date"></v-text-field>
                 <v-text-field v-model="newScreen.screen_manday" label="Manday" type="float"></v-text-field>
                 <v-select v-model="newScreen.screen_level" label="Screen Level" :items="[
-          'Very Difficult',
-          'Hard',
-          'Moderate',
-          'Easy',
-          'Simple',
-        ]"></v-select>
+      'Very Difficult',
+      'Hard',
+      'Moderate',
+      'Easy',
+      'Simple',
+    ]"></v-select>
 
                 <!-- File input for photo -->
                 <v-file-input :rules="rules" accept="image/png, image/jpeg, image/bmp" label="New Picture"
@@ -69,12 +75,12 @@
                 <v-text-field v-model="editScreen.screen_id" label="Screen ID" readonly></v-text-field>
                 <v-text-field v-model="editScreen.screen_name" label="Screen Name"></v-text-field>
                 <v-select v-model="editScreen.screen_level" label="Screen Level" :items="[
-          'Very Difficult',
-          'Hard',
-          'Moderate',
-          'Easy',
-          'Simple',
-        ]"></v-select>
+      'Very Difficult',
+      'Hard',
+      'Moderate',
+      'Easy',
+      'Simple',
+    ]"></v-select>
                 <v-text-field v-model="editScreen.screen_pic" label="Screen Picture" readonly></v-text-field>
 
                 <!-- File input for photo -->
@@ -461,7 +467,7 @@ export default {
     getBase64Image(base64Data) {
       return "data:image/jpeg;base64," + base64Data;
     },
-    
+
     async fetchSystemNameENG() {
       try {
         const screenId = this.$route.params.id;
@@ -894,7 +900,7 @@ export default {
         return `${day}/${month}/${year}`;
       };
     },
-    
+
     // Compute the formatted planEnd date
     formattedScreenPlanEnd() {
       return function (screenPlanEnd) {
