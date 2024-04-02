@@ -245,6 +245,7 @@ export default {
         console.error("Error checking users:", error);
       }
     },
+
     async fetchUserSystems(system_id) {
       try {
         const response = await fetch(
@@ -259,6 +260,7 @@ export default {
         console.error("Error fetching user systems:", error);
       }
     },
+
     async createScreen() {
       const systemId = this.$route.params.id;
 
@@ -329,9 +331,11 @@ export default {
         // ... continue
       }
     },
+
     validateForm() {
       return this.$refs.form.validate();
     },
+
     async restoreScreen(item) {
       try {
         const confirmResult = await Swal.fire({
@@ -397,6 +401,7 @@ export default {
         );
       }
     },
+
     async confirmDeleteHistoryScreen(item) {
       try {
         const confirmResult = await Swal.fire({
@@ -439,6 +444,7 @@ export default {
         });
       }
     },
+
     // Function to convert image to Base64
     imageToBase64(imagePath) {
       return new Promise((resolve, reject) => {
@@ -455,6 +461,7 @@ export default {
         };
       });
     },
+
     getBase64Image(base64Data) {
       return "data:image/jpeg;base64," + base64Data;
     },
@@ -530,16 +537,19 @@ export default {
         });
       }
     },
+
     goToScreensDetails(screen) {
       this.$router.push({
         path: `/Screen/${screen.id}`,
         params: { selectedScreen: screen },
       });
     },
+
     async goToHistoryScreens() {
       await this.fetchDeletedScreens();
       this.showHistoryDialog = true;
     },
+
     async fetchDeletedScreens() {
       try {
         const screenId = this.$route.params.id;
@@ -569,6 +579,7 @@ export default {
       this.editScreen = { ...screen };
       this.editScreenDialog = true;
     },
+
     async softDeleteScreen(screen) {
       try {
         const confirmResult = await Swal.fire({
@@ -609,9 +620,11 @@ export default {
         );
       }
     },
+
     async goToCreateScreen() {  // Open the create system dialog first
       this.createScreenDialog = true;
     },
+
     async saveEditedScreen() {
       try {
         const response = await fetch(
@@ -652,6 +665,7 @@ export default {
         });
       }
     },
+
     updateDateTime() {
       const now = new Date();
       const options = {
@@ -668,6 +682,7 @@ export default {
       this.greeting = this.getGreeting(now);
       this.currentDateTime = now.toLocaleDateString("en-US", options);
     },
+
     getGreeting(date) {
       const hour = date.getHours();
 
@@ -701,6 +716,7 @@ export default {
         });
       }
     },
+
     async deletedScreens(item) {
       try {
         // Check if item is defined and has the expected structure
@@ -759,6 +775,7 @@ export default {
         );
       }
     },
+
     async fetchScreens() {
       const screenId = this.$route.params.id;
       try {
@@ -774,12 +791,14 @@ export default {
         console.error("Error fetching screens:", error);
       }
     },
+
     async editScreen(screen) {
       // Set the edited system to the selected system
       this.editedScreen = { ...screen };
       // Open the edit system dialog
       this.editScreenDialog = true;
     },
+
     async confirmDeleteScreen(screen) {
       try {
         const confirmResult = await Swal.fire({
@@ -808,6 +827,7 @@ export default {
         console.error("Error confirming delete screen:", error);
       }
     },
+
     async deleteScreen(screen) {
       const screenId = screen.id;
       try {
@@ -838,6 +858,7 @@ export default {
         });
       }
     },
+
     async fetchScreenPhoto(screenId) {
       try {
         const response = await fetch(`http://localhost:7777/screens/getScreenPhoto/${screenId}`);
@@ -850,7 +871,9 @@ export default {
     },
 
   },
+
   computed: {
+
     filteredScreens() {
       return this.screens.filter((screen) => {
         const searchText = this.searchQuery.toLowerCase();
@@ -860,6 +883,7 @@ export default {
         );
       });
     },
+
     formattedScreensPlanStart() {
       return function (screenPlanStart) {
         if (!screenPlanStart) return ""; // Check if planStart date is defined
@@ -871,6 +895,7 @@ export default {
         return `${day}/${month}/${year}`;
       };
     },
+    
     // Compute the formatted planEnd date
     formattedScreenPlanEnd() {
       return function (screenPlanEnd) {
@@ -891,11 +916,13 @@ export default {
 .actions-column {
   text-align: left;
 }
+
 /* CSS for the table */
 .system-details {
   overflow-x: auto;
   /* Add horizontal scrollbar if table overflows */
 }
+
 /* Set width for each column */
 .screen-details td,
 .screen-details th {
@@ -906,6 +933,7 @@ export default {
   word-wrap: break-word;
   /* Allow long text to wrap */
 }
+
 /* CSS for the image */
 .screen-details img {
   width: 50px;
