@@ -157,10 +157,6 @@ export default {
   layout: "admin",
   data() {
     return {
-      rules: [
-        (value) => !!value || 'Required.',
-        (value) => (value && value.length <= 10) || 'Max 10 characters.',
-      ],
       userSystems: [],
       user: [],
       dateStartMenu: false,
