@@ -465,6 +465,7 @@ export default {
     getBase64Image(base64Data) {
       return "data:image/jpeg;base64," + base64Data;
     },
+    
     async fetchSystemNameENG() {
       try {
         const screenId = this.$route.params.id;
@@ -482,9 +483,11 @@ export default {
         // Handle error fetching Screen
       }
     },
+
     async goToScreensDetail(screenId) {
       await this.$router.push({ path: `/screens/${screenId}` });
     },
+
     async updateScreen() {
       try {
         // Prepare the data to send
