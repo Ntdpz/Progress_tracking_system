@@ -39,23 +39,17 @@
                 <v-text-field v-model="newScreen.screen_plan_start" label="Plant Start" type="date"></v-text-field>
                 <v-text-field v-model="newScreen.screen_plan_end" label="Plant End" type="date"></v-text-field>
                 <v-text-field v-model="newScreen.screen_manday" label="Manday" type="float"></v-text-field>
-                <v-select v-model="newScreen.screen_level" label="Screen Level" :items="[
-          'Very Difficult',
-          'Hard',
-          'Moderate',
-          'Easy',
-          'Simple',
-        ]"></v-select>
-
+                <v-select v-model="newScreen.screen_level" label="Screen Level" :items="['Very Difficult', 'Hard', 'Moderate', 'Easy', 'Simple',]"></v-select>
                 <!-- File input for photo -->
-                <v-file-input :rules="rules" accept="image/png, image/jpeg, image/bmp" label="New Picture"
-                  placeholder="Select a picture" prepend-icon="mdi-camera" v-model="newScreen.photo">
-                </v-file-input>
+                <v-file-input
+                  accept="image/png, image/jpeg, image/bmp"
+                  label="Select screen image"
+                  placeholder="Select screen image"
+                  prepend-icon="mdi-camera"
+                  v-model="picFile"
+                ></v-file-input>
 
-                <v-btn type="submit" @click="
-          createScreenDialog = false;
-        createScreen();
-        ">Create</v-btn>
+                <v-btn type="submit" @click="createScreenDialog = false;createScreen();">Create</v-btn>
                 <v-btn @click="createScreenDialog = false">Cancel</v-btn>
               </v-form>
             </v-card-text>
@@ -81,7 +75,7 @@
                 <v-text-field v-model="editScreen.screen_pic" label="Screen Picture" readonly></v-text-field>
 
                 <!-- File input for photo -->
-                <v-file-input :rules="rules" accept="image/png, image/jpeg, image/bmp" label="New Picture"
+                <v-file-input accept="image/png, image/jpeg, image/bmp" label="New Picture"
                   placeholder="Select a picture" prepend-icon="mdi-camera" v-model="editScreen.photo">
                 </v-file-input>
 
@@ -150,15 +144,6 @@
         </tr>
       </template>
     </v-data-table>
-
- <!-- <div>
-      <h1>Check Users in Project</h1>
-      <button @click="checkUsers">Check Users</button>
-      <div v-if="usersLoaded">
-        <p v-if="users.length > 0">มีผู้ใช้ในโปรเจกต์</p>
-        <p v-else>ไม่มีผู้ใช้ในโปรเจกต์</p>
-      </div>
-    </div> -->
     
   </div>
 </template>
@@ -170,8 +155,7 @@ export default {
   layout: "admin",
   data() {
     return {
-      userSystems: [],
-      user: [],
+            
       dateStartMenu: false,
       dateEndMenu: false,
       systemNameENG: "",
@@ -182,6 +166,7 @@ export default {
       formattedPlanStart: "",
       formattedPlanEnd: "",
       photo: null,
+      picFile: null,
       newScreen: {
         screen_id: "",
         screen_name: "",
@@ -235,53 +220,40 @@ export default {
 
   mounted() {
     // Fetch system details on component mount
+    this.fetchSystem();
     this.fetchScreens();
     this.fetchSystemNameENG();
   },
   methods: {
-    
-    async checkUsers() {
-      try {
-        const systemId = this.$route.params.id;
-        await this.fetchUserSystems(systemId); // เรียกใช้ฟังก์ชัน fetchUserProjects เพื่อดึงข้อมูลผู้ใช้
-
-        // ตรวจสอบว่ามีข้อมูลผู้ใช้หรือไม่
-        if (this.userSystems && this.userSystems.length > 0) {
-          // มีผู้ใช้ในโปรเจกต์นี้
-          console.log("มีผู้ใช้ในโปรเจกต์นี้");
-          // แสดงรายชื่อผู้ใช้ที่มีในโปรเจกต์
-          this.userSystems.forEach((user) => {
-            console.log(user.user_id, user.user_firstname); // ประเภทของข้อมูล user_id อาจเป็นอย่างอื่นตามโครงสร้างของข้อมูลที่ได้รับ
-          });
-        } else {
-          // ไม่มีผู้ใช้ในโปรเจกต์นี้
-          console.log("ไม่มีผู้ใช้ในโปรเจกต์นี้");
-        }
-      } catch (error) {
-        console.error("Error checking users:", error);
-      }
-    },
-
-    async fetchUserSystems(system_id) {
+     async fetchSystem() {
+      const systemId = this.$route.params.id;
       try {
         const response = await fetch(
-          `http://localhost:7777/user_systems/getOneScreenID/${system_id}`
+          `http://localhost:7777/systems/getOne/${systemId}`
         );
         if (!response.ok) {
-          throw new Error("Failed to fetch user systems");
+          throw new Error("Failed to fetch system data");
         }
-        const data = await response.json();
-        // ตั้งค่า userProjects เป็นข้อมูลที่ได้รับมา
-        this.userSystems = data;
+        const systemData = await response.json();
+        this.system = systemData;
+        this.projectId = systemData.project_id;
+        this.systemId = systemData.id;
+
       } catch (error) {
-        console.error("Error fetching user systems:", error);
+        console.error("Error fetching system data:", error);
+        await Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to fetch system data. Please try again.",
+          timer: 3000,
+        });
       }
     },
-    
+
     async createScreen() {
       const systemId = this.$route.params.id;
-
       try {
+        
         // Fetch system data to get project_id
         const systemResponse = await fetch(
           `http://localhost:7777/systems/getOne/${systemId}`
@@ -304,13 +276,12 @@ export default {
           screen_level: this.newScreen.screen_level,
           screen_pic: base64Image, // Update with your default pic
           system_id: systemId,
-          screen_manday: this.newScreen.screen_manday,
-          screen_type: this.newScreen.screen_type,
           screen_progress: 0, // Update with your default progress
           screen_plan_start: this.newScreen.screen_plan_start || null, // Use null if empty
           screen_plan_end: this.newScreen.screen_plan_end || null, // Use null if empty
-          project_id: projectId, // Use the fetched project_id
+          project_id: projectId, // Use the fetched project_id  
           photo: this.newScreen.photo, // New photo data
+         
         };
 
         // Make the request to create a new screen
@@ -325,7 +296,6 @@ export default {
           }
         );
 
-        // Check if the screen was created successfully
         // Check if the screen was created successfully
         if (response.ok) {
           await Swal.fire({
