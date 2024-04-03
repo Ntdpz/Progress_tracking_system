@@ -143,13 +143,32 @@
           <td>{{ formattedScreenPlanEnd(item.screen_plan_end) }}</td>
           <td>{{ item.screen_man_day }}</td>
           <td>{{ item.screen_level }}</td>
-          <!-- <td>{{ item.screen_progress }}</td> -->
           <td>
-            <!-- Actions -->
-            <v-icon class="me-2" size="20" px @click="openEditDialog(item)">mdi-pencil-circle</v-icon>
-            <v-icon size="20" px @click="confirmDeleteScreen(item)">mdi-delete-empty</v-icon>
-            <v-btn @click="goToScreensDetail(item.id)" style="margin-left: 10px">Tasks</v-btn>
-            <v-btn @click="openManageUserDialog(item)">Manage User Screen</v-btn>
+            <!-- Dropdown menu for other actions -->
+            <v-menu offset-y>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn v-bind="attrs" v-on="on" icon>
+                  <v-icon size="20" px>mdi-dots-vertical</v-icon>
+                </v-btn>
+              </template>
+              <v-list>
+                <!-- Edit action -->
+                <v-list-item @click="openManageUserDialog(item)">
+                  <v-list-item-content>Assign</v-list-item-content>
+                </v-list-item>
+                <v-list-item @click="openEditDialog(item)">
+                  <v-list-item-content>Edit</v-list-item-content>
+                </v-list-item>
+                <!-- Delete action -->
+                <v-list-item @click="confirmDeleteScreen(item)">
+                  <v-list-item-content class="red--text">Delete</v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+            <!-- Icon for "Manage User Projects" -->
+            <v-btn @click="goToScreensDetail(item.id)" icon>
+              <v-icon>mdi-menu-right</v-icon>
+            </v-btn>
           </td>
         </tr>
       </template>
