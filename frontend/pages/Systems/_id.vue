@@ -149,6 +149,7 @@
             <v-icon class="me-2" size="20" px @click="openEditDialog(item)">mdi-pencil-circle</v-icon>
             <v-icon size="20" px @click="confirmDeleteScreen(item)">mdi-delete-empty</v-icon>
             <v-btn @click="goToScreensDetail(item.id)" style="margin-left: 10px">Tasks</v-btn>
+            <v-btn @click="openManageUserDialog(item)">Manage User Screen</v-btn>
           </td>
         </tr>
       </template>
@@ -163,6 +164,27 @@ export default {
   layout: "admin",
   data() {
     return {
+      selectedUsers: [],
+      availableUsers: [],
+      assignUserDialog: false,
+      assinguserDalog: false,
+      selectedProjectId: null,
+      users: [],
+      system_id: "",
+      userSystemsHeaders: [
+        { text: "ID", value: "id" },
+        { text: "First Name", value: "user_firstname" },
+        { text: "Last Name", value: "user_lastname" },
+        { text: "Position", value: "user_position" },
+        { text: "Picture", value: "user_pic" },
+      ],
+      search: "",
+      manageUserDialog: false,
+      selectedSystemId: "",
+      selectedScreenId: "",
+      screensHeaders: ["Actions", "Level", "Name"],
+      screenItems: [],
+      selectedUser: null,
       userSystems: [],
       user: [],
       dateStartMenu: false,
@@ -230,6 +252,103 @@ export default {
     this.fetchSystemNameENG();
   },
   methods: {
+    filteredUsers(position) {
+      return this.projectUsers
+        .filter((user) => user.user_position === position)
+        .map((user) => ({
+          ...user,
+          displayName: `${user.user_firstname} ${user.user_lastname}`,
+        }));
+    },
+
+    async assignUser() {
+      try {
+        const { selectedUsers, selectedScreenId, selectedSystemId, selectedProjectId } = this;
+        // เรียก API เพื่อสร้างการเชื่อมต่อระหว่างผู้ใช้และระบบ
+        const response = await axios.post(
+          `http://localhost:7777/user_screens/createUser_screen`,
+          {
+            user_id: selectedUsers,
+            screen_id: selectedScreenId,
+            system_id: selectedSystemId,
+            project_id: selectedProjectId,
+          }
+        );
+        console.log(response.data.message); // พิมพ์ข้อความจากการสร้างผู้ใช้ระบบใหม่
+        // ปิด Dialog หลังจากที่สร้างผู้ใช้ระบบเรียบร้อย
+        this.assinguserDalog = false;
+        // สามารถดำเนินการอื่นๆ ตามต้องการ เช่น รีเฟรชรายการผู้ใช้หรืออื่นๆ
+      } catch (error) {
+        console.error("Error assigning user:", error);
+        // จัดการข้อผิดพลาดหากมีปัญหาในการสร้างผู้ใช้ระบบ
+      }
+    },
+
+    async fetchUsersByScreenAndProject(systemId, projectId, screenId) {
+      try {
+        const response = await axios.get(
+          `http://localhost:7777/user_screens/getUserByScreenAndProject/${screenId}/${systemId}/${projectId}`
+        );
+        this.users = response.data;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
+    openManageUserDialog(item) {
+      this.selectedScreenId = item.screen_id; // เก็บรหัสหน้าจอที่เลือก
+      this.selectedSystemId = item.id; // เก็บรหัสระบบที่เลือก
+      this.selectedProjectId = item.project_id; // เก็บรหัสโปรเจคที่เลือก
+      this.manageUserDialog = true; // เปิด Dialog
+      this.fetchUsersBySystemAndProject(item.id, item.project_id, item.screen_id); // เรียกใช้งานฟังก์ชันโหลดข้อมูลผู้ใช้
+    },
+
+    async openNestedDialog(screenId, systemId, projectId) {
+      try {
+        // เรียก API เพื่อรับรายชื่อผู้ใช้ที่สามารถเลือกได้
+        const response = await axios.get(
+          `http://localhost:7777/user_screens/checkUsersNotInScreen/${projectId}/${systemId}/${screenId}`
+        );
+
+        // เพิ่มข้อมูล user_position เข้าไปในชุดข้อมูล
+        const usersWithDisplayName = response.data.map((user) => ({
+          ...user,
+          displayName: `${user.user_position} : ${user.user_firstname} ${user.user_lastname}`,
+        }));
+
+        // กำหนดข้อมูลผู้ใช้ใหม่ตามตำแหน่ง
+        this.availableUsers = usersWithDisplayName;
+
+        // เปิด Dialog
+        this.assinguserDalog = true;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
+    async deleteUser(screenId, systemId, projectId, userId) {
+      try {
+        const response = await axios.delete(
+          `http://localhost:7777/user_screens/deleteUserScreen/${systemId}/${screenId}/${projectId}/${userId}`
+        );
+
+        // ตรวจสอบว่าคำขอ DELETE สำเร็จหรือไม่
+        if (response.status === 200) {
+          // ลบผู้ใช้ระบบจากตาราง users ใน Vue
+          const index = this.users.findIndex((user) => user.id === userId);
+          if (index !== -1) {
+            this.users.splice(index, 1);
+          }
+          // แสดงข้อความเตือนว่าลบผู้ใช้ระบบสำเร็จ
+        } else {
+          // แสดงข้อความเตือนว่ามีข้อผิดพลาดในการลบผู้ใช้ระบบ
+        }
+      } catch (error) {
+        // แสดงข้อความเตือนว่ามีข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์
+        console.error("Error deleting user system:", error);
+      }
+    },
+
     async checkUsers() {
       try {
         const systemId = this.$route.params.id;

@@ -1,52 +1,40 @@
 <template>
   <!-- Systems Data Table container -->
   <div class="systems-data-table">
-    <!-- Search bar -->
-    <v-row no-gutters>
-      <v-col cols="12">
-        <input
-          type="text"
-          v-model="searchQuery"
-          placeholder="Search..."
-          style="
-            margin-bottom: 10px;
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-          "
-        />
-      </v-col>
-    </v-row>
 
     <!-- Data Table -->
-    <v-data-table
-      :headers="headers"
-      :items="filteredSystems"
-      :items-per-page="5"
-      class="elevation-1"
-    >
+    <v-data-table :headers="headers" :items="filteredSystems" :items-per-page="5" class="elevation-1">
       <!-- ส่วน Toolbar -->
       <template v-slot:top>
         <v-toolbar flat>
           <!-- ชื่อโปรเจค -->
-          <v-toolbar-title>Systems Management</v-toolbar-title>
+          <v-toolbar-title>Systems Management- Project : {{ projectNameENG }}</v-toolbar-title>
           <!-- ใช้ v-spacer เพื่อชิดปุ่มไปทางขวา -->
           <v-spacer></v-spacer>
-          <!-- เพิ่มปุ่ม New System -->
-          <v-btn color="primary" dark @click="goToCreateSystem"
-            >New System</v-btn
-          >
-          <!-- เพิ่มปุ่ม Show History System -->
-          <v-btn
-            color="primary"
-            dark
-            @click="goToHistorySystems"
-            style="margin-left: 10px"
-            >Show History System</v-btn
-          >
+
         </v-toolbar>
+        <!-- Search bar -->
+        <v-row no-gutters justify-content="flex-end" align-items="flex-end">
+          <v-col cols="12" class="text-center">
+            <input type="text" v-model="searchQuery" placeholder="Search..." style="
+      margin-bottom: 10px;
+      width: 70%; 
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    " />
+
+            <v-btn color="primary" class="text-none mb-4" @click="goToCreateSystem"
+              style="margin-left: 50px; width: 10%; height: 70%">
+              Create System
+            </v-btn>
+            <v-btn color="error" @click="goToHistorySystems" style="margin-left: 10px; width: 10%; height: 70%"
+              class="text-none mb-4">
+              <v-icon>mdi-delete</v-icon> &nbsp;Bin
+            </v-btn>
+          </v-col>
+        </v-row>
       </template>
 
       <!-- ส่วนแสดงข้อมูล -->
@@ -61,88 +49,66 @@
           <td>{{ item.system_progress ? item.system_progress : "0" }}</td>
           <td>
             {{
-              item.system_plan_start ? item.system_plan_start : "Not determined"
+            item.system_plan_start ? item.system_plan_start : "Not determined"
             }}
           </td>
           <td>
             {{ item.system_plan_end ? item.system_plan_end : "Not determined" }}
           </td>
           <td>{{ item.system_manday ? item.system_manday : "0" }}</td>
-          <!-- เพิ่มปุ่ม manage user systems -->
+
           <td>
-            <v-icon class="me-2" size="20" px @click="openEditDialog(item)"
-              >mdi-pencil-circle</v-icon
-            >
-            <v-icon size="20" px @click="confirmDeleteSystem(item)"
-              >mdi-delete-empty</v-icon
-            >
-            <v-btn @click="goToSystemsDetail(item.id)" style="margin-left: 10px"
-              >Systems Detail</v-btn
-            >
-            <!-- เพิ่มปุ่ม manage user systems -->
-            <v-btn @click="openManageUserDialog(item)"
-              >Manage User Systems</v-btn
-            >
+            <!-- Dropdown menu for other actions -->
+            <v-menu offset-y>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn v-bind="attrs" v-on="on" icon>
+                  <v-icon size="20" px>mdi-dots-vertical</v-icon>
+                </v-btn>
+              </template>
+              <v-list>
+                <!-- Edit action -->
+                <v-list-item @click="openManageUserDialog(item)">
+                  <v-list-item-content>Assign</v-list-item-content>
+                </v-list-item>
+                <v-list-item @click="openEditDialog(item)">
+                  <v-list-item-content>Edit</v-list-item-content>
+                </v-list-item>
+                <!-- Delete action -->
+                <v-list-item @click="confirmDeleteSystem(item)">
+                  <v-list-item-content class="red--text">Delete</v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+            <!-- Icon for "Manage User Projects" -->
+            <v-btn @click="goToSystemsDetail(item.id)" icon>
+              <v-icon>mdi-menu-right</v-icon>
+            </v-btn>
           </td>
         </tr>
       </template>
     </v-data-table>
 
     <!-- Create System Dialog -->
-    <v-dialog
-      v-model="createSystemDialog"
-      max-width="600"
-      ref="createSystemDialog"
-    >
+    <v-dialog v-model="createSystemDialog" max-width="600" ref="createSystemDialog">
       <v-card>
         <v-card-title>Create New System</v-card-title>
         <v-card-text>
           <!-- Form to create new system -->
           <v-form @submit.prevent="createSystem">
-            <v-text-field
-              v-model="newSystem.system_id"
-              label="System ID"
-            ></v-text-field>
-            <v-text-field
-              v-model="newSystem.system_nameTH"
-              label="System Name (TH)"
-            ></v-text-field>
-            <v-text-field
-              v-model="newSystem.system_nameEN"
-              label="System Name (EN)"
-            ></v-text-field>
-            <v-text-field
-              v-model="newSystem.system_shortname"
-              label="Short Name"
-            ></v-text-field>
+            <v-text-field v-model="newSystem.system_id" label="System ID"></v-text-field>
+            <v-text-field v-model="newSystem.system_nameTH" label="System Name (TH)"></v-text-field>
+            <v-text-field v-model="newSystem.system_nameEN" label="System Name (EN)"></v-text-field>
+            <v-text-field v-model="newSystem.system_shortname" label="Short Name"></v-text-field>
 
             <!-- Add v-select for selecting users -->
-            <v-select
-              v-model="selectedUsers"
-              :items="filteredUsers('Implementer')"
-              label="Select Implementer"
-              item-value="user_id"
-              item-text="displayName"
-              multiple
-            ></v-select>
+            <v-select v-model="selectedUsers" :items="filteredUsers('Implementer')" label="Select Implementer"
+              item-value="user_id" item-text="displayName" multiple></v-select>
 
-            <v-select
-              v-model="selectedUsers"
-              :items="filteredUsers('Developer')"
-              label="Select Developer"
-              item-value="user_id"
-              item-text="displayName"
-              multiple
-            ></v-select>
+            <v-select v-model="selectedUsers" :items="filteredUsers('Developer')" label="Select Developer"
+              item-value="user_id" item-text="displayName" multiple></v-select>
 
-            <v-select
-              v-model="selectedUsers"
-              :items="filteredUsers('System Analyst')"
-              label="Select System Analyst"
-              item-value="user_id"
-              item-text="displayName"
-              multiple
-            ></v-select>
+            <v-select v-model="selectedUsers" :items="filteredUsers('System Analyst')" label="Select System Analyst"
+              item-value="user_id" item-text="displayName" multiple></v-select>
 
             <v-btn type="submit">Create</v-btn>
             <v-btn @click="createSystemDialog = false">Cancel</v-btn>
@@ -158,23 +124,10 @@
         <v-card-text>
           <!-- Form to edit system -->
           <v-form @submit.prevent="updateSystem">
-            <v-text-field
-              v-model="editedSystem.system_id"
-              label="System ID"
-              readonly
-            ></v-text-field>
-            <v-text-field
-              v-model="editedSystem.system_nameTH"
-              label="System Name (TH)"
-            ></v-text-field>
-            <v-text-field
-              v-model="editedSystem.system_nameEN"
-              label="System Name (EN)"
-            ></v-text-field>
-            <v-text-field
-              v-model="editedSystem.system_shortname"
-              label="Short Name"
-            ></v-text-field>
+            <v-text-field v-model="editedSystem.system_id" label="System ID" readonly></v-text-field>
+            <v-text-field v-model="editedSystem.system_nameTH" label="System Name (TH)"></v-text-field>
+            <v-text-field v-model="editedSystem.system_nameEN" label="System Name (EN)"></v-text-field>
+            <v-text-field v-model="editedSystem.system_shortname" label="Short Name"></v-text-field>
 
             <v-btn type="submit">Update</v-btn>
             <v-btn @click="editSystemDialog = false">Cancel</v-btn>
@@ -210,19 +163,8 @@
       <v-card>
         <v-card-title>Manage User Systems</v-card-title>
         <v-card-text>
-          <v-text-field
-            v-model="search"
-            label="Search"
-            dense
-            hide-details
-            solo
-            flat
-          ></v-text-field>
-          <v-data-table
-            :headers="userSystemsHeaders"
-            :items="users"
-            :search="search"
-          >
+          <v-text-field v-model="search" label="Search" dense hide-details solo flat></v-text-field>
+          <v-data-table :headers="userSystemsHeaders" :items="users" :search="search">
             <template v-slot:item="{ item }">
               <tr>
                 <td>{{ item.id }}</td>
@@ -234,27 +176,18 @@
                 </td>
                 <td>
                   <!-- Add trash icon here -->
-                  <v-icon
-                    @click="
+                  <v-icon @click="
                       deleteUser(selectedSystemId, selectedProjectId, item.id)
-                    "
-                    >mdi-delete</v-icon
-                  >
+                    ">mdi-delete</v-icon>
                 </td>
               </tr>
             </template>
           </v-data-table>
         </v-card-text>
         <v-card-actions>
-          <v-btn color="blue darken-1" text @click="manageUserDialog = false"
-            >Close</v-btn
-          >
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="openNestedDialog(selectedSystemId, selectedProjectId)"
-            >Assign User</v-btn
-          >
+          <v-btn color="blue darken-1" text @click="manageUserDialog = false">Close</v-btn>
+          <v-btn color="blue darken-1" text @click="openNestedDialog(selectedSystemId, selectedProjectId)">Assign
+            User</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -264,49 +197,26 @@
       <v-card>
         <v-card-title>Assign User</v-card-title>
         <v-card-text>
-          <v-select
-            v-model="selectedUsers"
-            :items="
+          <v-select v-model="selectedUsers" :items="
               availableUsers.filter(
                 (user) => user.user_position === 'Implementer'
               )
-            "
-            label="Select Implementer"
-            item-text="displayName"
-            item-value="id"
-            multiple
-          ></v-select>
+            " label="Select Implementer" item-text="displayName" item-value="id" multiple></v-select>
 
-          <v-select
-            v-model="selectedUsers"
-            :items="
+          <v-select v-model="selectedUsers" :items="
               availableUsers.filter(
                 (user) => user.user_position === 'Developer'
               )
-            "
-            label="Select Developer"
-            item-text="displayName"
-            item-value="id"
-            multiple
-          ></v-select>
+            " label="Select Developer" item-text="displayName" item-value="id" multiple></v-select>
 
-          <v-select
-            v-model="selectedUsers"
-            :items="
+          <v-select v-model="selectedUsers" :items="
               availableUsers.filter(
                 (user) => user.user_position === 'System Analyst'
               )
-            "
-            label="Select System Analyst"
-            item-text="displayName"
-            item-value="id"
-            multiple
-          ></v-select>
+            " label="Select System Analyst" item-text="displayName" item-value="id" multiple></v-select>
         </v-card-text>
         <v-card-actions>
-          <v-btn color="blue darken-1" text @click="assinguserDalog = false"
-            >Close</v-btn
-          >
+          <v-btn color="blue darken-1" text @click="assinguserDalog = false">Close</v-btn>
           <v-btn color="blue darken-1" text @click="assignUser">Assign</v-btn>
         </v-card-actions>
       </v-card>
