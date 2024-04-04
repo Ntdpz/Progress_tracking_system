@@ -119,7 +119,7 @@
       </template>
 
       <!-- Data Rows -->
-      <template v-slot:item="{ screen }">
+      <template v-slot:item="{ item }">
         <tr>
           <td>{{ item.screen_id }}</td>
           <td>{{ item.screen_name }}</td>
@@ -142,7 +142,7 @@
                 <v-list-item @click="getUserScreenManagement(projectId, systemId, screen.id)">
                   <v-list-item-content>Assign</v-list-item-content>
                 </v-list-item>
-                <v-list-item @click="openEditDialog(screen)">
+                <v-list-item @click="openEditDialog(item)">
                   <v-list-item-content>Edit</v-list-item-content>
                 </v-list-item>
                 <!-- Delete action -->
