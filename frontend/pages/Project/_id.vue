@@ -110,8 +110,8 @@
             <v-select v-model="selectedUsers" :items="filteredUsers('System Analyst')" label="Select System Analyst"
               item-value="user_id" item-text="displayName" multiple></v-select>
 
-            <v-btn type="submit">Create</v-btn>
-            <v-btn @click="closeCreateSystemDialog">Cancel</v-btn>
+            <v-btn color="primary" type="submit">Create</v-btn>
+            <v-btn color="error" @click="closeCreateSystemDialog">Cancel</v-btn>
           </v-form>
         </v-card-text>
       </v-card>
@@ -129,8 +129,8 @@
             <v-text-field v-model="editedSystem.system_nameEN" label="System Name (EN)"></v-text-field>
             <v-text-field v-model="editedSystem.system_shortname" label="Short Name"></v-text-field>
 
-            <v-btn type="submit">Update</v-btn>
-            <v-btn @click="editSystemDialog = false">Cancel</v-btn>
+            <v-btn color="primary" type="submit">Update</v-btn>
+            <v-btn color="error" @click="editSystemDialog = false">Cancel</v-btn>
           </v-form>
         </v-card-text>
       </v-card>

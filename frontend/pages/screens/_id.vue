@@ -200,7 +200,7 @@ export default {
         task_plan_start: formattedStartDate,
         task_plan_end: formattedEndDate,
         screen_id: screenId,
-        project_id: screen.project_id,
+        project_id: screen.projectId,
         system_id: screen.system_id,
       };
 

@@ -80,8 +80,8 @@
               multiple
             ></v-select>
 
-                <v-btn type="submit">Create</v-btn>
-                <v-btn @click="createScreenDialog = false">Cancel</v-btn>
+                <v-btn color="primary" type="submit">Create</v-btn>
+                <v-btn color="error" @click="createScreenDialog = false">Cancel</v-btn>
               </v-form>
             </v-card-text>
           </v-card>
@@ -108,8 +108,8 @@
                 <!-- Display current photo -->
                 <v-img v-if="editScreen.photo" :src="editScreen.photo" height="100" contain></v-img>
 
-                <v-btn type="submit" @click="updateScreen">Update</v-btn>
-                <v-btn @click="editScreenDialog = false">Cancel</v-btn>
+                <v-btn color="primary" type="submit" @click="updateScreen">Update</v-btn>
+                <v-btn color="error" @click="editScreenDialog = false">Cancel</v-btn>
               </v-form>
             </v-card-text>
           </v-card>
