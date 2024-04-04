@@ -4,9 +4,27 @@
             {{ taskName }}
             <v-spacer></v-spacer>
             <!-- Edit icon -->
-            <v-btn icon @click="openEditTaskDialog">
-                <v-icon>mdi-pencil</v-icon>
+            <v-btn icon @click="openMenu">
+                <v-icon>mdi-dots-vertical</v-icon>
             </v-btn>
+            <!-- Menu -->
+            <v-menu v-model="menuOpen" :position-x="menuX" :position-y="menuY">
+                <template v-slot:activator="{ on }"></template>
+                <v-list>
+                    <v-list-item @click="openAssignDialog">
+                        <v-list-item-content>Assign</v-list-item-content>
+                    </v-list-item>
+                    <v-list-item @click="openEditTaskDialog">
+                        <v-list-item-content>Edit</v-list-item-content>
+                    </v-list-item>
+                    <v-list-item @click="openUpdateTaskDialog">
+                        <v-list-item-content>Update Progress</v-list-item-content>
+                    </v-list-item>
+                    <v-list-item @click="deleteTask" class="red-text">
+                        <v-list-item-content>Delete</v-list-item-content>
+                    </v-list-item>
+                </v-list>
+            </v-menu>
         </v-card-title>
         <v-card-text>
             <div>
@@ -15,7 +33,7 @@
             </div>
             <div>
                 <v-icon>mdi-account</v-icon>
-                <strong>Assignee:</strong> {{ teammemberName }}
+                <strong>Assignee:</strong> {{ assignee }}
             </div>
             <div>
                 <v-icon>mdi-timer-sand</v-icon>
@@ -23,7 +41,7 @@
             </div>
         </v-card-text>
         <v-card-actions>
-            <v-btn text color="red" @click="DeleteTask">
+            <v-btn text @click="DeleteTask">
                 Delete
             </v-btn>
             <v-spacer></v-spacer>
@@ -41,7 +59,7 @@
                     <strong>Plan End:</strong> {{ formattedTaskPlanEnd }}
                 </div>
                 <div>
-                    <strong>Task Detail:</strong> {{ taskDetail }}
+                    <strong>Task Detail:</strong> {{ tasksDetail }}
                 </div>
             </v-card-text>
         </v-expand-transition>
@@ -55,6 +73,9 @@ export default {
             show: false,
             formattedPlanStart: '',
             formattedPlanEnd: '',
+            menuOpen: false,
+            menuX: 0,
+            menuY: 0,
         };
     },
     props: {
@@ -70,14 +91,11 @@ export default {
         taskName() {
             return this.task.task_name;
         },
-        taskDetail() {
-            return this.task.task_detail;
+        tasksDetail() {
+            return this.task.tasks_detail;
         },
         taskManday() {
             return this.task.task_manday;
-        },
-        teammemberName() {
-            return this.task.task_member;
         },
         // Compute the formatted planStart date
         formattedTaskPlanStart() {
@@ -101,17 +119,27 @@ export default {
         },
     },
     methods: {
-        // open Update task progress dialog
-        openUpdateTaskDialog() {
-            this.$emit('open-update-task-dialog', this.task); // Emit the 'open-update-task-dialog' event with the task as payload
+        // open Menu
+        openMenu() {
+            this.menuOpen = true;
+            this.menuX = event.clientX;
+            this.menuY = event.clientY;
         },
-        // open Edit task dialog
+        openAssignDialog() {
+            this.menuOpen = false;
+            this.$emit('open-assign-dialog', this.task);
+        },
         openEditTaskDialog() {
-            this.$emit('edit-task', this.task); // Emit the 'edit-task' event with the task as payload
+            this.menuOpen = false;
+            this.$emit('edit-task', this.task);
         },
-        // Delete task
-        DeleteTask() {
-            this.$emit('delete-task', this.task); // Emit the 'delete-task' event with the task as payload
+        openUpdateTaskDialog() {
+            this.menuOpen = false;
+            this.$emit('open-update-task-dialog', this.task);
+        },
+        deleteTask() {
+            this.menuOpen = false;
+            this.$emit('delete-task', this.task);
         },
 
     },
