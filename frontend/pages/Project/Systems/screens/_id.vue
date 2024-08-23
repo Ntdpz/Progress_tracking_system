@@ -132,21 +132,45 @@
       <div class="topper">
         <h3>Task Management</h3>
         <v-divider vertical></v-divider>
-        <!-- open add task form -->
-        <v-btn class="rounded-btn" color="primary" @click="dialogAddTaskForm = true">
-          <v-icon>mdi-plus</v-icon>
-        </v-btn>
       </div>
       <v-divider></v-divider>
 
       <!-- Search bar -->
       <v-row no-gutters>
-        <v-col cols="12">
-          <v-text-field v-model="searchQuery" label="Search" clearable></v-text-field>
+        <v-col cols="8">
+          <v-text-field
+            v-model="searchQuery"
+            label="Search"
+            clearable
+            outlined
+            shaped
+            style="width: 100%;"
+          ></v-text-field>
+          
         </v-col>
+        <!-- open add task form -->
+        <v-col cols="4" class="text-right">
+        <v-btn
+          class="rounded-btn"
+          color="primary"
+          @click="dialogAddTaskForm = true"
+          style="width: 30%;"
+        >
+        Add Task
+    </v-btn>
+    <v-btn
+      class="rounded-btn"
+      color="error"
+      @click="handleDelete"
+      style="width: 10%; margin-left: 16px; margin-right: 16px;"
+    >
+      <v-icon>mdi-delete</v-icon>
+    </v-btn>
+  </v-col>
       </v-row>
 
       <v-divider></v-divider>
+
 
       <!-- v-tabs for filtering tasks by status -->
       <v-tabs v-model="selectedStatus">
