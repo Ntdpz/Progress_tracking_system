@@ -9,73 +9,46 @@
       </div>
       <v-col cols="12" v-if="screenId">
         <!-- Card แสดงข้อมูล Screen -->
-        <v-card class="mx-auto align-start" max-width="none" hover>
-          <v-img
-            v-if="screen_pic"
-            :src="screen_pic"
-            alt="Screen PIC"
-            width="100%"
-            height="300px"
-            @click="showImageDialog = true"
-          ></v-img>
+        <!--<v-card class="mx-auto align-start" max-width="none" hover>
+    <v-img
+      v-if="screen_pic"
+      :src="screen_pic"
+      alt="Screen PIC"
+      width="100%"
+      height="300px"
+      @click="showImageDialog = true"
+    ></v-img>-->
 
-          <v-card-item
-            class="d-flex justify-space-between align-center"
-            @click="showDetails = !showDetails"
-          >
+        <v-card>
+          <v-card-item class="d-flex justify-space-between align-center" @click="showDetails = !showDetails">
             <div class="card-title">
-              <v-card-title> Screen name : {{ screen_name }}</v-card-title>
+              <v-card-title>Screen name : {{ screen_name }}</v-card-title>
             </div>
             <div class="icon">
-              <v-icon
-                class="custom-btn"
-                @click.stop="openUserListDialog"
-                style="margin-right: 25px"
-                >mdi-account-multiple</v-icon
-              >
+              <v-icon class="custom-btn" @click.stop="openUserListDialog" style="margin-right: 25px">
+                mdi-account-multiple
+              </v-icon>
             </div>
           </v-card-item>
+
           <v-card-subtitle @click="showDetails = !showDetails">
-            <span style="font-weight: bold; color: black; font-size: 16px">
-              Screen Progress
-            </span>
-            <v-progress-linear
-              :color="getProgressColor(parseInt(screen_progress))"
-              height="50"
-              :value="parseInt(screen_progress)"
-              striped
-            >
-              <strong :style="{ color: '#5E5E5E', fontSize: '20px' }"
-                >{{ Math.floor(screen_progress) }}%</strong
-              ></v-progress-linear
-            >
+            <span style="font-weight: bold; color: black; font-size: 16px">Screen Progress</span>
+            <v-progress-linear :color="getProgressColor(parseInt(screen_progress))" height="50"
+              :value="parseInt(screen_progress)" striped>
+              <strong :style="{ color: '#5E5E5E', fontSize: '20px' }">
+                {{ Math.floor(screen_progress) }}%
+              </strong>
+            </v-progress-linear>
           </v-card-subtitle>
 
           <v-expand-transition>
             <div v-show="showDetails">
               <v-divider></v-divider>
               <v-card-text>
-                <p>
-                  Plan Start:
-                  {{
-                    screen_plan_start
-                      ? formatDate(screen_plan_start)
-                      : "Not determined"
-                  }}
-                </p>
-                <p>
-                  Plan End:
-                  {{
-                    screen_plan_end
-                      ? formatDate(screen_plan_end)
-                      : "Not determined"
-                  }}
-                </p>
-
+                <p>Plan Start: {{ screen_plan_start ? formatDate(screen_plan_start) : "Not determined" }}</p>
+                <p>Plan End: {{ screen_plan_end ? formatDate(screen_plan_end) : "Not determined" }}</p>
                 <p>Screen Manday: {{ screen_manday || 0 }}</p>
-
                 <p>Screen Level: {{ screen_level }}</p>
-
                 <p>Task Count: {{ task_count || 0 }}</p>
               </v-card-text>
             </div>
@@ -84,18 +57,8 @@
       </v-col>
 
       <!-- แสดงรูปภาพ Dialog -->
-      <v-dialog
-        v-model="showImageDialog"
-        max-width="1000"
-        max-height="800"
-        fitscreen
-        hide-overlay
-      >
-        <v-img
-          :src="screen_pic"
-          class="dialog-image"
-          @click="closeImageDialog"
-        ></v-img>
+      <v-dialog v-model="showImageDialog" max-width="1000" max-height="800" fitscreen hide-overlay>
+        <v-img :src="screen_pic" class="dialog-image" @click="closeImageDialog"></v-img>
       </v-dialog>
 
       <!-- แสดง ข้อมูลผู้ใช้ในระบบ Dialog -->
@@ -106,20 +69,13 @@
           <v-card-actions>
             <v-row no-gutters>
               <v-col cols="12">
-                <v-text-field
-                  v-model="searchUser"
-                  label="Search"
-                  clearable
-                ></v-text-field>
+                <v-text-field v-model="searchUser" label="Search" clearable></v-text-field>
               </v-col>
             </v-row>
           </v-card-actions>
           <v-card-text>
             <v-list>
-              <v-list-item
-                v-for="user in paginatedUserList"
-                :key="user.user_id"
-              >
+              <v-list-item v-for="user in paginatedUserList" :key="user.user_id">
                 <v-list-item-avatar>
                   <v-img :src="user.user_pic" alt="User Profile"></v-img>
                 </v-list-item-avatar>
@@ -129,24 +85,17 @@
                   </v-list-item-title>
                   <v-list-item-subtitle>{{
                     user.user_position
-                  }}</v-list-item-subtitle>
+                    }}</v-list-item-subtitle>
                   <v-list-item-subtitle>{{
                     user.user_department
-                  }}</v-list-item-subtitle>
+                    }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
             </v-list>
           </v-card-text>
-          <v-card-actions
-            class="pagination"
-            style="display: flex; justify-content: space-between"
-          >
-            <v-pagination
-              v-if="totalPagesUser > 1"
-              v-model="currentPageUser"
-              :length="totalPagesUser"
-              @input="paginateUserList"
-            ></v-pagination>
+          <v-card-actions class="pagination" style="display: flex; justify-content: space-between">
+            <v-pagination v-if="totalPagesUser > 1" v-model="currentPageUser" :length="totalPagesUser"
+              @input="paginateUserList"></v-pagination>
             <v-btn color="error" @click="closeUserListDialog">ปิด</v-btn>
           </v-card-actions>
         </v-card>
@@ -160,11 +109,7 @@
         <h3>Task Management</h3>
         <v-divider vertical></v-divider>
         <!-- open add task form -->
-        <v-btn
-          class="rounded-btn"
-          color="primary"
-          @click="dialogAddTaskForm = true"
-        >
+        <v-btn class="rounded-btn" color="primary" @click="dialogAddTaskForm = true">
           <v-icon>mdi-plus</v-icon>
         </v-btn>
       </div>
@@ -173,11 +118,7 @@
       <!-- Search bar -->
       <v-row no-gutters>
         <v-col cols="12">
-          <v-text-field
-            v-model="searchQuery"
-            label="Search"
-            clearable
-          ></v-text-field>
+          <v-text-field v-model="searchQuery" label="Search" clearable></v-text-field>
         </v-col>
       </v-row>
 
@@ -188,7 +129,7 @@
         <v-tab>All</v-tab>
         <v-tab v-for="(status, index) in statusOptions" :key="index">{{
           status
-        }}</v-tab>
+          }}</v-tab>
         <v-tab-item>
           <v-row>
             <!-- Dropdown for sorting -->
@@ -200,74 +141,35 @@
                   </v-btn>
                 </template>
                 <v-list>
-                  <v-list-item @click="sortTasks('task_name')"
-                    >Sort by Task Name A-Z</v-list-item
-                  >
-                  <v-list-item @click="sortTasks('-task_name')"
-                    >Sort by Task Name Z-A</v-list-item
-                  >
-                  <v-list-item @click="sortTasks('task_progress')"
-                    >Sort by Progress (Low to High)</v-list-item
-                  >
-                  <v-list-item @click="sortTasks('-task_progress')"
-                    >Sort by Progress (High to Low)</v-list-item
-                  >
-                  <v-list-item @click="sortTasks('task_plan_start')"
-                    >Sort by Plan Start first date</v-list-item
-                  >
-                  <v-list-item @click="sortTasks('task_plan_start_last')"
-                    >Sort by Plan Start last date</v-list-item
-                  >
-                  <v-list-item @click="sortTasks('task_plan_end')"
-                    >Sort by Plan End first date</v-list-item
-                  >
-                  <v-list-item @click="sortTasks('task_plan_end_last')"
-                    >Sort by Plan End last date</v-list-item
-                  >
+                  <v-list-item @click="sortTasks('task_name')">Sort by Task Name A-Z</v-list-item>
+                  <v-list-item @click="sortTasks('-task_name')">Sort by Task Name Z-A</v-list-item>
+                  <v-list-item @click="sortTasks('task_progress')">Sort by Progress (Low to High)</v-list-item>
+                  <v-list-item @click="sortTasks('-task_progress')">Sort by Progress (High to Low)</v-list-item>
+                  <v-list-item @click="sortTasks('task_plan_start')">Sort by Plan Start first date</v-list-item>
+                  <v-list-item @click="sortTasks('task_plan_start_last')">Sort by Plan Start last date</v-list-item>
+                  <v-list-item @click="sortTasks('task_plan_end')">Sort by Plan End first date</v-list-item>
+                  <v-list-item @click="sortTasks('task_plan_end_last')">Sort by Plan End last date</v-list-item>
                   <!-- Add more sorting options as needed -->
                 </v-list>
               </v-menu>
             </v-col>
 
-            <v-col
-              v-for="(task, index) in paginatedTasks"
-              :key="index"
-              cols="12"
-              md="6"
-              lg="4"
-            >
-              <v-card
-                class="mb-3"
-                style="overflow-y: auto"
-                @click="openDialog(task)"
-              >
-                <v-card-title
-                  ><span style="margin-right: auto"
-                    >ชื่องาน: {{ task.task_name }}</span
-                  ></v-card-title
-                >
+            <v-col v-for="(task, index) in paginatedTasks" :key="index" cols="12" md="6" lg="4">
+              <v-card class="mb-3" style="overflow-y: auto" @click="openDialog(task)">
+                <v-card-title><span style="margin-right: auto">ชื่องาน: {{ task.task_name }}</span></v-card-title>
                 <v-card-text>
                   <!-- Row 1: Task Name and Progress -->
                   <div class="d-flex justify-space-between">
                     <v-row>
                       <v-col>
-                        <span style="margin-right: auto; font-size: 17px"
-                          >Progress :
+                        <span style="margin-right: auto; font-size: 17px">Progress :
                         </span>
                       </v-col>
                       <v-col>
-                        <v-progress-linear
-                          :color="
+                        <v-progress-linear :color="
                             getProgressColorTask(parseInt(task.task_progress))
-                          "
-                          height="15"
-                          :value="parseInt(task.task_progress)"
-                          striped
-                          :style="{ width: '100%' }"
-                        >
-                          <strong :style="{ color: '#5E5E5E' }"
-                            >{{ parseInt(task.task_progress) }}%</strong
-                          >
+                          " height="15" :value="parseInt(task.task_progress)" striped :style="{ width: '100%' }">
+                          <strong :style="{ color: '#5E5E5E' }">{{ parseInt(task.task_progress) }}%</strong>
                         </v-progress-linear>
                       </v-col>
                     </v-row>
@@ -285,30 +187,21 @@
                     <v-list v-if="task.memberDetails">
                       <v-list-item>
                         <v-list-item-avatar>
-                          <img
-                            :src="task.memberDetails.user_pic"
-                            alt="User Pic"
-                          />
+                          <img :src="task.memberDetails.user_pic" alt="User Pic" />
                         </v-list-item-avatar>
                         <v-list-item-content>
-                          <v-list-item-title
-                            >First Name:
+                          <v-list-item-title>First Name:
                             {{
-                              task.memberDetails.user_firstname
-                            }}</v-list-item-title
-                          >
-                          <v-list-item-subtitle
-                            >Last Name:
+                            task.memberDetails.user_firstname
+                            }}</v-list-item-title>
+                          <v-list-item-subtitle>Last Name:
                             {{
-                              task.memberDetails.user_lastname
-                            }}</v-list-item-subtitle
-                          >
-                          <v-list-item-subtitle
-                            >Position:
+                            task.memberDetails.user_lastname
+                            }}</v-list-item-subtitle>
+                          <v-list-item-subtitle>Position:
                             {{
-                              task.memberDetails.user_position
-                            }}</v-list-item-subtitle
-                          >
+                            task.memberDetails.user_position
+                            }}</v-list-item-subtitle>
                         </v-list-item-content>
                       </v-list-item>
                     </v-list>
@@ -328,9 +221,9 @@
                     <p>
                       Plan Start:
                       {{
-                        task.task_plan_start
-                          ? formatDate(task.task_plan_start)
-                          : "Not determined"
+                      task.task_plan_start
+                      ? formatDate(task.task_plan_start)
+                      : "Not determined"
                       }}
                     </p>
 
@@ -338,55 +231,36 @@
                     <p>
                       Plan End:
                       {{
-                        task.task_plan_end
-                          ? formatDate(task.task_plan_end)
-                          : "Not determined"
+                      task.task_plan_end
+                      ? formatDate(task.task_plan_end)
+                      : "Not determined"
                       }}
                     </p>
 
                     <!-- Buttons -->
                     <div>
-                      <v-btn
-                        v-if="user.user_role === 'Admin'"
-                        icon
-                        color="primary"
-                        @click.stop="
+                      <v-btn v-if="user.user_role === 'Admin'" icon color="primary" @click.stop="
                           dialogEditTaskForm = true;
                           editedTask = task;
-                        "
-                      >
+                        ">
                         <v-icon>mdi-pencil</v-icon>
                       </v-btn>
-                      <v-btn
-                        v-if="
+                      <v-btn v-if="
                           (task.memberDetails &&
                             task.memberDetails.id === user.id) ||
                           user.user_role === 'Admin'
-                        "
-                        icon
-                        color="primary"
-                        @click.stop="openSaveHistoryDialog(task)"
-                      >
+                        " icon color="primary" @click.stop="openSaveHistoryDialog(task)">
                         <v-icon>mdi-content-save</v-icon>
                       </v-btn>
-                      <v-btn
-                        v-if="
+                      <v-btn v-if="
                           (task.memberDetails &&
                             task.memberDetails.id === user.id) ||
                           user.user_role === 'Admin'
-                        "
-                        icon
-                        color="error"
-                        @click.stop="deleteTask(task)"
-                      >
+                        " icon color="error" @click.stop="deleteTask(task)">
                         <v-icon>mdi-delete</v-icon>
                       </v-btn>
-                      <v-btn
-                        v-if="!task.memberDetails || !task.memberDetails.id"
-                        color="primary"
-                        style="margin-left: 75px"
-                        @click.stop="takeTask(task)"
-                      >
+                      <v-btn v-if="!task.memberDetails || !task.memberDetails.id" color="primary"
+                        style="margin-left: 75px" @click.stop="takeTask(task)">
                         Take this task.
                       </v-btn>
                     </div>
@@ -397,53 +271,27 @@
           </v-row>
 
           <!-- Pagination -->
-          <v-pagination
-            v-model="currentPage"
-            :length="numberOfPages"
-            @input="changePage"
-          />
+          <v-pagination v-model="currentPage" :length="numberOfPages" @input="changePage" />
         </v-tab-item>
 
         <v-tab-item v-for="(status, index) in statusOptions" :key="index">
           <v-row>
-            <v-col
-              v-for="(task, index) in filteredTasksByStatus(status)"
-              :key="index"
-              cols="12"
-              md="6"
-              lg="4"
-            >
-              <v-card
-                class="mb-3"
-                style="overflow-y: auto"
-                @click="openDialog(task)"
-              >
-                <v-card-title
-                  ><span style="margin-right: auto"
-                    >ชื่องาน: {{ task.task_name }}</span
-                  ></v-card-title
-                >
+            <v-col v-for="(task, index) in filteredTasksByStatus(status)" :key="index" cols="12" md="6" lg="4">
+              <v-card class="mb-3" style="overflow-y: auto" @click="openDialog(task)">
+                <v-card-title><span style="margin-right: auto">ชื่องาน: {{ task.task_name }}</span></v-card-title>
                 <v-card-text>
                   <!-- Row 1: Task Name and Progress -->
                   <div class="d-flex justify-space-between">
                     <v-row>
                       <v-col>
-                        <span style="margin-right: auto; font-size: 17px"
-                          >Progress :
+                        <span style="margin-right: auto; font-size: 17px">Progress :
                         </span>
                       </v-col>
                       <v-col>
-                        <v-progress-linear
-                          color="primary"
-                          height="15"
-                          :value="parseInt(task.task_progress)"
-                          striped
-                          :style="{ width: '100%' }"
-                        >
-                          <strong :style="{ color: 'white' }"
-                            >{{ parseInt(task.task_progress) }}%</strong
-                          ></v-progress-linear
-                        >
+                        <v-progress-linear color="primary" height="15" :value="parseInt(task.task_progress)" striped
+                          :style="{ width: '100%' }">
+                          <strong :style="{ color: 'white' }">{{ parseInt(task.task_progress)
+                            }}%</strong></v-progress-linear>
                       </v-col>
                     </v-row>
                   </div>
@@ -460,30 +308,21 @@
                     <v-list v-if="task.memberDetails">
                       <v-list-item>
                         <v-list-item-avatar>
-                          <img
-                            :src="task.memberDetails.user_pic"
-                            alt="User Pic"
-                          />
+                          <img :src="task.memberDetails.user_pic" alt="User Pic" />
                         </v-list-item-avatar>
                         <v-list-item-content>
-                          <v-list-item-title
-                            >First Name:
+                          <v-list-item-title>First Name:
                             {{
-                              task.memberDetails.user_firstname
-                            }}</v-list-item-title
-                          >
-                          <v-list-item-subtitle
-                            >Last Name:
+                            task.memberDetails.user_firstname
+                            }}</v-list-item-title>
+                          <v-list-item-subtitle>Last Name:
                             {{
-                              task.memberDetails.user_lastname
-                            }}</v-list-item-subtitle
-                          >
-                          <v-list-item-subtitle
-                            >Position:
+                            task.memberDetails.user_lastname
+                            }}</v-list-item-subtitle>
+                          <v-list-item-subtitle>Position:
                             {{
-                              task.memberDetails.user_position
-                            }}</v-list-item-subtitle
-                          >
+                            task.memberDetails.user_position
+                            }}</v-list-item-subtitle>
                         </v-list-item-content>
                       </v-list-item>
                     </v-list>
@@ -503,9 +342,9 @@
                     <p>
                       Plan Start:
                       {{
-                        task.task_plan_start
-                          ? formatDate(task.task_plan_start)
-                          : "Not determined"
+                      task.task_plan_start
+                      ? formatDate(task.task_plan_start)
+                      : "Not determined"
                       }}
                     </p>
 
@@ -513,29 +352,21 @@
                     <p>
                       Plan End:
                       {{
-                        task.task_plan_end
-                          ? formatDate(task.task_plan_end)
-                          : "Not determined"
+                      task.task_plan_end
+                      ? formatDate(task.task_plan_end)
+                      : "Not determined"
                       }}
                     </p>
 
                     <!-- Buttons -->
                     <div>
-                      <v-btn
-                        icon
-                        color="primary"
-                        @click.stop="
+                      <v-btn icon color="primary" @click.stop="
                           dialogEditTaskForm = true;
                           editedTask = task;
-                        "
-                      >
+                        ">
                         <v-icon>mdi-pencil</v-icon>
                       </v-btn>
-                      <v-btn
-                        icon
-                        color="primary"
-                        @click.stop="openSaveHistoryDialog(task)"
-                      >
+                      <v-btn icon color="primary" @click.stop="openSaveHistoryDialog(task)">
                         <v-icon>mdi-content-save</v-icon>
                       </v-btn>
 
@@ -553,44 +384,22 @@
         <v-tab>Task to day</v-tab>
         <v-tab-item>
           <v-row>
-            <v-col
-              v-for="(task, index) in tasksToday"
-              :key="index"
-              cols="12"
-              md="6"
-              lg="4"
-            >
-              <v-card
-                class="mb-3"
-                style="overflow-y: auto"
-                @click="openDialog(task)"
-              >
-                <v-card-title
-                  ><span style="margin-right: auto"
-                    >ชื่องาน: {{ task.task_name }}</span
-                  ></v-card-title
-                >
+            <v-col v-for="(task, index) in tasksToday" :key="index" cols="12" md="6" lg="4">
+              <v-card class="mb-3" style="overflow-y: auto" @click="openDialog(task)">
+                <v-card-title><span style="margin-right: auto">ชื่องาน: {{ task.task_name }}</span></v-card-title>
                 <v-card-text>
                   <!-- Row 1: Task Name and Progress -->
                   <div class="d-flex justify-space-between">
                     <v-row>
                       <v-col>
-                        <span style="margin-right: auto; font-size: 17px"
-                          >Progress :
+                        <span style="margin-right: auto; font-size: 17px">Progress :
                         </span>
                       </v-col>
                       <v-col>
-                        <v-progress-linear
-                          color="primary"
-                          height="15"
-                          :value="parseInt(task.task_progress)"
-                          striped
-                          :style="{ width: '100%' }"
-                        >
-                          <strong :style="{ color: 'white' }"
-                            >{{ parseInt(task.task_progress) }}%</strong
-                          ></v-progress-linear
-                        >
+                        <v-progress-linear color="primary" height="15" :value="parseInt(task.task_progress)" striped
+                          :style="{ width: '100%' }">
+                          <strong :style="{ color: 'white' }">{{ parseInt(task.task_progress)
+                            }}%</strong></v-progress-linear>
                       </v-col>
                     </v-row>
                   </div>
@@ -607,30 +416,21 @@
                     <v-list v-if="task.memberDetails">
                       <v-list-item>
                         <v-list-item-avatar>
-                          <img
-                            :src="task.memberDetails.user_pic"
-                            alt="User Pic"
-                          />
+                          <img :src="task.memberDetails.user_pic" alt="User Pic" />
                         </v-list-item-avatar>
                         <v-list-item-content>
-                          <v-list-item-title
-                            >First Name:
+                          <v-list-item-title>First Name:
                             {{
-                              task.memberDetails.user_firstname
-                            }}</v-list-item-title
-                          >
-                          <v-list-item-subtitle
-                            >Last Name:
+                            task.memberDetails.user_firstname
+                            }}</v-list-item-title>
+                          <v-list-item-subtitle>Last Name:
                             {{
-                              task.memberDetails.user_lastname
-                            }}</v-list-item-subtitle
-                          >
-                          <v-list-item-subtitle
-                            >Position:
+                            task.memberDetails.user_lastname
+                            }}</v-list-item-subtitle>
+                          <v-list-item-subtitle>Position:
                             {{
-                              task.memberDetails.user_position
-                            }}</v-list-item-subtitle
-                          >
+                            task.memberDetails.user_position
+                            }}</v-list-item-subtitle>
                         </v-list-item-content>
                       </v-list-item>
                     </v-list>
@@ -650,9 +450,9 @@
                     <p>
                       Plan Start:
                       {{
-                        task.task_plan_start
-                          ? formatDate(task.task_plan_start)
-                          : "Not determined"
+                      task.task_plan_start
+                      ? formatDate(task.task_plan_start)
+                      : "Not determined"
                       }}
                     </p>
 
@@ -660,29 +460,21 @@
                     <p>
                       Plan End:
                       {{
-                        task.task_plan_end
-                          ? formatDate(task.task_plan_end)
-                          : "Not determined"
+                      task.task_plan_end
+                      ? formatDate(task.task_plan_end)
+                      : "Not determined"
                       }}
                     </p>
 
                     <!-- Buttons -->
                     <div>
-                      <v-btn
-                        icon
-                        color="primary"
-                        @click.stop="
+                      <v-btn icon color="primary" @click.stop="
                           dialogEditTaskForm = true;
                           editedTask = task;
-                        "
-                      >
+                        ">
                         <v-icon>mdi-pencil</v-icon>
                       </v-btn>
-                      <v-btn
-                        icon
-                        color="primary"
-                        @click.stop="openSaveHistoryDialog(task)"
-                      >
+                      <v-btn icon color="primary" @click.stop="openSaveHistoryDialog(task)">
                         <v-icon>mdi-content-save</v-icon>
                       </v-btn>
 
@@ -748,36 +540,36 @@
                   <p>
                     <strong>Last updated date:</strong>
                     {{
-                      formatDate(dialogTaskDetails.task_date_update) ||
-                      "Not determined"
+                    formatDate(dialogTaskDetails.task_date_update) ||
+                    "Not determined"
                     }}
                   </p>
                   <p>
                     <strong>Plan Start:</strong>
                     {{
-                      formatDate(dialogTaskDetails.task_plan_start) ||
-                      "Not determined"
+                    formatDate(dialogTaskDetails.task_plan_start) ||
+                    "Not determined"
                     }}
                   </p>
                   <p>
                     <strong>Plan End:</strong>
                     {{
-                      formatDate(dialogTaskDetails.task_plan_end) ||
-                      "Not determined"
+                    formatDate(dialogTaskDetails.task_plan_end) ||
+                    "Not determined"
                     }}
                   </p>
                   <p>
                     <strong>Actual Start:</strong>
                     {{
-                      formatDate(dialogTaskDetails.task_actual_start) ||
-                      "Not determined"
+                    formatDate(dialogTaskDetails.task_actual_start) ||
+                    "Not determined"
                     }}
                   </p>
                   <p>
                     <strong>Actual End:</strong>
                     {{
-                      formatDate(dialogTaskDetails.task_actual_end) ||
-                      "Not determined"
+                    formatDate(dialogTaskDetails.task_actual_end) ||
+                    "Not determined"
                     }}
                   </p>
                 </div>
@@ -788,13 +580,8 @@
           <div>
             <h3 style="padding-left: 20px">History tasks</h3>
           </div>
-          <v-data-table
-            :headers="historyHeaders"
-            :items="historyTasks"
-            item-key="id"
-            class="table-with-border"
-            :sort-by="[{ key: 'update_date', order: 'desc' }]"
-          >
+          <v-data-table :headers="historyHeaders" :items="historyTasks" item-key="id" class="table-with-border"
+            :sort-by="[{ key: 'update_date', order: 'desc' }]">
             <template v-slot:item.task_detail="{ item }">
               {{ item.task_detail ? item.task_detail : "No determine" }}
             </template>
@@ -807,37 +594,37 @@
             <!-- โค้ดประสาทีนี้เรียงตาม update_date -->
             <template v-slot:item.update_date="{ item }">
               {{
-                item.update_date ? formatDate(item.update_date) : "No determine"
+              item.update_date ? formatDate(item.update_date) : "No determine"
               }}
             </template>
 
             <!-- ส่วนที่เหลือจะใช้ formatDate ตามปกติ -->
             <template v-slot:item.task_plan_start="{ item }">
               {{
-                item.task_plan_start
-                  ? formatDate(item.task_plan_start)
-                  : "No determine"
+              item.task_plan_start
+              ? formatDate(item.task_plan_start)
+              : "No determine"
               }}
             </template>
             <template v-slot:item.task_plan_end="{ item }">
               {{
-                item.task_plan_end
-                  ? formatDate(item.task_plan_end)
-                  : "No determine"
+              item.task_plan_end
+              ? formatDate(item.task_plan_end)
+              : "No determine"
               }}
             </template>
             <template v-slot:item.task_actual_start="{ item }">
               {{
-                item.task_actual_start
-                  ? formatDate(item.task_actual_start)
-                  : "No determine"
+              item.task_actual_start
+              ? formatDate(item.task_actual_start)
+              : "No determine"
               }}
             </template>
             <template v-slot:item.task_actual_end="{ item }">
               {{
-                item.task_actual_end
-                  ? formatDate(item.task_actual_end)
-                  : "No determine"
+              item.task_actual_end
+              ? formatDate(item.task_actual_end)
+              : "No determine"
               }}
             </template>
             <!-- โค้ดประสาทีนี้เรียงตาม update_date -->
@@ -863,113 +650,51 @@
           <!-- Edit task form -->
           <v-form @submit.prevent="updateTask">
             <!-- Form fields to edit task details -->
-            <v-text-field
-              v-model="editedTask.task_name"
-              label="Task Name"
-              required
-            ></v-text-field>
-            <v-text-field
-              v-model="editedTask.task_detail"
-              label="Detail"
-              required
-            ></v-text-field>
-            <v-select
-              v-model="editedTask.task_status"
-              :items="[
+            <v-text-field v-model="editedTask.task_name" label="Task Name" required></v-text-field>
+            <v-text-field v-model="editedTask.task_detail" label="Detail" required></v-text-field>
+            <v-select v-model="editedTask.task_status" :items="[
                 'start',
                 'stop',
                 'correct',
                 'mistake',
                 'Not started yet',
-              ]"
-              label="Status"
-              required
-              outlined
-              dense
-            ></v-select>
+              ]" label="Status" required outlined dense></v-select>
 
             <v-row align="center">
               <v-col cols="3">
-                <v-text-field
-                  v-model="editedTask.task_progress"
-                  label="Progress"
-                  type="number"
-                  min="0"
-                  max="100"
-                  outlined
-                  dense
-                ></v-text-field>
+                <v-text-field v-model="editedTask.task_progress" label="Progress" type="number" min="0" max="100"
+                  outlined dense></v-text-field>
               </v-col>
               <v-col cols="9">
-                <v-slider
-                  v-model="editedTask.task_progress"
-                  :thumb-label="true"
-                  thumb-size="20"
-                  ticks="always"
-                  tick-size="2"
-                  tick-thickness="2"
-                  track-color="primary"
-                  :max="100"
-                  :min="0"
-                  step="1"
-                ></v-slider>
+                <v-slider v-model="editedTask.task_progress" :thumb-label="true" thumb-size="20" ticks="always"
+                  tick-size="2" tick-thickness="2" track-color="primary" :max="100" :min="0" step="1"></v-slider>
               </v-col>
             </v-row>
 
             <!-- Plan -->
             <v-row>
               <v-col cols="6">
-                <v-menu
-                  v-model="planStartMenu"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  transition="scale-transition"
-                  offset-y
-                >
+                <v-menu v-model="planStartMenu" :close-on-content-click="false" :nudge-right="40"
+                  transition="scale-transition" offset-y>
                   <template v-slot:activator="{ on }">
-                    <v-text-field
-                      :value="
+                    <v-text-field :value="
                         formatDate(editedTask.task_plan_start, 'DD-MM-YYYY')
-                      "
-                      label="Plan Start"
-                      prepend-icon="mdi-calendar"
-                      readonly
-                      v-on="on"
-                    ></v-text-field>
+                      " label="Plan Start" prepend-icon="mdi-calendar" readonly v-on="on"></v-text-field>
                   </template>
-                  <v-date-picker
-                    v-model="editedTask.task_plan_start"
-                    no-title
-                    scrollable
-                  ></v-date-picker>
+                  <v-date-picker v-model="editedTask.task_plan_start" no-title scrollable></v-date-picker>
                 </v-menu>
               </v-col>
               <v-col cols="6">
-                <v-menu
-                  v-model="planEndMenu"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  transition="scale-transition"
-                  offset-y
-                >
+                <v-menu v-model="planEndMenu" :close-on-content-click="false" :nudge-right="40"
+                  transition="scale-transition" offset-y>
                   <template v-slot:activator="{ on }">
-                    <v-text-field
-                      :value="
+                    <v-text-field :value="
                         formatDate(editedTask.task_plan_end, 'DD-MM-YYYY')
-                      "
-                      label="Plan End"
-                      prepend-icon="mdi-calendar"
-                      readonly
-                      v-on="on"
-                      :disabled="!editedTask.task_plan_start"
-                    ></v-text-field>
+                      " label="Plan End" prepend-icon="mdi-calendar" readonly v-on="on"
+                      :disabled="!editedTask.task_plan_start"></v-text-field>
                   </template>
-                  <v-date-picker
-                    v-model="editedTask.task_plan_end"
-                    no-title
-                    scrollable
-                    :min="editedTask.task_plan_start"
-                  ></v-date-picker>
+                  <v-date-picker v-model="editedTask.task_plan_end" no-title scrollable
+                    :min="editedTask.task_plan_start"></v-date-picker>
                 </v-menu>
               </v-col>
             </v-row>
@@ -977,78 +702,36 @@
             <!-- Actual -->
             <v-row>
               <v-col cols="6">
-                <v-menu
-                  v-if="editedTask.task_plan_start && editedTask.task_plan_end"
-                  v-model="actualStartMenu"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  transition="scale-transition"
-                  offset-y
-                >
+                <v-menu v-if="editedTask.task_plan_start && editedTask.task_plan_end" v-model="actualStartMenu"
+                  :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y>
                   <template v-slot:activator="{ on }">
-                    <v-text-field
-                      :value="
+                    <v-text-field :value="
                         formatDate(editedTask.task_actual_start, 'DD-MM-YYYY')
-                      "
-                      label="Actual Start"
-                      prepend-icon="mdi-calendar"
-                      readonly
-                      v-on="on"
-                    ></v-text-field>
+                      " label="Actual Start" prepend-icon="mdi-calendar" readonly v-on="on"></v-text-field>
                   </template>
-                  <v-date-picker
-                    v-model="editedTask.task_actual_start"
-                    no-title
-                    scrollable
-                  ></v-date-picker>
+                  <v-date-picker v-model="editedTask.task_actual_start" no-title scrollable></v-date-picker>
                 </v-menu>
               </v-col>
               <v-col cols="6">
-                <v-menu
-                  v-if="editedTask.task_plan_start && editedTask.task_plan_end"
-                  v-model="actualEndMenu"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  transition="scale-transition"
-                  offset-y
-                >
+                <v-menu v-if="editedTask.task_plan_start && editedTask.task_plan_end" v-model="actualEndMenu"
+                  :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y>
                   <template v-slot:activator="{ on }">
-                    <v-text-field
-                      :value="
+                    <v-text-field :value="
                         formatDate(editedTask.task_actual_end, 'DD-MM-YYYY')
-                      "
-                      label="Actual End"
-                      prepend-icon="mdi-calendar"
-                      readonly
-                      v-on="on"
-                      :disabled="!editedTask.task_actual_start"
-                    ></v-text-field>
+                      " label="Actual End" prepend-icon="mdi-calendar" readonly v-on="on"
+                      :disabled="!editedTask.task_actual_start"></v-text-field>
                   </template>
-                  <v-date-picker
-                    v-model="editedTask.task_actual_end"
-                    no-title
-                    scrollable
-                    :min="editedTask.task_actual_start"
-                  ></v-date-picker>
+                  <v-date-picker v-model="editedTask.task_actual_end" no-title scrollable
+                    :min="editedTask.task_actual_start"></v-date-picker>
                 </v-menu>
               </v-col>
             </v-row>
 
-            <v-text-field
-              v-model="editedTask.task_manday"
-              label="Manday"
-              required
-            ></v-text-field>
+            <v-text-field v-model="editedTask.task_manday" label="Manday" required></v-text-field>
 
             <!-- Member ID -->
-            <v-select
-              v-model="editedTask.task_member_id"
-              :items="userListCreate"
-              item-value="user_id"
-              item-text="user_name"
-              label="Member ID"
-              required
-            >
+            <v-select v-model="editedTask.task_member_id" :items="userListCreate" item-value="user_id"
+              item-text="user_name" label="Member ID" required>
               <template v-slot:item="{ item }">
                 <v-list-item-avatar>
                   <v-img :src="item.user_pic" />
@@ -1075,116 +758,54 @@
         <v-card-text>
           <v-form @submit.prevent="saveHistory">
             <!-- Task data fields -->
-            <v-text-field
-              v-model="historyTaskData.task_name"
-              label="Task Name"
-              required
-            ></v-text-field>
-            <v-text-field
-              v-model="historyTaskData.task_detail"
-              label="Detail"
-              required
-            ></v-text-field>
-            <v-select
-              v-model="historyTaskData.task_status"
-              :items="[
+            <v-text-field v-model="historyTaskData.task_name" label="Task Name" required></v-text-field>
+            <v-text-field v-model="historyTaskData.task_detail" label="Detail" required></v-text-field>
+            <v-select v-model="historyTaskData.task_status" :items="[
                 'start',
                 'stop',
                 'correct',
                 'mistake',
                 'Not started yet',
-              ]"
-              label="Status"
-              required
-              outlined
-              dense
-            ></v-select>
+              ]" label="Status" required outlined dense></v-select>
 
             <v-row align="center">
               <v-col cols="3">
-                <v-text-field
-                  v-model="historyTaskData.task_progress"
-                  label="Progress"
-                  type="number"
-                  min="0"
-                  max="100"
-                  outlined
-                  dense
-                ></v-text-field>
+                <v-text-field v-model="historyTaskData.task_progress" label="Progress" type="number" min="0" max="100"
+                  outlined dense></v-text-field>
               </v-col>
               <v-col cols="9">
-                <v-slider
-                  v-model="historyTaskData.task_progress"
-                  :thumb-label="true"
-                  thumb-size="20"
-                  ticks="always"
-                  tick-size="2"
-                  tick-thickness="2"
-                  track-color="primary"
-                  :max="100"
-                  :min="0"
-                  step="1"
-                ></v-slider>
+                <v-slider v-model="historyTaskData.task_progress" :thumb-label="true" thumb-size="20" ticks="always"
+                  tick-size="2" tick-thickness="2" track-color="primary" :max="100" :min="0" step="1"></v-slider>
               </v-col>
             </v-row>
 
             <!-- Plan -->
             <v-row>
               <v-col cols="6">
-                <v-menu
-                  v-model="planStartMenu"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  transition="scale-transition"
-                  offset-y
-                >
+                <v-menu v-model="planStartMenu" :close-on-content-click="false" :nudge-right="40"
+                  transition="scale-transition" offset-y>
                   <template v-slot:activator="{ on }">
-                    <v-text-field
-                      :value="
+                    <v-text-field :value="
                         formatDate(
                           historyTaskData.task_plan_start,
                           'DD-MM-YYYY'
                         )
-                      "
-                      label="Plan Start"
-                      prepend-icon="mdi-calendar"
-                      readonly
-                      v-on="on"
-                    ></v-text-field>
+                      " label="Plan Start" prepend-icon="mdi-calendar" readonly v-on="on"></v-text-field>
                   </template>
-                  <v-date-picker
-                    v-model="historyTaskData.task_plan_start"
-                    no-title
-                    scrollable
-                  ></v-date-picker>
+                  <v-date-picker v-model="historyTaskData.task_plan_start" no-title scrollable></v-date-picker>
                 </v-menu>
               </v-col>
               <v-col cols="6">
-                <v-menu
-                  v-model="planEndMenu"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  transition="scale-transition"
-                  offset-y
-                >
+                <v-menu v-model="planEndMenu" :close-on-content-click="false" :nudge-right="40"
+                  transition="scale-transition" offset-y>
                   <template v-slot:activator="{ on }">
-                    <v-text-field
-                      :value="
+                    <v-text-field :value="
                         formatDate(historyTaskData.task_plan_end, 'DD-MM-YYYY')
-                      "
-                      label="Plan End"
-                      prepend-icon="mdi-calendar"
-                      readonly
-                      v-on="on"
-                      :disabled="!historyTaskData.task_plan_start"
-                    ></v-text-field>
+                      " label="Plan End" prepend-icon="mdi-calendar" readonly v-on="on"
+                      :disabled="!historyTaskData.task_plan_start"></v-text-field>
                   </template>
-                  <v-date-picker
-                    v-model="historyTaskData.task_plan_end"
-                    no-title
-                    scrollable
-                    :min="historyTaskData.task_plan_start"
-                  ></v-date-picker>
+                  <v-date-picker v-model="historyTaskData.task_plan_end" no-title scrollable
+                    :min="historyTaskData.task_plan_start"></v-date-picker>
                 </v-menu>
               </v-col>
             </v-row>
@@ -1192,80 +813,44 @@
             <!-- Actual -->
             <v-row>
               <v-col cols="6">
-                <v-menu
-                  v-if="
+                <v-menu v-if="
                     historyTaskData.task_plan_start &&
                     historyTaskData.task_plan_end
-                  "
-                  v-model="actualStartMenu"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  transition="scale-transition"
-                  offset-y
-                >
+                  " v-model="actualStartMenu" :close-on-content-click="false" :nudge-right="40"
+                  transition="scale-transition" offset-y>
                   <template v-slot:activator="{ on }">
-                    <v-text-field
-                      :value="
+                    <v-text-field :value="
                         formatDate(
                           historyTaskData.task_actual_start,
                           'DD-MM-YYYY'
                         )
-                      "
-                      label="Actual Start"
-                      prepend-icon="mdi-calendar"
-                      readonly
-                      v-on="on"
-                    ></v-text-field>
+                      " label="Actual Start" prepend-icon="mdi-calendar" readonly v-on="on"></v-text-field>
                   </template>
-                  <v-date-picker
-                    v-model="historyTaskData.task_actual_start"
-                    no-title
-                    scrollable
-                  ></v-date-picker>
+                  <v-date-picker v-model="historyTaskData.task_actual_start" no-title scrollable></v-date-picker>
                 </v-menu>
               </v-col>
               <v-col cols="6">
-                <v-menu
-                  v-if="
+                <v-menu v-if="
                     historyTaskData.task_plan_start &&
                     historyTaskData.task_plan_end
-                  "
-                  v-model="actualEndMenu"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  transition="scale-transition"
-                  offset-y
-                >
+                  " v-model="actualEndMenu" :close-on-content-click="false" :nudge-right="40"
+                  transition="scale-transition" offset-y>
                   <template v-slot:activator="{ on }">
-                    <v-text-field
-                      :value="
+                    <v-text-field :value="
                         formatDate(
                           historyTaskData.task_actual_end,
                           'DD-MM-YYYY'
                         )
-                      "
-                      label="Actual End"
-                      prepend-icon="mdi-calendar"
-                      readonly
-                      v-on="on"
-                      :disabled="!historyTaskData.task_actual_start"
-                    ></v-text-field>
+                      " label="Actual End" prepend-icon="mdi-calendar" readonly v-on="on"
+                      :disabled="!historyTaskData.task_actual_start"></v-text-field>
                   </template>
-                  <v-date-picker
-                    v-model="historyTaskData.task_actual_end"
-                    no-title
-                    scrollable
-                    :min="historyTaskData.task_actual_start"
-                  ></v-date-picker>
+                  <v-date-picker v-model="historyTaskData.task_actual_end" no-title scrollable
+                    :min="historyTaskData.task_actual_start"></v-date-picker>
                 </v-menu>
               </v-col>
             </v-row>
 
-            <v-text-field
-              v-model="historyTaskData.task_manday"
-              label="Manday"
-              required
-            ></v-text-field>
+            <v-text-field v-model="historyTaskData.task_manday" label="Manday" required></v-text-field>
 
             <v-btn color="primary" type="submit">Save History</v-btn>
             <v-btn color="error" @click="cancelSaveHistory">Cancel</v-btn>
@@ -1283,103 +868,45 @@
           <!-- Create task form -->
           <v-form @submit.prevent="createTask(newTask)">
             <!-- Task ID -->
-            <v-text-field
-              v-model="newTask.task_id"
-              label="Task ID"
-              required
-              append-icon="mdi-alert-circle"
-              pattern="[A-Za-z0-9@#$%^&*()-_+=!]+"
-            ></v-text-field>
+            <v-text-field v-model="newTask.task_id" label="Task ID" required append-icon="mdi-alert-circle"
+              pattern="[A-Za-z0-9@#$%^&*()-_+=!]+"></v-text-field>
 
             <!-- Task Name -->
-            <v-text-field
-              v-model="newTask.task_name"
-              label="Task Name"
-              required
-              append-icon="mdi-alert-circle"
-            ></v-text-field>
+            <v-text-field v-model="newTask.task_name" label="Task Name" required
+              append-icon="mdi-alert-circle"></v-text-field>
 
             <!-- Detail -->
-            <v-text-field
-              v-model="newTask.task_detail"
-              label="Detail"
-            ></v-text-field>
+            <v-text-field v-model="newTask.task_detail" label="Detail"></v-text-field>
 
             <!-- Status -->
-            <v-select
-              v-model="newTask.task_status"
-              :items="statusOptions"
-              label="Status"
-            ></v-select>
+            <v-select v-model="newTask.task_status" :items="statusOptions" label="Status"></v-select>
 
             <!-- Plan Start -->
-            <v-menu
-              v-model="planStartMenu"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-              max-width="300px"
-            >
+            <v-menu v-model="planStartMenu" :close-on-content-click="false" :nudge-right="40"
+              transition="scale-transition" offset-y max-width="300px">
               <template v-slot:activator="{ on }">
-                <v-text-field
-                  label="Plan Start"
-                  prepend-icon="mdi-calendar"
-                  readonly
-                  v-on="on"
-                  :value="formatDate(newTask.task_plan_start)"
-                ></v-text-field>
+                <v-text-field label="Plan Start" prepend-icon="mdi-calendar" readonly v-on="on"
+                  :value="formatDate(newTask.task_plan_start)"></v-text-field>
               </template>
-              <v-date-picker
-                v-model="newTask.task_plan_start"
-                no-title
-                scrollable
-                max-width="300px"
-              ></v-date-picker>
+              <v-date-picker v-model="newTask.task_plan_start" no-title scrollable max-width="300px"></v-date-picker>
             </v-menu>
 
             <!-- Plan End -->
-            <v-menu
-              v-model="planEndMenu"
-              :close-on-content-click="false"
-              :nudge-right="40"
-              transition="scale-transition"
-              offset-y
-              max-width="300px"
-            >
+            <v-menu v-model="planEndMenu" :close-on-content-click="false" :nudge-right="40"
+              transition="scale-transition" offset-y max-width="300px">
               <template v-slot:activator="{ on }">
-                <v-text-field
-                  label="Plan End"
-                  prepend-icon="mdi-calendar"
-                  readonly
-                  v-on="on"
-                  :min="newTask.task_plan_start"
-                  :value="formatDate(newTask.task_plan_end)"
-                ></v-text-field>
+                <v-text-field label="Plan End" prepend-icon="mdi-calendar" readonly v-on="on"
+                  :min="newTask.task_plan_start" :value="formatDate(newTask.task_plan_end)"></v-text-field>
               </template>
-              <v-date-picker
-                v-model="newTask.task_plan_end"
-                no-title
-                scrollable
-                max-width="300px"
-                :min="newTask.task_plan_start"
-              ></v-date-picker>
+              <v-date-picker v-model="newTask.task_plan_end" no-title scrollable max-width="300px"
+                :min="newTask.task_plan_start"></v-date-picker>
             </v-menu>
 
-            <v-text-field
-              v-model="newTask.task_manday"
-              label="Manday"
-              :readonly="true"
-            ></v-text-field>
+            <v-text-field v-model="newTask.task_manday" label="Manday" :readonly="true"></v-text-field>
 
             <!-- Member ID -->
-            <v-select
-              v-model="newTask.task_member_id"
-              :items="userListCreate"
-              item-value="user_id"
-              item-text="user_name"
-              label="Member ID"
-            >
+            <v-select v-model="newTask.task_member_id" :items="userListCreate" item-value="user_id"
+              item-text="user_name" label="Member ID">
               <template v-slot:item="{ item }">
                 <v-list-item-avatar>
                   <v-img :src="item.user_pic" />
@@ -1391,12 +918,7 @@
             </v-select>
 
             <!-- Submit button -->
-            <v-btn
-              color="primary"
-              :disabled="!newTask.task_id || !newTask.task_name"
-              type="submit"
-              >Create</v-btn
-            >
+            <v-btn color="primary" :disabled="!newTask.task_id || !newTask.task_name" type="submit">Create</v-btn>
 
             <!-- Cancel button -->
             <v-btn color="error" @click="cancel">Cancel</v-btn>
