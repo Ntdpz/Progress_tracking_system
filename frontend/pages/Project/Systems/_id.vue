@@ -21,12 +21,10 @@
                 :value="parseInt(system.system_progress)"
                 striped
               >
-            
-             <strong :style="{ color: '#5E5E5E', fontSize: '20px' }"
-                >{{ Math.floor(system_progress) || 0}}%</strong
-              ></v-progress-linear
-            >
-            </v-progress-linear>
+                <strong :style="{ color: '#5E5E5E', fontSize: '20px' }"
+                  >{{ Math.floor(system_progress) || 0 }}%</strong
+                ></v-progress-linear
+              >
             </v-card-subtitle>
           </v-card-item>
 
@@ -56,7 +54,7 @@
             </div>
           </v-expand-transition>
         </v-card>
-        <!-- แสดงรายชื่อ USser Dialog -->
+        <!-- แสดงรายชื่อ Usser Dialog -->
         <v-dialog v-model="showUserDialog" max-width="600">
           <v-card>
             <v-card-title>User Systems</v-card-title>
@@ -273,6 +271,14 @@
                         @click.stop="confirmDeleteScreen(screen)"
                       >
                         <v-icon>mdi-delete</v-icon>
+                      </v-btn>
+
+                      <v-btn
+                        color="primary"
+                        class="small"
+                        @click.stop="goToReportDetail(screen.id)"
+                      >
+                        <v-icon>mdi-information-outline</v-icon>
                       </v-btn>
                     </v-card-actions>
                   </v-card>
@@ -606,6 +612,7 @@ export default {
   layout: "admin",
   data() {
     return {
+      system_progress: this.system?.system_progress || 0,
       userHasAccess: false,
       user: this.$auth.user,
       loggedIn: this.$auth.loggedIn,
@@ -1306,7 +1313,38 @@ export default {
         ) {
           // ตรวจสอบว่า this.$auth.user.id อยู่ใน users หรือเป็น "Admin" หรือไม่
           // ถ้าใช่ให้ทำการเปลี่ยนหน้าไปยังรายละเอียดของหน้าจอ
-          await this.$router.push({ path: `/Project/Systems/screens/${screenId}` });
+          await this.$router.push({
+            path: `/Project/Systems/screens/${screenId}`,
+          });
+        } else {
+          console.log("User does not have access to this screen");
+          // หากไม่มีสิทธิ์เข้าถึงหน้าจอ สามารถเพิ่มการจัดการตามความเหมาะสมที่นี่
+        }
+      } catch (error) {
+        console.error("Error fetching user screen management data:", error);
+        // Handle error fetching user screen management data
+      }
+    },
+
+    async goToReportDetail(screenId) {
+      try {
+        const response = await fetch(
+          `http://localhost:7777/user_screens/checkUsersINScreen/${this.projectId}/${this.systemId}/${screenId}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch user screen management data");
+        }
+        const users = await response.json();
+
+        if (
+          users.some((user) => user.id === this.$auth.user.id) ||
+          this.$auth.user.user_role === "Admin"
+        ) {
+          // ตรวจสอบว่า this.$auth.user.id อยู่ใน users หรือเป็น "Admin" หรือไม่
+          // ถ้าใช่ให้ทำการเปลี่ยนหน้าไปยังรายละเอียดของหน้าจอ
+          await this.$router.push({
+            path: `/Project/Systems/Report/${screenId}`,
+          });
         } else {
           console.log("User does not have access to this screen");
           // หากไม่มีสิทธิ์เข้าถึงหน้าจอ สามารถเพิ่มการจัดการตามความเหมาะสมที่นี่
@@ -1388,13 +1426,6 @@ export default {
         reader.readAsDataURL(file);
         reader.onload = () => resolve(reader.result);
         reader.onerror = (error) => reject(error);
-      });
-    },
-
-    goToScreensDetails(screen) {
-      this.$router.push({
-        path: `/Screen/${screen.id}`,
-        params: { selectedScreen: screen },
       });
     },
 

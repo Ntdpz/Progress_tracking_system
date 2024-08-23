@@ -308,44 +308,6 @@
             :NoAssginCheck="selected.no_assign"
             @button-clicked="getIssue()"
           />
-          <!-- <v-tabs-items v-model="tab" style="width: 100%">
-            <v-tabs
-              fixed-tabs
-              v-model="tab_issue"
-              next-icon="mdi-menu-right-outline"
-              prev-icon="mdi-menu-left-outline"
-              show-arrows
-              color="#454545"
-              class="mt-5 mb-3"
-            > -->
-          <!-- <v-tab
-                :style="tab_assign ? 'background-color:#454545;' : null"
-                @click="(tab_assign = true), (tab_unassign = false)"
-              >
-                <h3 :style="tab_assign ? 'color:#ffff;' : 'color:#000;'">
-                  ปัญหาที่มีคนรับผิดชอบ
-                </h3>
-
-                ถึงตรงนี้
-              </v-tab>
-              <v-tab
-                :style="tab_unassign ? 'background-color:#454545;' : null"
-                @click="(tab_assign = false), (tab_unassign = true)"
-              >
-                <h3 :style="tab_unassign ? 'color:#ffff;' : 'color:#000;'">
-                  ปัญหาที่ไม่มีคนรับผิดชอบ
-                </h3>
-              </v-tab> -->
-          <!-- </v-tabs>
-          </v-tabs-items> -->
-          <!-- <v-tabs-items v-model="tab_issue">
-            <v-tab-item>
-              <h1>h1</h1>
-            </v-tab-item>
-            <v-tab-item>
-              <h1>h2</h1>
-            </v-tab-item>
-          </v-tabs-items> -->
           <v-tabs-items v-model="tab">
             <v-tab-item>
               <!-- *cardAll -->

@@ -3,7 +3,7 @@
     <v-form ref="form">
       <v-dialog v-model="dialog" persistent max-width="750">
         <v-card>
-          <v-card-title class="pt-3 mb-2" style="background-color: #5c3efe">
+          <v-card-title class="pt-3 mb-2" style="background-color: #009933">
             <h5 style="color: white">
               สร้างปัญหาใหม่ | {{ systemName }} ({{ systemShortname }})
             </h5>
@@ -335,76 +335,13 @@
             </v-btn>
           </v-card-actions>
         </v-card>
-        <template>
-          <v-dialog
-            v-model="dialogSuccess"
-            persistent
-            max-width="400px"
-            max-height="100%"
-          >
-            <v-card width="100%" max-height="100%">
-              <v-row class="ma-0 pa-0" style="place-content: center">
-                <v-card-title>
-                  <v-icon size="100px" color="success"
-                    >mdi-check-circle-outline</v-icon
-                  >
-                </v-card-title>
-              </v-row>
-              <v-row class="ma-0 pa-0" style="place-content: center">
-                <v-card-title class="text-h4">
-                  สร้างเสร็จเรียบร้อย
-                </v-card-title>
-              </v-row>
-              <v-card-actions style="place-content: center">
-                <!-- <v-spacer></v-spacer> -->
-                <v-btn
-                  color="success"
-                  dark
-                  @click="(dialogSuccess = false), close()"
-                  rounded
-                >
-                  Ok
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-        </template>
-        <!--  -->
-        <template>
-          <v-dialog
-            v-model="dialogFail"
-            persistent
-            max-width="400px"
-            max-height="100%"
-          >
-            <v-card width="100%" max-height="100%">
-              <v-row class="ma-0 pa-0" style="place-content: center">
-                <v-card-title>
-                  <v-icon size="100px" color="error"
-                    >mdi-alert-circle-outline</v-icon
-                  >
-                </v-card-title>
-              </v-row>
-              <v-row class="ma-0 pa-0" style="place-content: center">
-                <v-card-title class="text-h4">
-                  กรุณาใส่ข้อมูลให้ครบถ้วน
-                </v-card-title>
-              </v-row>
-              <v-card-actions style="place-content: center">
-                <!-- <v-spacer></v-spacer> -->
-                <v-btn color="error" dark @click="dialogFail = false" rounded>
-                  Ok
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-        </template>
       </v-dialog>
     </v-form>
   </v-layout>
 </template>
 
 <script>
+import Swal from "sweetalert2";
 import moment from "moment";
 import DialogSuccess from "./DialogSuccess.vue";
 export default {
@@ -497,7 +434,6 @@ export default {
       )
         .toISOString()
         .substr(0, 10),
-      
     };
   },
   created() {
@@ -555,65 +491,31 @@ export default {
       reader.readAsDataURL(file); // อ่านไฟล์และแปลงเป็น base64
       // reader.readAsArrayBuffer(file);
     },
-    resetForm() {
-      this.projectName = "";
-      this.systemName = "";
-      this.projectId = "";
-      this.systemId = "";
-      this.userFirstname = "";
-      this.userLastname = "";
-      this.userId = "";
-      this.mode = "";
-      this.runningNumber = "";
-      this.form.screen_id = "";
-      this.form.system_id = "";
-      this.form.project_id = "";
-      this.form.issue_name = "";
-      this.form.issue_type = "";
-      this.form.issue_priority = "";
-      this.form.issue_end = "";
-      this.form.issue_assign = "";
-      this.form.issue_qc = "";
-      this.form.issue_des = "";
-      this.form.issue_des_sa = "";
-      this.form.issue_type_sa = "";
-      this.form.issue_doc_id = "";
-      this.form.issue_customer = "";
-      this.form.issue_filename = "";
-      this.form.issue_des_dev = "";
-      this.form.issue_des_implementer = "";
-      this.form.issue_start = "";
-      this.form.issue_expected = "";
-      this.form.issue_status = "รอแก้ไข";
-      this.form.issue_accepting = "";
-      this.form.issue_manday = "";
-      this.form.issue_complete = "";
-      this.selectedScreen = null;
-    },
     async close() {
       this.$refs.form.resetValidation();
       this.$emit("button-clicked");
-      this.resetForm();
       this.$emit("update:dialog", false);
     },
     async saveIssue() {
       const check = await this.$refs.form.validate();
-      if (check) {
+
+      // ตรวจสอบว่ากรอกข้อมูลครบถ้วนหรือไม่
+      const isFormComplete =
+        this.form.issue_name !== "" &&
+        this.form.issue_type !== "" &&
+        this.form.issue_priority !== "" &&
+        this.selectedScreen !== "" &&
+        this.dayQc !== "" &&
+        this.hourQc !== "";
+
+      if (check && isFormComplete) {
         console.log("check ok");
-        if (
-          this.mode == "create" &&
-          this.form.issue_name !== "" &&
-          this.form.issue_type !== "" &&
-          this.form.issue_priority !== "" &&
-          this.selectedScreen !== "" &&
-          this.dayQc !== "" &&
-          this.hourQc !== ""
-        ) {
+        if (this.mode == "create") {
           this.form.issue_end = this.date;
           const selectedScreenId = this.selectedScreen
             ? this.selectedScreen.id
             : null;
-          //addUser_Screen
+
           try {
             const existingUserDevScreen = await this.$axios.get(
               "/user_screens/getOneUserID/" + this.form.issue_assign.id
@@ -621,30 +523,10 @@ export default {
             const existingUserImpleScreen = await this.$axios.get(
               "/user_screens/getOneUserID/" + this.form.issue_qc.id
             );
-
-            if (existingUserDevScreen.data.length === 0) {
-              await this.$axios.post("/user_screens/createUser_screen", {
-                user_id: this.form.issue_assign.id,
-                screen_id: selectedScreenId,
-                system_id: this.systemId,
-                project_id: this.projectId,
-              });
-              // alert("addUser_Screen Dev Success!!");
-            } else if (existingUserImpleScreen.data.length === 0) {
-              await this.$axios.post("/user_screens/createUser_screen", {
-                user_id: this.form.issue_qc.id,
-                screen_id: selectedScreenId,
-                system_id: this.systemId,
-                project_id: this.projectId,
-              });
-              // alert("addUser_Screen Imple Success!!");
-            } else {
-              // alert("User already exists in user_screens");
-            }
           } catch (error) {
             console.log("user_screen: " + error);
-            // alert("user_screen: " + error);
           }
+
           const data = {
             screen_id: selectedScreenId,
             system_id: this.systemId,
@@ -664,7 +546,7 @@ export default {
             issue_type_sa: this.form.issue_type_sa,
             issue_doc_id: this.form.issue_doc_id,
             issue_customer: this.form.issue_customer,
-            issue_filename: this.form.pdf, 
+            issue_filename: this.form.pdf,
             issue_des_dev: this.form.issue_des_dev,
             issue_des_implementer: this.form.issue_des_implementer,
             issue_start: null,
@@ -677,55 +559,72 @@ export default {
             issue_status_implement: null,
             issue_round: 0,
           };
-          try {
-            await this.$axios.post("/issues/createIssue", data, {timeout: 10000});
 
-            const promise = new Promise((resolve, reject) => {
-              resolve();
-              this.form.screen_id = "";
-              this.form.system_id = "";
-              this.form.project_id = "";
-              this.form.issue_name = "";
-              this.form.issue_id = "";
-              this.form.issue_type = "";
-              this.form.issue_informer = this.userFirstname;
-              this.form.issue_priority = "";
-              this.form.issue_end = "";
-              this.form.issue_assign = "";
-              this.form.issue_qc = "";
-              this.form.issue_des = "";
-              this.selectedScreen = null;
-              this.form.issue_des_sa = "";
-              this.form.issue_type_sa = "";
-              this.form.issue_doc_id = "";
-              this.form.issue_customer = "";
-              // this.form.issue_filename = "";
-              this.form.issue_des_dev = "";
-              this.form.issue_des_implementer = "";
-              this.form.issue_start = "";
-              this.form.issue_expected = "";
-              this.form.issue_status = "รอแก้ไข";
-              this.form.issue_accepting = "";
-              this.form.issue_manday = "";
-              this.form.issue_complete = "";
-              this.dialogSuccess = true;
+          try {
+            await this.$axios.post("/issues/createIssue", data, {
+              timeout: 10000,
             });
-            promise.then(() => {
-              setTimeout(() => {
-                // alert("success3");
-                this.dialogSuccess = true;
-                // this.close();
-              }, 2000);
+            Swal.fire({
+              icon: "success",
+              title: "Success!",
+              text: "Issue has been created successfully.",
+              confirmButtonText: "OK",
+              confirmButtonColor: "#009933",
+              timer: 2000,
+              showConfirmButton: true,
+            }).then(() => {
+              // Clear the form
+              this.form = {
+                screen_id: "",
+                system_id: "",
+                project_id: "",
+                issue_name: "",
+                issue_id: "",
+                issue_type: "",
+                issue_informer: this.userFirstname,
+                issue_priority: "",
+                issue_end: "",
+                issue_assign: "",
+                issue_qc: "",
+                issue_des: "",
+                selectedScreen: null,
+                issue_des_sa: "",
+                issue_type_sa: "",
+                issue_doc_id: "",
+                issue_customer: "",
+                issue_des_dev: "",
+                issue_des_implementer: "",
+                issue_start: "",
+                issue_expected: "",
+                issue_status: "รอแก้ไข",
+                issue_accepting: "",
+                issue_manday: "",
+                issue_complete: "",
+              };
+              this.dialog = false;
+              this.getDefault;
             });
           } catch (error) {
             console.error(error);
-            alert("Error submitting form");
+            Swal.fire({
+              icon: "error",
+              title: "Error!",
+              text: "Error submitting form.",
+              confirmButtonText: "OK",
+              confirmButtonColor: "#009933",
+              showConfirmButton: true,
+            });
           }
         }
       } else {
-        // Display an error message or handle the invalid form case
-        console.log("error check");
-        this.dialogFail = true;
+        Swal.fire({
+          icon: "warning",
+          title: "Incomplete Form",
+          text: "กรุณาใส่ข้อมูลให้ครบถ้วน",
+          confirmButtonText: "OK",
+          confirmButtonColor: "#009933",
+          showConfirmButton: true,
+        });
       }
     },
     async getDefault() {

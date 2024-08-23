@@ -5,12 +5,13 @@
         <h1>Loading.....</h1>
       </v-card>
       <v-card v-else>
-        <v-card-title class="pt-3" style="background-color: #5c3efe">
+        <v-card-title class="pt-3" style="background-color: #009933">
           <h5 style="color: white">
             รายละเอียดปัญหาที่พบ | โครงการ : {{ ProjectName }} > ระบบ :
             {{ SystemName }}
+            {{ this.IssueEndDate }} . {{ this.IssueAccepting }}
           </h5>
-          <h5>{{ this.IssueEndDate }} . {{ this.IssueAccepting }}</h5>
+
           <v-spacer></v-spacer>
           <v-btn color="white" :to="`/history/${id}`" v-if="history"
             >ประวัติ</v-btn
@@ -275,7 +276,7 @@
                 <v-expansion-panel-header
                   disable-icon-rotate
                   class="pb-0 pt-0"
-                  style="background-color: #5c3efe"
+                  style="background-color: #009933"
                 >
                   <h3 style="color: white">ส่วนของผู้พัฒนา</h3>
                   <template v-slot:actions>
@@ -505,7 +506,7 @@
                 <v-expansion-panel-header
                   disable-icon-rotate
                   class="pb-0 pt-0"
-                  style="background-color: #5c3efe"
+                  style="background-color: #009933"
                 >
                   <h3 style="color: white">ส่วนของผู้ตรวจสอบ</h3>
                   <template v-slot:actions>
@@ -807,15 +808,15 @@ export default {
         this.pdf = "Failed to load PDF document.";
       }
     },
-      async downloadPDF() {
-    const response = await this.$axios.get(`/issues/getpdf/${this.id}`);
-    if (response.status === 200) {
-      const url = "http://localhost:7777/issues/getpdf/" + this.id;
-      window.open(url, '_blank');
-    } else {
-      alert("ไม่มี PDF ไฟล์ในฐานข้อมูล");
-    }
-  },
+    async downloadPDF() {
+      const response = await this.$axios.get(`/issues/getpdf/${this.id}`);
+      if (response.status === 200) {
+        const url = "http://localhost:7777/issues/getpdf/" + this.id;
+        window.open(url, "_blank");
+      } else {
+        alert("ไม่มี PDF ไฟล์ในฐานข้อมูล");
+      }
+    },
 
     getUserScreen(selectedUserID) {
       this.userSendWork = selectedUserID;

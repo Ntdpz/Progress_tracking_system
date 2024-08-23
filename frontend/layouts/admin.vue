@@ -52,21 +52,60 @@
         >
           <template v-slot:activator>
             <v-list-item-content>
-              <v-list-item-title>โครงการ</v-list-item-title>
+              <v-list-item-title>รายงานปัญหาเก่า</v-list-item-title>
             </v-list-item-content>
           </template>
 
           <v-list-item
             v-for="child in project.projectList"
-            :key="child.title"
+            :key="child.id"
             :to="`/issueList/${child?.id}`"
           >
             <v-list-item-content>
-              <v-list-item-title
-                ><v-icon color="primary" class="mr-2"
-                  >mdi mdi-format-list-bulleted</v-icon
-                >{{ child?.project_name_ENG }}</v-list-item-title
-              >
+              <v-list-item-title>
+                <v-icon color="primary" class="mr-2"
+                  >mdi-format-list-bulleted</v-icon
+                >
+                {{ child.project_name_ENG }}
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-group>
+
+        <!-- Report Issue Menu -->
+        <v-list-group :prepend-icon="'mdi-alert-circle'" no-action class="pl-2">
+          <template v-slot:activator>
+            <v-list-item-content>
+              <v-list-item-title>รายงานปัญหา</v-list-item-title>
+            </v-list-item-content>
+          </template>
+
+          <v-list-item @click="navigateTo('/custom/reportList')">
+            <v-list-item-content>
+              <v-list-item-title>
+                <v-icon color="primary" class="mr-2"
+                  >mdi-format-list-bulleted</v-icon
+                >
+                แสดงรายงานปัญหา
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item @click="navigateTo('/custom/reportCreate')">
+            <v-list-item-content>
+              <v-list-item-title>
+                <v-icon color="primary" class="mr-2">mdi-pencil</v-icon>
+                แจ้งรายงานปัญหา
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item @click="navigateTo('/Note_Management/dashboard')">
+            <v-list-item-content>
+              <v-list-item-title>
+                <v-icon color="primary" class="mr-2">mdi-table</v-icon>
+                Dashbord
+              </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list-group>
@@ -98,6 +137,44 @@
                   >mdi mdi-format-list-bulleted</v-icon
                 >{{ child?.project_name_ENG }}</v-list-item-title
               >
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-group>
+
+        <!-- Report Issue Menu -->
+        <v-list-group :prepend-icon="'mdi-alert-circle'" no-action>
+          <template v-slot:activator>
+            <v-list-item-content>
+              <v-list-item-title>รายงานปัญหา</v-list-item-title>
+            </v-list-item-content>
+          </template>
+
+          <v-list-item @click="navigateTo('/custom/reportList')">
+            <v-list-item-content>
+              <v-list-item-title>
+                <v-icon color="primary" class="mr-2"
+                  >mdi-format-list-bulleted</v-icon
+                >
+                แสดงรายงานปัญหา
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item @click="navigateTo('/custom/reportCreate')">
+            <v-list-item-content>
+              <v-list-item-title>
+                <v-icon color="primary" class="mr-2">mdi-pencil</v-icon>
+                แจ้งรายงานปัญหา
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item @click="navigateTo('/custom/reportCreate')">
+            <v-list-item-content>
+              <v-list-item-title>
+                <v-icon color="primary" class="mr-2">mdi-pencil</v-icon>
+                Dashbord รายงานปัญหา
+              </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list-group>
@@ -238,11 +315,23 @@ export default {
       ownProject: [],
       projectIds: [],
       projectDetails: [
+        // Existing items
         {
-          action: "mdi-view-list",
+          action: "mdi-alert-circle",
           active: false,
-          title: "โครงการ",
-          projectList: [],
+          title: "รายงานปัญหา",
+          projectList: [
+            {
+              id: 1,
+              project_name_ENG: "แสดงรายงานปัญหา",
+              path: "/custom/reportList",
+            },
+            {
+              id: 2,
+              project_name_ENG: "แจ้งรายงานปัญหา",
+              path: "/custom/reportCreate",
+            },
+          ],
         },
       ],
       items: [
@@ -259,13 +348,26 @@ export default {
         },
       ],
       items3: [
+        // Existing items
         {
-          action: "mdi-view-list",
+          action: "mdi-alert-circle",
           active: false,
-          title: "โครงการ",
-          projectList: [],
+          title: "รายงานปัญหา",
+          projectList: [
+            {
+              id: 1,
+              project_name_ENG: "แสดงรายงานปัญหา",
+              path: "/custom/reportList",
+            },
+            {
+              id: 2,
+              project_name_ENG: "แจ้งรายงานปัญหา",
+              path: "/custom/reportCreate",
+            },
+          ],
         },
       ],
+
       menuOption: [],
       right: true,
       rightDrawer: false,
@@ -298,7 +400,7 @@ export default {
         );
         items.splice(0, 0, {
           icon: "mdi-view-dashboard",
-          title: "แดชบอร์ด",
+          title: "แดชบอร์ดรายงานปัญหา",
           to: "/dashboard",
         });
         items.splice(0, 0, {
@@ -313,7 +415,7 @@ export default {
         });
         items.splice(0, 0, {
           icon: "mdi-table",
-          title: "Dashbord Project",
+          title: "แดชบอร์ดติดตามความคืบหน้า",
           to: "/Dashbord_Project",
         });
         items.splice(0, 0, {
@@ -352,6 +454,9 @@ export default {
     },
   },
   methods: {
+    navigateTo(path) {
+      window.location.href = path;
+    },
     goBack() {
       this.$router.back();
     },

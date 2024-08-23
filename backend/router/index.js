@@ -16,6 +16,8 @@ const pdfRouter = require("./pdf");
 const authRouter = require("./auth");
 const history_issuesRouter = require("./history_issues");
 
+const dashboard = require("./Note_Management/dashboard");
+
 
 router.use("/users", usersRouter);
 router.use("/projects", projectsRouter);
@@ -32,5 +34,7 @@ router.use("/user_systems", user_systemsRouter);
 router.use("/pdf", pdfRouter);
 router.use("/auth", authRouter);
 router.use("/history_issues", history_issuesRouter);
+
+router.use("/dashboard", dashboard);
 
 module.exports = router;

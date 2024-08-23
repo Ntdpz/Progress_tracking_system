@@ -1,0 +1,126 @@
+/* เส้นขอบและการจัดรูปแบบสำหรับแถวและคอลัมน์ในตาราง */
+.with-grid-lines thead th,
+.with-grid-lines tbody td {
+    border: 1px solid #e0e0e0;
+    /* เส้นขอบสีเทาอ่อนสำหรับทั้งหัวตารางและเซลล์ใน tbody */
+}
+
+/* การจัดรูปแบบของหัวตาราง */
+.with-grid-lines thead th {
+    background-color: #388e3c !important;
+    /* สีพื้นหลังของหัวตาราง (สีเขียวเข้ม) */
+    color: #ffffff !important;
+    /* สีข้อความในหัวตาราง (สีขาว) */
+    text-align: center !important;
+    /* จัดข้อความในหัวตารางให้อยู่ตรงกลาง */
+    padding: 12px 8px !important;
+    /* เพิ่มระยะห่างภายใน (padding) ในหัวตาราง */
+    border-bottom: 2px solid #388e3c !important;
+    /* เส้นขอบด้านล่างของหัวตาราง (สีเขียวเข้ม) */
+    font-weight: bold !important;
+    /* ทำให้ข้อความในหัวตารางเป็นตัวหนา */
+    font-size: 16px !important;
+    /* กำหนดขนาดของตัวหนังสือในหัวตาราง */
+}
+
+/* การจัดรูปแบบของเซลล์ใน tbody */
+.with-grid-lines tbody td {
+    text-align: center;
+    /* จัดข้อความในเซลล์ของตารางให้อยู่ตรงกลาง */
+    padding: 12px 8px;
+    /* เพิ่มระยะห่างภายใน (padding) ในเซลล์ */
+}
+
+/* การจัดรูปแบบของแถวใน tbody */
+.with-grid-lines tbody tr {
+    transition: background-color 0.3s;
+    /* เพิ่มการเปลี่ยนสีพื้นหลังเมื่อ hover อย่างนุ่มนวล */
+}
+
+/* เปลี่ยนสีพื้นหลังของแถวเมื่อ hover */
+.with-grid-lines tbody tr:hover {
+    background-color: #f5f5f5;
+    /* เปลี่ยนสีพื้นหลังของแถวเป็นสีเทาอ่อนเมื่อมีการ hover */
+}
+
+/* การจัดรูปแบบของ container ของตาราง */
+.table-container {
+    max-height: 800px;
+    /* กำหนดความสูงสูงสุดของ container */
+    overflow-y: auto;
+    /* เพิ่ม scroll bar แนวตั้งเมื่อเนื้อหามีความสูงเกิน */
+    border-radius: 4px;
+    /* ทำให้มุมของ container เป็นโค้งมน */
+    border: 1px solid #e0e0e0;
+    /* เพิ่มเส้นขอบสีเทาอ่อนรอบ ๆ container */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* เพิ่มเงาเบา ๆ ให้กับ container */
+}
+
+/* การจัดรูปแบบของ v-data-table wrapper */
+.table-container .v-data-table__wrapper {
+    height: auto;
+    /* ปรับความสูงอัตโนมัติตามขนาดเนื้อหาภายใน */
+}
+
+/* การจัดรูปแบบของ tbody ใน v-data-table */
+.table-container .v-data-table__wrapper tbody {
+    max-height: 800px;
+    /* กำหนดความสูงสูงสุดของ tbody */
+    overflow-y: auto;
+    /* เพิ่ม scroll bar ถ้าจำเป็น */
+}
+
+/* ซ่อนไอคอนการจัดเรียงใน headers ของ v-data-table */
+.v-data-table__header th .v-data-table__sortable {
+    display: none;
+    /* ซ่อนไอคอนการจัดเรียงในหัวข้อของตาราง */
+}
+
+/* ซ่อนไอคอนการจัดเรียงใน v-data-table headers */
+.v-data-table th .v-icon {
+    display: none;
+    /* ซ่อนไอคอนที่เกี่ยวกับการจัดเรียง */
+}
+
+/* การจัดรูปแบบของแถบเครื่องมือ (toolbar) */
+.my-toolbar {
+    background-color: #388e3c !important;
+    /* สีพื้นหลังของแถบเครื่องมือ (สีเขียวเข้ม) */
+    border-bottom: 1px solid rgb(255, 255, 255) !important;
+    /* เส้นขอบด้านล่างของ toolbar เป็นสีขาว */
+}
+
+/* การจัดรูปแบบของ title ในแถบเครื่องมือ */
+.my-toolbar-title {
+    color: #ffffff !important;
+    /* สีของข้อความใน title ของ toolbar */
+    font-size: 1.5rem;
+    /* กำหนดขนาดของตัวหนังสือใน title */
+    font-weight: 500;
+    /* น้ำหนักของตัวหนังสือเป็นกึ่งหนา */
+}
+
+/* การจัดรูปแบบของไอคอนใน toolbar */
+.my-toolbar-btn {
+    color: #388e3c !important;
+    /* สีของข้อความในปุ่ม toolbar */
+    background-color: #ffffff !important;
+    /* สีพื้นหลังของปุ่ม toolbar */
+    margin: 0 8px;
+    /* ระยะห่างระหว่างปุ่ม */
+    border: 1px solid #388e3c !important;
+    /* เส้นขอบสีเขียว */
+    font-weight: bold;
+    /* ทำให้ตัวหนังสือหนา */
+}
+
+/* เปลี่ยนสีของไอคอนเมื่อ hover */
+.my-toolbar-btn:hover {
+    color: #ffffff !important;
+    /* สีของข้อความในปุ่มเมื่อ hover */
+    background-color: #576158 !important;
+    /* สีพื้นหลังของปุ่มเมื่อ hover */
+    border: 1px solid #ffffff !important;
+    /* เปลี่ยนเส้นขอบเป็นสีขาวเมื่อ hover */
+}
