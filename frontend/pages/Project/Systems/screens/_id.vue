@@ -21,10 +21,10 @@
               <v-card-title>Screen name : {{ screen_name }}</v-card-title>
             </div>
             <div class="text-center">
-              <v-row justify="center">
+              <v-row justify="center" class="progress-row">
                 <v-col cols="auto" class="progress-item">
                   <v-progress-circular class="my-progress" :rotate="360" :size="100" :width="15" :value="value"
-                    color="teal">
+                    color="purple">
                     {{ value }}
                   </v-progress-circular>
                   <div class="progress-label">Design</div>
@@ -32,7 +32,7 @@
 
                 <v-col cols="auto" class="progress-item">
                   <v-progress-circular class="my-progress" :rotate="-90" :size="100" :width="15" :value="value"
-                    color="primary">
+                    color="blue">
                     {{ value }}
                   </v-progress-circular>
                   <div class="progress-label">Develop</div>
@@ -40,12 +40,13 @@
 
                 <v-col cols="auto" class="progress-item">
                   <v-progress-circular class="my-progress" :rotate="90" :size="100" :width="15" :value="screen_progress"
-                    color="red">
+                    color="green">
                     {{ Math.floor(screen_progress) }}%
                   </v-progress-circular>
                   <div class="progress-label">Total</div>
                 </v-col>
               </v-row>
+              <div style="margin-top: 20px;"></div> <!-- เพิ่มช่องว่างด้านบน -->
             </div>
 
             <div class="icon">
@@ -55,7 +56,7 @@
             </div>
           </v-card-item>
 
-          <v-card-subtitle @click="showDetails = !showDetails">
+          <!-- <v-card-subtitle @click="showDetails = !showDetails">
             <span style="font-weight: bold; color: black; font-size: 16px">Screen Progress</span>
             <v-progress-linear :color="getProgressColor(parseInt(screen_progress))" height="50"
               :value="parseInt(screen_progress)" striped>
@@ -63,7 +64,7 @@
                 {{ Math.floor(screen_progress) }}%
               </strong>
             </v-progress-linear>
-          </v-card-subtitle>
+          </v-card-subtitle> -->
 
           <v-expand-transition>
             <div v-show="showDetails">
@@ -133,40 +134,24 @@
         <h3>Task Management</h3>
         <v-divider vertical></v-divider>
       </div>
-      <v-divider></v-divider>
 
       <!-- Search bar -->
       <v-row no-gutters>
-        <v-col cols="8">
-          <v-text-field
-            v-model="searchQuery"
-            label="Search"
-            clearable
-            outlined
-            shaped
-            style="width: 100%;"
-          ></v-text-field>
-          
+        <v-col cols="7">
+          <v-text-field v-model="searchQuery" label="Search" clearable outlined
+            style="width: 100%; border-radius: 20px;">
+          </v-text-field>
         </v-col>
         <!-- open add task form -->
         <v-col cols="4" class="text-right">
-        <v-btn
-          class="rounded-btn"
-          color="primary"
-          @click="dialogAddTaskForm = true"
-          style="width: 30%;"
-        >
-        Add Task
-    </v-btn>
-    <v-btn
-      class="rounded-btn"
-      color="error"
-      @click="handleDelete"
-      style="width: 10%; margin-left: 16px; margin-right: 16px;"
-    >
-      <v-icon>mdi-delete</v-icon>
-    </v-btn>
-  </v-col>
+          <v-btn class="rounded-btn" color="primary" @click="dialogAddTaskForm = true" style="width: 30%;">
+            Add Task
+          </v-btn>
+          <v-btn class="rounded-btn" color="error" @click="handleDelete"
+            style="width: 10%; margin-left: 16px; margin-right: 16px;">
+            <v-icon>mdi-delete</v-icon>
+          </v-btn>
+        </v-col>
       </v-row>
 
       <v-divider></v-divider>
@@ -2061,9 +2046,14 @@ export default {
 
 <style scoped>
 
+.progress-row {
+  margin-top: 20px; /* ปรับขนาดตามที่ต้องการ */
+}
+
 .my-progress {
   margin: 0 1rem; /* เพิ่มระยะห่างด้านซ้ายและขวา */
 }
+
 .progress-item {
   text-align: center;
 }
