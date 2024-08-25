@@ -670,94 +670,73 @@
       </v-dialog>
     </div>
 
-    <!-- Edit task dialog -->
+<!-- Edit task dialog -->
     <v-dialog v-model="dialogEditTaskForm" max-width="600px">
-      <v-card>
-        <v-card-title>
-          <h2>Edit Task</h2>
-        </v-card-title>
-        <v-card-text>
-          <!-- Edit task form -->
-          <v-form @submit.prevent="updateTask">
-            <!-- Form fields to edit task details -->
+  <v-card>
+    <v-card-title>
+      <h2>Edit Task</h2>
+    </v-card-title>
+    <v-card-text>
+      <v-form @submit.prevent="updateTask">
+        <v-row>
+          <v-col cols="6">
+            <v-text-field v-model="editedTask.task_id" label="Task ID" readonly disabled ></v-text-field>
+          </v-col>
+          <v-col cols="6">
             <v-text-field v-model="editedTask.task_name" label="Task Name" required></v-text-field>
-            <v-text-field v-model="editedTask.task_detail" label="Detail" required></v-text-field>
-            <v-select v-model="editedTask.task_status" :items="[
-        'start',
-        'stop',
-        'correct',
-        'mistake',
-        'Not started yet',
-      ]" label="Status" required outlined dense></v-select>
+          </v-col>
+        </v-row>
 
-            <v-row align="center">
-              <v-col cols="3">
-                <v-text-field v-model="editedTask.task_progress" label="Progress" type="number" min="0" max="100"
-                  outlined dense></v-text-field>
-              </v-col>
-              <v-col cols="9">
-                <v-slider v-model="editedTask.task_progress" :thumb-label="true" thumb-size="20" ticks="always"
-                  tick-size="2" tick-thickness="2" track-color="primary" :max="100" :min="0" step="1"></v-slider>
-              </v-col>
-            </v-row>
+        <v-row>
+          <v-col cols="6">
+            <v-menu v-model="planStartMenu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y>
+              <template v-slot:activator="{ on }">
+                <v-text-field :value="formatDate(editedTask.task_plan_start, 'DD-MM-YYYY')" label="Plan Start" prepend-icon="mdi-calendar" readonly v-on="on"></v-text-field>
+              </template>
+              <v-date-picker v-model="editedTask.task_plan_start" no-title scrollable></v-date-picker>
+            </v-menu>
+          </v-col>
+          <v-col cols="6">
+            <v-menu v-model="planEndMenu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y>
+              <template v-slot:activator="{ on }">
+                <v-text-field :value="formatDate(editedTask.task_plan_end, 'DD-MM-YYYY')" label="Plan End" prepend-icon="mdi-calendar" readonly v-on="on" :disabled="!editedTask.task_plan_start"></v-text-field>
+              </template>
+              <v-date-picker v-model="editedTask.task_plan_end" no-title scrollable :min="editedTask.task_plan_start"></v-date-picker>
+            </v-menu>
+          </v-col>
+        </v-row>
 
-            <!-- Plan -->
-            <v-row>
-              <v-col cols="6">
-                <v-menu v-model="planStartMenu" :close-on-content-click="false" :nudge-right="40"
-                  transition="scale-transition" offset-y>
-                  <template v-slot:activator="{ on }">
-                    <v-text-field :value="formatDate(editedTask.task_plan_start, 'DD-MM-YYYY')
-        " label="Plan Start" prepend-icon="mdi-calendar" readonly v-on="on"></v-text-field>
-                  </template>
-                  <v-date-picker v-model="editedTask.task_plan_start" no-title scrollable></v-date-picker>
-                </v-menu>
-              </v-col>
-              <v-col cols="6">
-                <v-menu v-model="planEndMenu" :close-on-content-click="false" :nudge-right="40"
-                  transition="scale-transition" offset-y>
-                  <template v-slot:activator="{ on }">
-                    <v-text-field :value="formatDate(editedTask.task_plan_end, 'DD-MM-YYYY')
-        " label="Plan End" prepend-icon="mdi-calendar" readonly v-on="on"
-                      :disabled="!editedTask.task_plan_start"></v-text-field>
-                  </template>
-                  <v-date-picker v-model="editedTask.task_plan_end" no-title scrollable
-                    :min="editedTask.task_plan_start"></v-date-picker>
-                </v-menu>
-              </v-col>
-            </v-row>
+        <v-row>
+          <v-col cols="6">
+            <v-menu v-if="editedTask.task_plan_start && editedTask.task_plan_end" v-model="actualStartMenu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y>
+              <template v-slot:activator="{ on }">
+                <v-text-field :value="formatDate(editedTask.task_actual_start, 'DD-MM-YYYY')" label="Actual Start" prepend-icon="mdi-calendar" readonly v-on="on"></v-text-field>
+              </template>
+              <v-date-picker v-model="editedTask.task_actual_start" no-title scrollable></v-date-picker>
+            </v-menu>
+          </v-col>
+          <v-col cols="6">
+            <v-menu v-if="editedTask.task_plan_start && editedTask.task_plan_end" v-model="actualEndMenu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y>
+              <template v-slot:activator="{ on }">
+                <v-text-field :value="formatDate(editedTask.task_actual_end, 'DD-MM-YYYY')" label="Actual End" prepend-icon="mdi-calendar" readonly v-on="on" :disabled="!editedTask.task_actual_start"></v-text-field>
+              </template>
+              <v-date-picker v-model="editedTask.task_actual_end" no-title scrollable :min="editedTask.task_actual_start"></v-date-picker>
+            </v-menu>
+          </v-col>
+        </v-row>
 
-            <!-- Actual -->
-            <v-row>
-              <v-col cols="6">
-                <v-menu v-if="editedTask.task_plan_start && editedTask.task_plan_end" v-model="actualStartMenu"
-                  :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y>
-                  <template v-slot:activator="{ on }">
-                    <v-text-field :value="formatDate(editedTask.task_actual_start, 'DD-MM-YYYY')
-        " label="Actual Start" prepend-icon="mdi-calendar" readonly v-on="on"></v-text-field>
-                  </template>
-                  <v-date-picker v-model="editedTask.task_actual_start" no-title scrollable></v-date-picker>
-                </v-menu>
-              </v-col>
-              <v-col cols="6">
-                <v-menu v-if="editedTask.task_plan_start && editedTask.task_plan_end" v-model="actualEndMenu"
-                  :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y>
-                  <template v-slot:activator="{ on }">
-                    <v-text-field :value="formatDate(editedTask.task_actual_end, 'DD-MM-YYYY')
-        " label="Actual End" prepend-icon="mdi-calendar" readonly v-on="on"
-                      :disabled="!editedTask.task_actual_start"></v-text-field>
-                  </template>
-                  <v-date-picker v-model="editedTask.task_actual_end" no-title scrollable
-                    :min="editedTask.task_actual_start"></v-date-picker>
-                </v-menu>
-              </v-col>
-            </v-row>
+        <v-row>
+          <v-col cols="6">
+            <v-text-field v-model="editedTask.task_manday" label="Plan Manday" required></v-text-field>
+          </v-col>
+          <v-col cols="6">
+            <v-select v-model="editedTask.task_status" :items="['Not started yet', 'Design', 'Develop']" label="Type of Task" required outlined dense></v-select>
+          </v-col>
+        </v-row>
 
-            <v-text-field v-model="editedTask.task_manday" label="Manday" required></v-text-field>
-
-            <!-- Member ID -->
-            <v-select v-model="editedTask.task_member_id" :items="userListCreate" item-value="user_id"
-              item-text="user_name" label="Member ID" required>
+        <v-row>
+          <v-col cols="12">
+            <v-select v-model="editedTask.task_member_id" :items="userListCreate" item-value="user_id" item-text="user_name" label="Assign To" required>
               <template v-slot:item="{ item }">
                 <v-list-item-avatar>
                   <v-img :src="item.user_pic" />
@@ -767,13 +746,28 @@
                 </v-list-item-content>
               </template>
             </v-select>
+          </v-col>
+        </v-row>
 
-            <v-btn color="primary" type="submit">Update</v-btn>
-            <v-btn color="error" @click="cancelEdit">Cancel</v-btn>
-          </v-form>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
+        <v-row justify="center">
+          <v-col cols="auto">
+            <v-btn color="success" type="submit" >Save</v-btn>
+          </v-col>
+          <v-col cols="auto">
+            <v-btn
+              v-if="(editedTask.memberDetails && editedTask.memberDetails.id === user.id) || user.user_role === 'Admin'"
+              color="error"
+              @click.stop="deleteTask(editedTask)"
+            >
+              Delete
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-form>
+    </v-card-text>
+  </v-card>
+</v-dialog>
+
 
     <!-- save task dialog -->
     <v-dialog v-model="dialogSaveTaskForm" max-width="600px">
@@ -1027,7 +1021,7 @@ export default {
       tasks: [],
       currentPage: 1,
       perPage: 12,
-      statusOptions: ["In Progress", "Completed", "Not started yet"],
+      statusOptions: ["Not started yet","Design", "Develop"],
       showImageDialog: false,
       screen_plan_start: "",
       screen_plan_end: "",
@@ -1679,6 +1673,8 @@ export default {
           }
           this.fetchTasks();
           this.fetchScreenDetail();
+          // ปิด dialog หลังจากลบเสร็จ
+        this.dialogEditTaskForm = false;
         }
       } catch (error) {
         console.error("Error deleting task:", error);
