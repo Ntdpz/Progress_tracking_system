@@ -865,30 +865,35 @@
 </v-dialog>
 
 
-      <!-- Create task dialog -->
-    <v-dialog v-model="dialogAddTaskForm" max-width="600px">
-      <v-card>
-        <v-card-title>
-          <h2>Create New Task</h2>
-        </v-card-title>
-        <v-card-text>
-          <!-- Create task form -->
-          <v-form @submit.prevent="createTask(newTask)">
-            <!-- Task ID -->
+     <!-- Create task dialog -->
+<v-dialog v-model="dialogAddTaskForm" max-width="600px">
+  <v-card>
+    <v-card-title>
+      <h2>Create Task</h2>
+       <v-spacer></v-spacer>
+      <v-btn icon @click="dialogAddTaskForm = false">
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
+    </v-card-title>
+    <v-card-text>
+      <!-- Create task form -->
+      <v-form @submit.prevent="createTask(newTask)">
+        <v-row>
+          <!-- Task ID -->
+          <v-col cols="12" md="6">
             <v-text-field v-model="newTask.task_id" label="Task ID" required append-icon="mdi-alert-circle"
               pattern="[A-Za-z0-9@#$%^&*()-_+=!]+"></v-text-field>
-
-            <!-- Task Name -->
+          </v-col>
+          <!-- Task Name -->
+          <v-col cols="12" md="6">
             <v-text-field v-model="newTask.task_name" label="Task Name" required
               append-icon="mdi-alert-circle"></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
 
-            <!-- Detail -->
-            <v-text-field v-model="newTask.task_detail" label="Detail"></v-text-field>
-
-            <!-- Status -->
-            <v-select v-model="newTask.task_status" :items="statusOptions" label="Status"></v-select>
-
-            <!-- Plan Start -->
+          <!-- Plan Start -->
+          <v-col cols="12" md="4">
             <v-menu v-model="planStartMenu" :close-on-content-click="false" :nudge-right="40"
               transition="scale-transition" offset-y max-width="300px">
               <template v-slot:activator="{ on }">
@@ -897,8 +902,9 @@
               </template>
               <v-date-picker v-model="newTask.task_plan_start" no-title scrollable max-width="300px"></v-date-picker>
             </v-menu>
-
-            <!-- Plan End -->
+          </v-col>
+          <!-- Plan End -->
+          <v-col cols="12" md="4">
             <v-menu v-model="planEndMenu" :close-on-content-click="false" :nudge-right="40"
               transition="scale-transition" offset-y max-width="300px">
               <template v-slot:activator="{ on }">
@@ -908,12 +914,18 @@
               <v-date-picker v-model="newTask.task_plan_end" no-title scrollable max-width="300px"
                 :min="newTask.task_plan_start"></v-date-picker>
             </v-menu>
+          </v-col>
+        
+          <v-col cols="12" md="4">
+            <v-text-field v-model="newTask.task_manday" label="Plan Manday" :readonly="true"></v-text-field>
+          </v-col>
+        </v-row>
 
-            <v-text-field v-model="newTask.task_manday" label="Manday" :readonly="true"></v-text-field>
-
-            <!-- Member ID -->
+        <v-row>
+          <!-- Member ID -->
+          <v-col cols="12" md="6">
             <v-select v-model="newTask.task_member_id" :items="userListCreate" item-value="user_id"
-              item-text="user_name" label="Member ID">
+              item-text="user_name" label="Assign To">
               <template v-slot:item="{ item }">
                 <v-list-item-avatar>
                   <v-img :src="item.user_pic" />
@@ -923,16 +935,33 @@
                 </v-list-item-content>
               </template>
             </v-select>
+          </v-col>
 
+          <!-- Status -->
+          <v-col cols="12" md="6">
+            <v-select v-model="newTask.task_status" :items="statusOptions" label="Status"></v-select>
+          </v-col>
+        </v-row>
+        <!-- Detail -->
+        <!-- <v-row>
+          <v-col cols="12">
+            <v-text-field v-model="newTask.task_detail" label="Detail"></v-text-field>
+          </v-col>
+        </v-row> -->
+        
+        <v-row justify="center">
+          <v-col cols="auto">
             <!-- Submit button -->
             <v-btn color="primary" :disabled="!newTask.task_id || !newTask.task_name" type="submit">Create</v-btn>
 
             <!-- Cancel button -->
             <v-btn color="error" @click="cancel">Cancel</v-btn>
-          </v-form>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
+          </v-col>
+        </v-row>
+      </v-form>
+    </v-card-text>
+  </v-card>
+</v-dialog>
   </div>
 </template>
 
