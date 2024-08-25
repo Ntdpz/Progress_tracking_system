@@ -775,108 +775,97 @@
 
     <!-- save task dialog -->
     <v-dialog v-model="dialogSaveTaskForm" max-width="600px">
-      <v-card>
-        <v-card-title>
-          <h2>Save History</h2>
-        </v-card-title>
-        <v-card-text>
-          <v-form @submit.prevent="saveHistory">
-            <!-- Task data fields -->
-            <v-text-field v-model="historyTaskData.task_name" label="Task Name" required></v-text-field>
-            <v-text-field v-model="historyTaskData.task_detail" label="Detail" required></v-text-field>
-            <v-select v-model="historyTaskData.task_status" :items="[
-        'start',
-        'stop',
-        'correct',
-        'mistake',
-        'Not started yet',
-      ]" label="Status" required outlined dense></v-select>
+  <v-card>
+    <v-card-title>
+      <h2>Update Task</h2>     
+      <v-spacer></v-spacer>
+      <v-btn icon @click="dialogSaveTaskForm = false">
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
+  
+    </v-card-title>
+    <v-card-text>
+      <v-form @submit.prevent="saveHistory">
+        <v-row align="center" justify="center" class="w-100">
+        <v-col class="text-center">
+          <h2>Task Name:{{ historyTaskData.task_name }}</h2>
+        </v-col>
+      </v-row>
+        <!-- Progress -->
+        <v-row align="center">
+          <v-col cols="4">
+            <v-text-field v-model="historyTaskData.task_progress" label="Task Progress" type="number" min="0" max="100" outlined dense></v-text-field>
+          </v-col>
+          <v-col cols="8">
+            <v-slider v-model="historyTaskData.task_progress" :thumb-label="true" thumb-size="20" ticks="always" tick-size="2" tick-thickness="2" track-color="primary" :max="100" :min="0" step="1"></v-slider>
+          </v-col>
+        </v-row>
 
-            <v-row align="center">
-              <v-col cols="3">
-                <v-text-field v-model="historyTaskData.task_progress" label="Progress" type="number" min="0" max="100"
-                  outlined dense></v-text-field>
-              </v-col>
-              <v-col cols="9">
-                <v-slider v-model="historyTaskData.task_progress" :thumb-label="true" thumb-size="20" ticks="always"
-                  tick-size="2" tick-thickness="2" track-color="primary" :max="100" :min="0" step="1"></v-slider>
-              </v-col>
-            </v-row>
+        <!-- Remark -->
+        <v-text-field v-model="historyTaskData.task_remark" label="Remark" outlined dense></v-text-field>
 
-            <!-- Plan -->
-            <v-row>
-              <v-col cols="6">
-                <v-menu v-model="planStartMenu" :close-on-content-click="false" :nudge-right="40"
-                  transition="scale-transition" offset-y>
-                  <template v-slot:activator="{ on }">
-                    <v-text-field :value="formatDate(
-        historyTaskData.task_plan_start,
-        'DD-MM-YYYY'
-      )
-        " label="Plan Start" prepend-icon="mdi-calendar" readonly v-on="on"></v-text-field>
-                  </template>
-                  <v-date-picker v-model="historyTaskData.task_plan_start" no-title scrollable></v-date-picker>
-                </v-menu>
-              </v-col>
-              <v-col cols="6">
-                <v-menu v-model="planEndMenu" :close-on-content-click="false" :nudge-right="40"
-                  transition="scale-transition" offset-y>
-                  <template v-slot:activator="{ on }">
-                    <v-text-field :value="formatDate(historyTaskData.task_plan_end, 'DD-MM-YYYY')
-        " label="Plan End" prepend-icon="mdi-calendar" readonly v-on="on"
-                      :disabled="!historyTaskData.task_plan_start"></v-text-field>
-                  </template>
-                  <v-date-picker v-model="historyTaskData.task_plan_end" no-title scrollable
-                    :min="historyTaskData.task_plan_start"></v-date-picker>
-                </v-menu>
-              </v-col>
-            </v-row>
+        <!-- Dates and Mandays -->
+        <v-row>
+          <v-col cols="4">
+            <v-menu v-model="planStartMenu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y>
+              <template v-slot:activator="{ on }">
+                <v-text-field :value="formatDate(historyTaskData.task_plan_start, 'DD/MM/YYYY')" label="Plan Start" prepend-icon="mdi-calendar" readonly v-on="on"></v-text-field>
+              </template>
+              <v-date-picker v-model="historyTaskData.task_plan_start" no-title scrollable></v-date-picker>
+            </v-menu>
+          </v-col>
+          <v-col cols="4">
+            <v-menu v-model="planEndMenu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y>
+              <template v-slot:activator="{ on }">
+                <v-text-field :value="formatDate(historyTaskData.task_plan_end, 'DD/MM/YYYY')" label="Plan End" prepend-icon="mdi-calendar" readonly v-on="on"></v-text-field>
+              </template>
+              <v-date-picker v-model="historyTaskData.task_plan_end" no-title scrollable :min="historyTaskData.task_plan_start"></v-date-picker>
+            </v-menu>
+          </v-col>
+          <v-col cols="4">
+            <v-text-field v-model="historyTaskData.plan_manday" label="Plan Manday" type="number" min="0" max="100" outlined dense></v-text-field>
+          </v-col>
+        </v-row>
 
-            <!-- Actual -->
-            <v-row>
-              <v-col cols="6">
-                <v-menu v-if="historyTaskData.task_plan_start &&
-        historyTaskData.task_plan_end
-        " v-model="actualStartMenu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
-                  offset-y>
-                  <template v-slot:activator="{ on }">
-                    <v-text-field :value="formatDate(
-        historyTaskData.task_actual_start,
-        'DD-MM-YYYY'
-      )
-        " label="Actual Start" prepend-icon="mdi-calendar" readonly v-on="on"></v-text-field>
-                  </template>
-                  <v-date-picker v-model="historyTaskData.task_actual_start" no-title scrollable></v-date-picker>
-                </v-menu>
-              </v-col>
-              <v-col cols="6">
-                <v-menu v-if="historyTaskData.task_plan_start &&
-        historyTaskData.task_plan_end
-        " v-model="actualEndMenu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
-                  offset-y>
-                  <template v-slot:activator="{ on }">
-                    <v-text-field :value="formatDate(
-        historyTaskData.task_actual_end,
-        'DD-MM-YYYY'
-      )
-        " label="Actual End" prepend-icon="mdi-calendar" readonly v-on="on"
-                      :disabled="!historyTaskData.task_actual_start"></v-text-field>
-                  </template>
-                  <v-date-picker v-model="historyTaskData.task_actual_end" no-title scrollable
-                    :min="historyTaskData.task_actual_start"></v-date-picker>
-                </v-menu>
-              </v-col>
-            </v-row>
+        <!-- ติดไม่สามารถแสดงตัวเลือกวันของ actual ได้ -->
+        <v-row>
+          <v-col cols="4">
+            <v-menu v-if="historyTaskData.task_plan_start && historyTaskData.task_plan_end" v-model="actualStartMenu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y>
+              <template v-slot:activator="{ on }">
+                <v-text-field :value="formatDate(historyTaskData.task_actual_start, 'DD/MM/YYYY')" label="Actual Start" prepend-icon="mdi-calendar" readonly v-on="on"></v-text-field>
+              </template>
+              <v-date-picker v-model="historyTaskData.task_actual_start" no-title scrollable></v-date-picker>
+            </v-menu>
+          </v-col>
+          <v-col cols="4">
+            <v-menu v-if="historyTaskData.task_plan_start && historyTaskData.task_plan_end" v-model="actualEndMenu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y>
+              <template v-slot:activator="{ on }">
+                <v-text-field :value="formatDate(historyTaskData.task_actual_end, 'DD/MM/YYYY')" label="Actual End" prepend-icon="mdi-calendar" readonly v-on="on"></v-text-field>
+              </template>
+              <v-date-picker v-model="historyTaskData.task_actual_end" no-title scrollable :min="historyTaskData.task_actual_start"></v-date-picker>
+            </v-menu>
+          </v-col>
+          <v-col cols="4">
+            <v-text-field v-model="historyTaskData.actual_manday" label="Actual Manday" type="number" min="0" max="100" outlined dense></v-text-field>
+          </v-col>
+        </v-row>
 
-            <v-text-field v-model="historyTaskData.task_manday" label="Manday" required></v-text-field>
+        <!-- Save and Cancel Buttons -->
+        <v-row justify="center">
+          <v-col cols="auto">
+            <v-btn color="primary" type="submit">Save</v-btn>
+          </v-col>
+          <v-col cols="auto">
+            <v-btn color="error" @click="dialogSaveTaskForm = false">Cancel</v-btn>
+          </v-col>
+        </v-row>
+      </v-form>
+    </v-card-text>
+  </v-card>
+</v-dialog>
 
-            <v-btn color="primary" type="submit">Save History</v-btn>
-            <v-btn color="error" @click="cancelSaveHistory">Cancel</v-btn>
-          </v-form>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
 
+      <!-- Create task dialog -->
     <v-dialog v-model="dialogAddTaskForm" max-width="600px">
       <v-card>
         <v-card-title>
