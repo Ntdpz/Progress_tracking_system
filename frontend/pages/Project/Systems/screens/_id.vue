@@ -675,6 +675,10 @@
   <v-card>
     <v-card-title>
       <h2>Edit Task</h2>
+      <v-spacer></v-spacer>
+      <v-btn icon @click="dialogEditTaskForm = false">
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
     </v-card-title>
     <v-card-text>
       <v-form @submit.prevent="updateTask">
