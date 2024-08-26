@@ -734,7 +734,7 @@
             <v-text-field v-model="editedTask.task_manday" label="Plan Manday" required></v-text-field>
           </v-col>
           <v-col cols="6">
-            <v-select v-model="editedTask.task_status" :items="['Not started yet', 'Design', 'Develop']" label="Type of Task" required outlined dense></v-select>
+            <v-select v-model="editedTask.task_type" :items="[ 'Design', 'Develop']" label="Type of Task" required outlined dense></v-select>
           </v-col>
         </v-row>
 
@@ -986,6 +986,7 @@ export default {
         task_name: "",
         task_detail: "",
         task_status: "",
+        task_type: "",
         task_progress: "",
         task_plan_start: "",
         task_plan_end: "",
@@ -1005,6 +1006,7 @@ export default {
         { text: "Task Name", value: "task_name" },
         { text: "Task Detail", value: "task_detail" },
         { text: "Status", value: "task_status" },
+        { text: "Type", value: "task_type" },
         { text: "Progress", value: "task_progress" },
         { text: "Plan Start", value: "task_plan_start" },
         { text: "Plan End", value: "task_plan_end" },
@@ -1032,6 +1034,7 @@ export default {
         task_name: "",
         task_detail: "",
         task_status: "",
+        task_type: "",
         task_manday: "",
         task_progress: "",
         task_plan_start: "",
@@ -1076,6 +1079,7 @@ export default {
         task_id: "",
         task_name: "",
         task_status: "Not started yet",
+        task_type: "",
         person_in_charge: "",
         task_plan_start: null,
         task_plan_end: null,
@@ -1388,6 +1392,7 @@ export default {
         task_name: task.task_name,
         task_detail: task.task_detail,
         task_status: task.task_status,
+        task_type: task.task_type,
         task_progress: task.task_progress,
         task_plan_start: task.task_plan_start,
         task_plan_end: task.task_plan_end,
@@ -1877,6 +1882,7 @@ export default {
           task_name,
           task_detail = "",
           task_status = "",
+          task_type = "",
           task_plan_start = "",
           task_plan_end = "",
           task_member_id,
@@ -1899,6 +1905,7 @@ export default {
               task_name,
               task_detail,
               task_status,
+              task_type,
               screen_id: this.screenId,
               project_id: this.project_id,
               system_id: this.system_id,
@@ -1925,6 +1932,7 @@ export default {
             task_name: "",
             task_detail: "",
             task_status: "",
+            task_type: "",
             task_plan_start: "",
             task_plan_end: "",
             task_member_id: "",
