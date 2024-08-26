@@ -147,10 +147,31 @@
           <v-btn class="rounded-btn" color="primary" @click="dialogAddTaskForm = true" style="width: 30%;">
             Add Task
           </v-btn>
-          <v-btn class="rounded-btn" color="error" @click="handleDelete"
+          <v-btn class="rounded-btn" color="error" @click="showHistoryDialog = true"
             style="width: 10%; margin-left: 16px; margin-right: 16px;">
             <v-icon>mdi-delete</v-icon>
           </v-btn>
+
+          <!-- Deleted Tasks History -->
+          <v-dialog v-model="showHistoryDialog" max-width="800">
+            <v-data-table v-model:selected="selectedTasks" :headers="headersDelete" :items="deletedTasks" show-select>
+              <!-- Define headers for the table -->
+              <template v-slot:top>
+                <v-toolbar flat>
+                  <v-toolbar-title>Deleted Tasks History</v-toolbar-title>
+                  <v-divider class="mx-4" inset vertical></v-divider>
+                  <v-spacer></v-spacer>
+                  <v-btn class="mr-3" color="green" @click="restoreSelectedTasks">
+                    <v-icon color="white">mdi-restore</v-icon>
+                  </v-btn>
+                  <v-btn color="error" @click="deleteSelectedHistoryTasks">
+                    <v-icon>mdi-delete</v-icon>
+                  </v-btn>
+                </v-toolbar>
+              </template>
+            </v-data-table>
+          </v-dialog>
+
         </v-col>
       </v-row>
 
@@ -1020,6 +1041,7 @@ export default {
         task_actual_start: "",
         task_actual_end: "",
         actual_manday: "",
+        selectedTasks: [],
       },
 
       value: 0, // กำหนดค่าเริ่มต้นสำหรับ value
@@ -1075,6 +1097,7 @@ export default {
       perPage: 12,
       statusOptions: ["Design", "Develop"],
       showImageDialog: false,
+      showHistoryDialog: false,
       screen_plan_start: "",
       screen_plan_end: "",
       screen_progress: "",
@@ -1090,6 +1113,7 @@ export default {
       screenId: "",
       system_id: "",
       project_id: "",
+      deletedTasks: [],
 
       showDetails: false,
       // Dialogs
@@ -1097,6 +1121,17 @@ export default {
       dialogAddTaskForm: false,
       show: false,
       searchQuery: "",
+      headersDelete: [ 
+        // Data Deleted Tasks History
+        { text: "Task ID", value: "task_id" }, 
+        { text: "Task Detail", value: "task_detail" },
+        { text: "Task Type", value: "task_type" },
+        { text: "Plan Start", value: "task_plan_start" },
+        { text: "Plan End", value: "task_plan_end" },
+        { text: "Actual Start", value: "task_actual_start" },
+        { text: "Actual End", value: "task_actual_end" },
+        // { text: "Actions", value: "actions", sortable: false },
+      ],
       //Edited Task data
 
       //Task data
@@ -1323,6 +1358,134 @@ export default {
         this.historyTaskData.actual_manday = diffDays;
       }
     },
+
+    async deleteSelectedHistoryTasks() {
+      try {
+        // Check if any tasks are selected
+        if (this.selectedTasks.length === 0) {
+          await Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "No tasks selected to delete.",
+          });
+          return;
+        }
+
+        const confirmResult = await Swal.fire({
+          title: "Are you sure?",
+          text: "You won't be able to revert this!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#009933",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, delete them!",
+        });
+
+        if (confirmResult.isConfirmed) {
+          // Loop through selected tasks and delete each one
+          for (const task of this.selectedTasks) {
+            const taskId = task.id; // Get the ID of the task to delete
+            const response = await fetch(
+              `http://localhost:7777/tasks/deleteHistoryTasks/${taskId}`,
+              {
+                method: "DELETE",
+              }
+            );
+            if (!response.ok) {
+              throw new Error("Failed to delete tasks");
+            }
+          }
+
+          await Swal.fire({
+            icon: "success",
+            title: "Success",
+            text: "Selected tasks and related data deleted successfully",
+          });
+
+          // Refresh deleted tasks data after deletion
+          this.fetchDeletedTasks();
+        }
+      } catch (error) {
+        console.error("Error deleting selected history tasks:", error);
+        await Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to delete selected history tasks",
+        });
+      }
+    },
+
+    async restoreSelectedTasks() {
+      try {
+        // Check if any tasks are selected
+        if (this.selectedTasks.length === 0) {
+          await Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "No tasks selected to restore.",
+          });
+          return;
+        }
+
+        const confirmResult = await Swal.fire({
+          title: "Are you sure?",
+          text: "You are about to restore the selected tasks.",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#009933",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, restore them!",
+        });
+
+        if (confirmResult.isConfirmed) {
+          // Loop through selected tasks and restore each one
+          for (const task of this.selectedTasks) {
+            const taskId = task.id;
+            const response = await fetch(
+              `http://localhost:7777/tasks/updateTask/${taskId}`,
+              {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  task_nameTH: task.task_nameTH,
+                  task_nameEN: task.task_nameEN,
+                  task_shortname: task.task_shortname,
+                  project_id: task.project_id,
+                  is_deleted: 0,
+                }),
+              }
+            );
+
+            if (!response.ok) {
+              throw new Error("Failed to restore tasks");
+            }
+          }
+
+          console.log("Selected tasks restored successfully");
+
+          await Swal.fire(
+            "Success",
+            "Selected tasks restored successfully.",
+            "success"
+          );
+
+          // Refresh data after restoring tasks
+          this.fetchDeletedTasks();
+          this.fetchTasks();
+          this.fetchProjectNameENG();
+        }
+      } catch (error) {
+        console.error("Error restoring selected tasks:", error);
+        await Swal.fire(
+          "Error",
+          "An error occurred during the tasks restoration process.",
+          "error"
+        );
+      }
+    },
+
     async takeTask(task) {
       try {
         // ตรวจสอบว่ามีข้อมูลผู้ใช้ที่เข้าสู่ระบบหรือไม่
@@ -1998,6 +2161,11 @@ export default {
           text: "Please try again",
         });
       }
+    },
+
+    async goToHistoryTasks() {
+      await this.fetchDeletedTasks();
+      this.showHistoryDialog = true;
     },
 
     formatDisplayDate(dateString) {
