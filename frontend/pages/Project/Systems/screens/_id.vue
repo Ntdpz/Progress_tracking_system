@@ -823,11 +823,10 @@
             </v-menu>
           </v-col>
           <v-col cols="4">
-            <v-text-field v-model="historyTaskData.plan_manday" label="Plan Manday" type="number" min="0" max="100" outlined dense></v-text-field>
+             <v-text-field v-model="historyTaskData.task_manday" label="Manday" required></v-text-field>
           </v-col>
         </v-row>
 
-        <!-- ติดไม่สามารถแสดงตัวเลือกวันของ actual ได้ -->
         <v-row>
           <v-col cols="4">
             <v-menu v-if="historyTaskData.task_plan_start && historyTaskData.task_plan_end" v-model="actualStartMenu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y>
@@ -846,7 +845,8 @@
             </v-menu>
           </v-col>
           <v-col cols="4">
-            <v-text-field v-model="historyTaskData.actual_manday" label="Actual Manday" type="number" min="0" max="100" outlined dense></v-text-field>
+            <v-text-field v-model="historyTaskData.actual_manday" label="Actual Manday" required></v-text-field>
+            
           </v-col>
         </v-row>
 
@@ -992,6 +992,7 @@ export default {
         task_manday: "",
         task_actual_start: "",
         task_actual_end: "",
+        actual_manday: "",
       },
 
       value: 0, // กำหนดค่าเริ่มต้นสำหรับ value
@@ -1225,6 +1226,9 @@ export default {
     this.getTasksToday();
   },
   watch: {
+    'historyTaskData.task_actual_start': 'calculateActualManday',
+    'historyTaskData.task_actual_end': 'calculateActualManday',
+
     "historyTaskData.task_plan_start": function (newVal, oldVal) {
       this.calculateMandaySAVE();
     },
@@ -1241,8 +1245,9 @@ export default {
     "editedTask.task_plan_end": function (newValue, oldValue) {
       if (this.editedTask.task_plan_start && this.editedTask.task_plan_end) {
         this.calculateMandayEdit();
-      }
+      }      
     },
+    
 
     filteredTasks: {
       handler() {
@@ -1268,6 +1273,24 @@ export default {
       } else {
         // If either start or end date is not selected, reset manday field
         this.newTask.task_manday = null;
+      }
+    },
+    calculateActualManday() {
+      const start = this.historyTaskData.task_actual_start;
+      const end = this.historyTaskData.task_actual_end;
+
+      if (start && end) {
+        const startDate = new Date(start);
+        const endDate = new Date(end);
+
+        // Calculate difference in time (milliseconds)
+        const diffTime = Math.abs(endDate - startDate);
+
+        // Calculate difference in days (1 day = 1000 * 60 * 60 * 24 milliseconds)
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 to include the start day
+
+        // Assign the calculated days to actual_manday
+        this.historyTaskData.actual_manday = diffDays;
       }
     },
     async takeTask(task) {
