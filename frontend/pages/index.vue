@@ -1,5 +1,5 @@
 <template>
-  <div class="greeting-container">
+  <div>
     <Greeting />
   </div>
 </template>

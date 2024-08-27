@@ -6,9 +6,11 @@
         <v-col>
           <span class="bold-text"> All your tasks in </span>
           <span class="bold-text">
-            Project :
-            {{ tasks.length > 0 ? tasks[0].task_name : "No task" }}
+            Project : (ชื่อโปรเจค)
+            
           </span>
+
+          <!-- {{ projectId }} -->
           <span> Today ({{ today }}) </span>
 
           <span class="task-count-wrapper">

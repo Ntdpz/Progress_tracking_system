@@ -1,13 +1,13 @@
 <template>
   <div>
-    <v-row no-gutters class="mt-4 justify-center">
+    <v-row no-gutters class="mt-4 ">
       <v-col class="text-center" style="margin-right: 16px">
-        <h1 class="text-01">{{ greeting }}</h1>
+        <h1 >{{ greeting }}</h1>
         <h1>
           {{ this.$auth.user.user_position }} :
           {{ this.$auth.user.user_firstname }}
         </h1>
-        <p class="text-01">{{ currentDateTime }}</p>
+        <p>{{ currentDateTime }}</p>
       </v-col>
     </v-row>
   </div>
