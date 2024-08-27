@@ -42,14 +42,15 @@
 
       <v-row>
         <v-col cols="12">
-          <v-text-field
+          <!-- Title Row -->
+          <h3 class="task-Remark-title">Remark</h3>
+          <v-textarea
             v-model="taskData.task_detail"
-            name="Remark"
-            label="Remark"
-            placeholder="Enter task details"
-            outlined
-            required
-          ></v-text-field>
+            solo
+            clearable
+            placeholder="Enter Remark"
+            class="textarea-Remark"
+          ></v-textarea>
         </v-col>
       </v-row>
 
@@ -190,9 +191,9 @@
     <history_task_table ref="historyTaskTable" :taskId="task.id" />
 
     <v-row class="button-row">
-    <v-btn class="save-btn" @click="updateTask">Save</v-btn>
-    <v-btn class="close-btn" @click="$emit('close-dialog')">Close</v-btn>
-  </v-row>
+      <v-btn class="save-btn" @click="updateTask">Save</v-btn>
+      <v-btn class="close-btn" @click="$emit('close-dialog')">Close</v-btn>
+    </v-row>
   </div>
 </template>
 
@@ -393,6 +394,7 @@ export default {
           text: "Task updated successfully",
           icon: "success",
           confirmButtonText: "OK",
+          confirmButtonColor: "#629859",
         }).then((result) => {
           if (result.isConfirmed) {
             this.$emit("task-updated");
@@ -407,6 +409,7 @@ export default {
           text: "Error updating task",
           icon: "error",
           confirmButtonText: "OK",
+          confirmButtonColor: "#F67878",
         });
       }
     },

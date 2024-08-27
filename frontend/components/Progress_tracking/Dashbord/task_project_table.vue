@@ -29,6 +29,8 @@
       class="project_task_table"
       item-key="task_id"
       @click:row="handleRowClick"
+      :sort-by="['task_plan_start']"
+      :sort-desc="[false]"  
     >
       <!-- กำหนดการแสดงผลในหัวตาราง -->
       <template v-slot:column.header="{ column }">
@@ -78,7 +80,7 @@
                 mdi-file-chart
               </v-icon>
             </template>
-            <span>แก้ไข Task</span>
+            <span>Update Task</span>
           </v-tooltip>
         </div>
       </template>

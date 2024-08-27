@@ -10,7 +10,7 @@
     >
       <template v-slot:top>
         <v-toolbar flat class="toolbar-centered">
-          <v-toolbar-title>History</v-toolbar-title>
+          <v-toolbar-title class="toolbar-title" >History</v-toolbar-title>
         </v-toolbar>
       </template>
       <template v-slot:item.update_date="{ item }">

@@ -38,13 +38,27 @@
 
 .task-progress-title {
     margin-top: 20px;
-    font-size: 1 rem;
+    font-size: 16px;
     /* ปรับขนาดฟอนต์ของ title */
     font-weight: 500;
     /* ปรับความหนาของฟอนต์ */
     color: #000;
     /* ปรับสีของ title */
     text-align: left;
+}
+
+.task-Remark-title {
+    font-size: 16px;
+    /* ปรับขนาดฟอนต์ของ title */
+    font-weight: 500;
+    /* ปรับความหนาของฟอนต์ */
+    color: #000;
+    /* ปรับสีของ title */
+    text-align: left;
+}
+
+.textarea-Remark{
+    margin-top: 20px !important;
 }
 
 .task-text-field .v-input__control {
@@ -74,5 +88,6 @@
     background-color: #F67878 !important;
     /* สีปุ่ม Close */
     color: white !important;
-    /* สีข้อความในปุ่ม */
+    /* 
+    สีข้อความในปุ่ม */
 }

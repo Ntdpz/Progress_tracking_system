@@ -195,6 +195,8 @@
 </template>
 
 <script>
+import Swal from 'sweetalert2';
+
 export default {
   data() {
     return {
@@ -217,11 +219,20 @@ export default {
         this.$router.push("/"); // Redirect to a protected route
       } catch (error) {
         console.error(error);
+
+        Swal.fire({
+          icon: 'error',
+          title: 'The information is incorrect.',
+          text: 'Please check your employee ID and password.',
+          confirmButtonText: 'OK',
+           confirmButtonColor: "#009933",
+        });
       }
     },
   },
 };
 </script>
+
 
 <style scoped>
 * {
