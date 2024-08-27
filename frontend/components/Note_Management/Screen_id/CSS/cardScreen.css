@@ -1,0 +1,94 @@
+.custom-card {
+    height: 300px;
+    /* ความสูงของ v-card */
+    display: flex;
+}
+
+.left-column {
+    background-color: green;
+    color: white;
+    /* ทำให้ข้อความชัดเจน */
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.right-column {
+    background-color: red;
+    color: white;
+    /* ทำให้ข้อความชัดเจน */
+    height: 100%;
+    /* ให้ความสูงของ right-column เต็มความสูงของ card */
+    display: flex;
+    flex-direction: column;
+}
+
+.full-height-row {
+    flex: 1;
+    /* ให้ v-row ขยายเต็มพื้นที่ที่มี */
+}
+
+.top-row {
+    height: 10%;
+    /* กำหนดความสูงเป็น 10% ของความสูงของ right-column */
+    background-color: rgb(217, 255, 0);
+    /* สีพื้นหลังของแถวแรก */
+    color: black;
+    /* เปลี่ยนสีข้อความให้เห็นชัดเจน */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center !important;
+    /* จัดข้อความให้อยู่กลาง */
+    overflow: hidden !important;
+    /* ซ่อนข้อความที่ยาวเกินขอบเขต */
+    padding: 0 10px !important;
+    /* เพิ่ม padding ด้านข้างเพื่อให้ข้อความไม่ติดขอบ */
+    box-sizing: border-box !important;
+    /* รวม padding และ border เข้าไปในขนาดทั้งหมดของ element */
+}
+
+.second-row {
+    height: 50%;
+    /* กำหนดความสูงเป็น 70% ของความสูงของ right-column */
+    background-color: lightcoral;
+    /* สีพื้นหลังของแถวแรก */
+    color: white;
+    /* ทำให้ข้อความชัดเจน */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bottom-row {
+    height: 40%;
+    /* กำหนดความสูงเป็น 30% ของความสูงของ right-column */
+    display: flex;
+    flex-direction: row;
+    /* คอลัมน์ในแถวนี้จะอยู่ในแนวนอน */
+}
+
+.bottom-left-column,
+.bottom-right-column {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    /* ทำให้คอลัมน์เต็มความสูงของ bottom-row */
+    padding: 16px;
+}
+
+.bottom-left-column {
+    background-color: darkorange;
+    /* สีพื้นหลังของคอลัมน์ซ้ายในแถวที่สอง */
+    color: white;
+    /* ทำให้ข้อความชัดเจน */
+}
+
+.bottom-right-column {
+    background-color: darkblue;
+    /* สีพื้นหลังของคอลัมน์ขวาในแถวที่สอง */
+    color: white;
+    /* ทำให้ข้อความชัดเจน */
+}

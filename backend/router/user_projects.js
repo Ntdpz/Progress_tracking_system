@@ -267,5 +267,24 @@ router.get("/getProjectByUser_id/:user_id", async (req, res) => {
     }
 });
 
+// API endpoint to get project_ids by user_id
+router.get('/get_project_by_userid/:user_id', (req, res) => {
+    const userId = req.params.user_id;
+
+    const query = `
+    SELECT project_id
+    FROM user_projects
+    WHERE user_id = ?
+  `;
+
+    connection.query(query, [userId], (err, results) => {
+        if (err) {
+            console.error('Error executing query:', err.stack);
+            return res.status(500).json({ error: 'An error occurred' });
+        }
+
+        res.json(results.map(row => row.project_id));
+    });
+});
 
 module.exports = router;

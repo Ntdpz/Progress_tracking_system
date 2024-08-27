@@ -147,11 +147,32 @@ router.get('/searchByProjectId/:project_id', async (req, res) => {
     try {
         const { project_id } = req.params;
 
-        // สร้าง query SQL เพื่อดึงข้อมูล Tasks ตาม ID โครงการที่ระบุ
+        // สร้าง query SQL โดยทำการ JOIN ระหว่างตาราง Tasks, Projects, Systems, และ Screens
         let query = `
-            SELECT * 
-            FROM Tasks 
-            WHERE project_id = ? 
+            SELECT 
+                Tasks.task_id, 
+                Tasks.task_name, 
+                Tasks.task_detail, 
+                Tasks.task_status, 
+                Tasks.task_manday, 
+                Tasks.task_progress, 
+                Tasks.task_plan_start, 
+                Tasks.task_plan_end, 
+                Projects.project_name_ENG, 
+                Systems.system_nameEN, 
+                Screens.screen_name,
+                Tasks.project_id,
+                Tasks.system_id,
+                Tasks.screen_id,
+                Tasks.id,
+                task_actual_start,
+                task_actual_end
+
+            FROM Tasks
+            JOIN Projects ON Tasks.project_id = Projects.id
+            JOIN Systems ON Tasks.system_id = Systems.id
+            JOIN Screens ON Tasks.screen_id = Screens.id
+            WHERE Tasks.project_id = ?
         `;
 
         // ดำเนินการคิวรีด้วย project_id ที่ให้ไว้
@@ -174,6 +195,7 @@ router.get('/searchByProjectId/:project_id', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+
 
 router.get('/searchBySystemId/:system_id', async (req, res) => {
     try {

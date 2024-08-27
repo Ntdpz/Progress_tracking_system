@@ -1,11 +1,11 @@
 <template>
   <v-container>
     <v-tabs v-model="tab" background-color="primary" dark slider-color="yellow">
-      <v-tab>MU ISSUE</v-tab>
-      <v-tab>PNI</v-tab>
-      <v-tab>PNC</v-tab>
-      <v-tab>NewREQTable</v-tab>
-      <v-tab>Editing Completed</v-tab>
+      <v-tab>NON MY ISSUE</v-tab>
+      <v-tab>NON PNI</v-tab>
+      <v-tab>NON PNC</v-tab>
+      <v-tab>NON NewREQTable</v-tab>
+      <v-tab>NON Editing Completed</v-tab>
     </v-tabs>
 
     <v-tabs-items v-model="tab">
@@ -33,11 +33,11 @@
 </template>
 
 <script>
-import AllTable from "/components/Note_Management/Dashbord_Table/AllTable.vue";
-import PNITable from "/components/Note_Management/Dashbord_Table/PNITable.vue";
-import PNCTable from "/components/Note_Management/Dashbord_Table/PNCTable.vue";
-import NewREQTable from "/components/Note_Management/Dashbord_Table/NewREQTable.vue";
-import EditingCompletedTable from "/components/Note_Management/Dashbord_Table/EditingCompletedTable.vue";
+import AllTable from "/components/Note_Management/Dashboard/Dashbord_Table_non/AllTable.vue";
+import PNITable from "/components/Note_Management/Dashboard/Dashbord_Table_non/PNITable.vue";
+import PNCTable from "/components/Note_Management/Dashboard/Dashbord_Table_non/PNCTable.vue";
+import NewREQTable from "/components/Note_Management/Dashboard/Dashbord_Table_non/NewREQTable.vue";
+import EditingCompletedTable from "/components/Note_Management/Dashboard/Dashbord_Table_non/EditingCompletedTable.vue";
 export default {
   components: {
     AllTable,
@@ -56,24 +56,8 @@ export default {
       EditingCompletedTable: [],
     };
   },
-  created() {
-    this.getData();
-  },
-  methods: {
-    async getData() {
-      try {
-        // ดึงข้อมูลสำหรับ Admin
-        const adminRes = await this.$axios.get(`/users/getAdminData`);
-        this.AllTable = adminRes.data;
-
-        // ดึงข้อมูลสำหรับ User
-        const userRes = await this.$axios.get(`/users/getUserData`);
-        this.PNITable = userRes.data;
-      } catch (error) {
-        console.error(error);
-      }
-    },
-  },
+  created() {},
+  methods: {},
 };
 </script>
 

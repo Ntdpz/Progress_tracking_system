@@ -1,7 +1,7 @@
 <template>
   <div>
-    <v-row no-gutters class="mt-4">
-      <v-col class="text-left" style="margin-right: 16px">
+    <v-row no-gutters class="mt-4 justify-center">
+      <v-col class="text-center" style="margin-right: 16px">
         <h1 class="text-01">{{ greeting }}</h1>
         <h1>
           {{ this.$auth.user.user_position }} :
@@ -70,4 +70,7 @@ export default {
 </script>
 
 <style>
+.text-center {
+  text-align: center;
+}
 </style>

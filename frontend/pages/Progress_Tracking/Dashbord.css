@@ -1,0 +1,21 @@
+.centered-heading {
+    text-align: center;
+    margin: 0;
+}
+
+.full-width-card {
+    display: flex;
+    justify-content: center;
+}
+
+.full-card {
+    width: 100%;
+    max-width: 100%;
+}
+
+.full-card {
+    box-shadow: none !important;
+    /* เอาเงาออกจาก v-card */
+    border: none !important;
+    /* เอาเส้นขอบออกจาก v-card */
+}

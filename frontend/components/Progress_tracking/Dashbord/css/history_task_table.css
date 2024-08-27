@@ -1,0 +1,80 @@
+.custom-table {
+    width: 900px !important;
+    /* ปรับความกว้างของตารางให้เต็มความกว้างของ container */
+    overflow-x: auto !important;
+    /* เปิดใช้งานการเลื่อนแนวนอน */
+    border-collapse: collapse;
+    /* รวมเส้นขอบเพื่อป้องกันการซ้อนทับ */
+}
+
+.custom-table thead th {
+    background-color: #ffffff !important;
+    /* สีพื้นหลังหัวตาราง */
+    color: #000000 !important;
+    /* สีตัวอักษรหัวตาราง */
+    font-size: 16px !important;
+    /* ขนาดตัวอักษรหัวตาราง */
+    text-align: center !important;
+    /* จัดข้อความแนวนอนให้อยู่ตรงกลาง */
+    vertical-align: middle !important;
+    /* จัดข้อความแนวตั้งให้อยู่ตรงกลาง */
+    padding: 16px !important;
+    /* เพิ่ม padding ให้หัวตารางเพื่อการจัดตำแหน่งที่ดีขึ้น */
+    line-height: 1.5;
+    /* เพิ่มความสูงของบรรทัด */
+    border-bottom: 1px solid #b6b6b685 !important;
+    /* เส้นขอบด้านล่างของหัวตาราง */
+}
+
+.custom-table tbody td {
+    /* border: 1px solid #b6b6b685 !important; */
+    /* เส้นขอบเนื้อหาตาราง */
+    text-align: center !important;
+    /* จัดตำแหน่งข้อความในเนื้อหาตรงกลาง */
+    padding: 8px !important;
+    /* เพิ่ม padding ให้กับเซลล์ */
+}
+
+.custom-table thead th,
+.custom-table tbody td {
+    white-space: nowrap !important;
+    /* ป้องกันการตัดข้อความและให้มีการเลื่อนแนวนอน */
+}
+
+.custom-table tbody tr:hover {
+    background-color: #02020285 !important;
+    /* สีพื้นหลังเมื่อ hover ที่แถว */
+    color: #ffffff !important;
+    /* สีตัวอักษรเมื่อ hover ที่แถว */
+}
+
+.progress-cell {
+    text-align: center !important;
+    /* จัดข้อความแนวนอนตรงกลาง */
+}
+
+.no-tasks-container {
+    text-align: center !important;
+    /* จัดข้อความให้อยู่ตรงกลาง */
+    margin: 20px;
+}
+
+.no-tasks-message img {
+   
+    margin-bottom: 20px !important;
+    /* ระยะห่างด้านล่างของภาพ */
+}
+
+.no-tasks-message {
+    font-size: 18px !important;
+    /* ขนาดตัวอักษรข้อความไม่มี task */
+    color: #555 !important;
+    /* สีตัวอักษรข้อความไม่มี task */
+}
+
+.toolbar-centered {
+    display: flex !important;
+    /* ใช้ flexbox เพื่อจัดตำแหน่ง */
+    justify-content: center !important;
+    /* จัดตำแหน่งข้อความให้อยู่ตรงกลางแนวนอน */
+}

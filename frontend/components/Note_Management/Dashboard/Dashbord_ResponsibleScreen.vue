@@ -6,6 +6,7 @@
       item-key="id"
       class="elevation-1 with-grid-lines table-container"
       :items-per-page="10"
+      @click:row="navigateToScreen"
     >
       <template v-slot:top>
         <v-toolbar flat class="my-toolbar">
@@ -13,9 +14,7 @@
             >Responsible Screen</v-toolbar-title
           >
           <v-spacer></v-spacer>
-          <v-btn  @click="openSettings" class="my-toolbar-btn">
-           see all
-          </v-btn>
+          <v-btn class="my-toolbar-btn"> see all </v-btn>
         </v-toolbar>
       </template>
 
@@ -104,6 +103,9 @@ export default {
     await this.GetResponsibleScreen();
   },
   methods: {
+    navigateToScreen(item) {
+      this.$router.push(`/Note_Management/screen/${item.id}`);
+    },
     async GetResponsibleScreen() {
       try {
         const userId = this.$auth.user.id; // ดึง user ID จาก $auth.user

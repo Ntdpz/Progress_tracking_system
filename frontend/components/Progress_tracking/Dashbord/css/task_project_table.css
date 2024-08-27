@@ -1,0 +1,164 @@
+.task-count-card {
+    display: inline-flex;
+    display: inline-flex;
+    /* ใช้ inline-flex แทน inline-block เพื่อใช้ Flexbox */
+    justify-content: center;
+    /* จัดตำแหน่งในแนวนอน */
+    align-items: center;
+    /* จัดตำแหน่งในแนวตั้ง */
+    border: 2px solid #565656 !important;
+    /* กำหนดสีกรอบ */
+    border-radius: 4px !important;
+    /* กำหนดความโค้งมนของกรอบ */
+    padding: 8px 16px !important;
+    /* กำหนดระยะห่างภายในกรอบ */
+    color: #565656 !important;
+    /* กำหนดสีตัวหนังสือ */
+    background-color: #ffffff !important;
+    /* กำหนดสีพื้นหลัง (ถ้าต้องการ) */
+    font-weight: bold !important;
+    /* ทำให้ตัวหนังสือเป็นตัวหนา */
+    width: 85px !important;
+    height: 40px !important;
+
+}
+
+.bold-text {
+    font-weight: bold;
+}
+
+.project_task_table .v-data-table-header th {
+    color: #374AAB !important;
+    /* กำหนดสีตัวอักษร */
+    font-weight: bold;
+    /* ทำให้ตัวอักษรหนา */
+    font-size: 16px !important;
+    /* กำหนดขนาดตัวอักษร */
+    text-align: center !important;
+    /* จัดเรียงตัวอักษรแนวนอนให้อยู่ตรงกลาง */
+    vertical-align: middle !important;
+    /* จัดเรียงตัวอักษรแนวตั้งให้อยู่ตรงกลาง */
+    padding: 10px !important;
+    /* กำหนดระยะห่างด้านใน */
+
+}
+
+.project_task_table .cell-content {
+    padding: 12px !important;
+    font-size: 14px !important;
+    color: #000000 !important;
+    /* ข้อความเป็นสีขาวเพื่อให้ชัดเจนบนพื้นหลังที่มีสี */
+    text-align: center !important;
+    vertical-align: middle !important;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    border-radius: 4px;
+    /* เพิ่มมุมโค้งให้กับพื้นหลัง */
+}
+
+/* ตกแต่งแถวเมื่อมีการ hover */
+.project_task_table .v-data-table__wrapper tbody tr:hover {
+    background-color: #7189ff !important;
+}
+
+/* ตกแต่งคอลัมน์ที่เป็น action ไอคอน */
+.project_task_table .v-icon {
+    cursor: pointer;
+    margin-left: 10px;
+    color: #629859 !important;
+    /* สีของไอคอน */
+}
+
+.project_task_table .v-icon:hover {
+    color: #ffffff !important;
+    /* สีของไอคอนเมื่อ hover */
+}
+
+.no-tasks-message {
+    color: #888;
+    /* สีข้อความ */
+    font-size: 16px;
+    /* ขนาดตัวอักษร */
+    text-align: center;
+    /* จัดข้อความให้ตรงกลาง */
+    padding: 20px;
+    /* ระยะห่างด้านใน */
+    border: 1px solid #ddd;
+    /* เส้นขอบ */
+    border-radius: 8px;
+    /* มุมโค้งของกล่อง */
+    background-color: #f9f9f9;
+    /* สีพื้นหลัง */
+    margin: 20px;
+    /* ระยะห่างภายนอก */
+    font-weight: bold;
+    /* ตัวอักษรหนา */
+}
+
+
+/* คลาสสำหรับข้อความเมื่อไม่มีรายการในโปรเจกต์ */
+.no-tasks-container {
+    display: flex;
+    /* ใช้ Flexbox */
+    flex-direction: column;
+    /* จัดเรียงในแนวตั้ง */
+    align-items: center;
+    /* จัดแนวกลางในแนวนอน */
+    justify-content: center;
+    /* จัดแนวกลางในแนวตั้ง */
+    text-align: center;
+    /* จัดข้อความให้อยู่กลาง */
+    padding: 20px;
+    /* ระยะห่างด้านใน */
+    border: 1px solid #ddd;
+    /* เส้นขอบ */
+    border-radius: 8px;
+    /* มุมโค้งของกล่อง */
+    background-color: #fcfcfc;
+    /* สีพื้นหลัง */
+    margin: 20px;
+    /* ระยะห่างภายนอก */
+    height: 200px;
+    /* กำหนดความสูงของ container */
+
+}
+
+.no-tasks-message {
+    display: flex;
+    /* ใช้ Flexbox ในข้อความ */
+    flex-direction: column;
+    /* จัดเรียงในแนวตั้ง */
+    align-items: center;
+    /* จัดแนวกลางในแนวนอน */
+    justify-content: center;
+    /* จัดแนวกลางในแนวตั้ง */
+    border: none;
+}
+
+.no-tasks-container img {
+    width: 100px;
+    /* ความกว้างของ GIF */
+    height: auto;
+    /* ความสูงอัตโนมัติ */
+    margin-bottom: 10px;
+    /* ระยะห่างระหว่าง GIF กับข้อความ */
+}
+
+.EditTask_dialog_card_title {
+    text-align: center;
+    /* จัดแนวข้อความให้อยู่ตรงกลาง */
+    font-size: 18px;
+    /* ขนาดตัวอักษร (สามารถปรับตามต้องการ) */
+    font-weight: bold;
+    /* ตัวอักษรหนา (สามารถปรับตามต้องการ) */
+    margin: 0;
+    /* ลบระยะห่างบนและล่าง */
+}
+
+.custom-dialog .v-card {
+    max-height: 100px;
+    /* หรือ height: 500px; ตามความต้องการ */
+}

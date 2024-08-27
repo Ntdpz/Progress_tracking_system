@@ -1,0 +1,78 @@
+.update-task-dialog {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.dialog-title {
+    font-size: 24px;
+    /* ขนาดตัวอักษรของ h1 */
+    margin-bottom: 16px;
+    /* ระยะห่างด้านล่างของ h1 */
+    margin-top: 24px;
+    /* ความห่างจากด้านบนของ h1 */
+}
+
+.dialog-subtitle {
+    font-size: 18px;
+    /* ขนาดตัวอักษรของ p */
+    color: #666;
+    /* สีของข้อความ */
+    margin-bottom: 32px;
+    /* ระยะห่างด้านล่างของ p */
+}
+
+.task-progress-col {
+
+    /* ความห่างจากด้านบนของ h1 */
+    max-width: 25%;
+}
+
+.task-slider-col {
+    margin-top: 10px;
+    /* ความห่างจากด้านบนของ h1 */
+    max-width: 75%;
+}
+
+.task-progress-title {
+    margin-top: 20px;
+    font-size: 1 rem;
+    /* ปรับขนาดฟอนต์ของ title */
+    font-weight: 500;
+    /* ปรับความหนาของฟอนต์ */
+    color: #000;
+    /* ปรับสีของ title */
+    text-align: left;
+}
+
+.task-text-field .v-input__control {
+    position: relative !important;
+    /* ใช้ตำแหน่ง relative สำหรับการจัดการกรอบ */
+}
+
+.task-text-field .v-text-field__slot {
+    padding: 0 40px !important;
+    /* กำหนดการเว้นวรรคภายในกรอบ */
+}
+
+.button-row {
+    margin-top: 16px;
+    gap: 16px;
+    /* ปรับระยะห่างระหว่างปุ่มตามที่ต้องการ */
+}
+
+.save-btn {
+    background-color: #629859 !important;
+    /* สีปุ่ม Save */
+    color: white !important;
+    /* สีข้อความในปุ่ม */
+}
+
+.close-btn {
+    background-color: #F67878 !important;
+    /* สีปุ่ม Close */
+    color: white !important;
+    /* สีข้อความในปุ่ม */
+}
