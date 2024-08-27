@@ -4,17 +4,6 @@
     <v-row style="margin-bottom: 20px" align="center">
       <v-col cols="12" v-if="screenId">
 
-        <!-- Card แสดงข้อมูล Screen -->
-        <!--<v-card class="mx-auto align-start" max-width="none" hover>
-    <v-img
-      v-if="screen_pic"
-      :src="screen_pic"
-      alt="Screen PIC"
-      width="100%"
-      height="300px"
-      @click="showImageDialog = true"
-    ></v-img>-->
-
         <v-card>
           <v-card-item class="d-flex justify-space-between align-center" @click="showDetails = !showDetails">
             <div class="card-title">
@@ -55,16 +44,6 @@
               </v-icon>
             </div>
           </v-card-item>
-
-          <!-- <v-card-subtitle @click="showDetails = !showDetails">
-            <span style="font-weight: bold; color: black; font-size: 16px">Screen Progress</span>
-            <v-progress-linear :color="getProgressColor(parseInt(screen_progress))" height="50"
-              :value="parseInt(screen_progress)" striped>
-              <strong :style="{ color: '#5E5E5E', fontSize: '20px' }">
-                {{ Math.floor(screen_progress) }}%
-              </strong>
-            </v-progress-linear>
-          </v-card-subtitle> -->
 
           <v-expand-transition>
             <div v-show="showDetails">
@@ -109,11 +88,11 @@
                     {{ user.user_firstname }} {{ user.user_lastname }}
                   </v-list-item-title>
                   <v-list-item-subtitle>{{
-                    user.user_position
-                    }}</v-list-item-subtitle>
+        user.user_position
+      }}</v-list-item-subtitle>
                   <v-list-item-subtitle>{{
-                    user.user_department
-                    }}</v-list-item-subtitle>
+          user.user_department
+        }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
             </v-list>
@@ -182,8 +161,8 @@
       <v-tabs v-model="selectedStatus">
         <v-tab>All</v-tab>
         <v-tab v-for="(status, index) in statusOptions" :key="index">{{
-          status
-          }}</v-tab>
+        status
+      }}</v-tab>
         <v-tab-item>
           <v-row>
             <!-- Dropdown for sorting -->
@@ -245,16 +224,16 @@
                         <v-list-item-content>
                           <v-list-item-title>First Name:
                             {{
-                            task.memberDetails.user_firstname
-                            }}</v-list-item-title>
+        task.memberDetails.user_firstname
+      }}</v-list-item-title>
                           <v-list-item-subtitle>Last Name:
                             {{
-                            task.memberDetails.user_lastname
-                            }}</v-list-item-subtitle>
+          task.memberDetails.user_lastname
+        }}</v-list-item-subtitle>
                           <v-list-item-subtitle>Position:
                             {{
-                            task.memberDetails.user_position
-                            }}</v-list-item-subtitle>
+          task.memberDetails.user_position
+        }}</v-list-item-subtitle>
                         </v-list-item-content>
                       </v-list-item>
                     </v-list>
@@ -274,20 +253,20 @@
                     <p>
                       Plan Start:
                       {{
-                      task.task_plan_start
-                      ? formatDate(task.task_plan_start)
-                      : "Not determined"
-                      }}
+        task.task_plan_start
+          ? formatDate(task.task_plan_start)
+          : "Not determined"
+      }}
                     </p>
 
                     <!-- Plan End -->
                     <p>
                       Plan End:
                       {{
-                      task.task_plan_end
-                      ? formatDate(task.task_plan_end)
-                      : "Not determined"
-                      }}
+          task.task_plan_end
+            ? formatDate(task.task_plan_end)
+            : "Not determined"
+        }}
                     </p>
 
                     <!-- Buttons -->
@@ -299,13 +278,13 @@
                         <v-icon>mdi-pencil</v-icon>
                       </v-btn>
                       <v-btn v-if="(task.memberDetails &&
-          task.memberDetails.id === user.id) ||
+        task.memberDetails.id === user.id) ||
         user.user_role === 'Admin'
         " icon color="primary" @click.stop="openSaveHistoryDialog(task)">
                         <v-icon>mdi-content-save</v-icon>
                       </v-btn>
                       <v-btn v-if="(task.memberDetails &&
-          task.memberDetails.id === user.id) ||
+        task.memberDetails.id === user.id) ||
         user.user_role === 'Admin'
         " icon color="error" @click.stop="deleteTask(task)">
                         <v-icon>mdi-delete</v-icon>
@@ -364,16 +343,16 @@
                         <v-list-item-content>
                           <v-list-item-title>First Name:
                             {{
-                            task.memberDetails.user_firstname
-                            }}</v-list-item-title>
+        task.memberDetails.user_firstname
+      }}</v-list-item-title>
                           <v-list-item-subtitle>Last Name:
                             {{
-                            task.memberDetails.user_lastname
-                            }}</v-list-item-subtitle>
+          task.memberDetails.user_lastname
+        }}</v-list-item-subtitle>
                           <v-list-item-subtitle>Position:
                             {{
-                            task.memberDetails.user_position
-                            }}</v-list-item-subtitle>
+          task.memberDetails.user_position
+        }}</v-list-item-subtitle>
                         </v-list-item-content>
                       </v-list-item>
                     </v-list>
@@ -393,20 +372,20 @@
                     <p>
                       Plan Start:
                       {{
-                      task.task_plan_start
-                      ? formatDate(task.task_plan_start)
-                      : "Not determined"
-                      }}
+        task.task_plan_start
+          ? formatDate(task.task_plan_start)
+          : "Not determined"
+      }}
                     </p>
 
                     <!-- Plan End -->
                     <p>
                       Plan End:
                       {{
-                      task.task_plan_end
-                      ? formatDate(task.task_plan_end)
-                      : "Not determined"
-                      }}
+          task.task_plan_end
+            ? formatDate(task.task_plan_end)
+            : "Not determined"
+        }}
                     </p>
 
                     <!-- Buttons -->
@@ -472,16 +451,16 @@
                         <v-list-item-content>
                           <v-list-item-title>First Name:
                             {{
-                            task.memberDetails.user_firstname
-                            }}</v-list-item-title>
+        task.memberDetails.user_firstname
+      }}</v-list-item-title>
                           <v-list-item-subtitle>Last Name:
                             {{
-                            task.memberDetails.user_lastname
-                            }}</v-list-item-subtitle>
+          task.memberDetails.user_lastname
+        }}</v-list-item-subtitle>
                           <v-list-item-subtitle>Position:
                             {{
-                            task.memberDetails.user_position
-                            }}</v-list-item-subtitle>
+          task.memberDetails.user_position
+        }}</v-list-item-subtitle>
                         </v-list-item-content>
                       </v-list-item>
                     </v-list>
@@ -501,20 +480,20 @@
                     <p>
                       Plan Start:
                       {{
-                      task.task_plan_start
-                      ? formatDate(task.task_plan_start)
-                      : "Not determined"
-                      }}
+        task.task_plan_start
+          ? formatDate(task.task_plan_start)
+          : "Not determined"
+      }}
                     </p>
 
                     <!-- Plan End -->
                     <p>
                       Plan End:
                       {{
-                      task.task_plan_end
-                      ? formatDate(task.task_plan_end)
-                      : "Not determined"
-                      }}
+          task.task_plan_end
+            ? formatDate(task.task_plan_end)
+            : "Not determined"
+        }}
                     </p>
 
                     <!-- Buttons -->
@@ -591,37 +570,37 @@
                   <p>
                     <strong>Last updated date:</strong>
                     {{
-                    formatDate(dialogTaskDetails.task_date_update) ||
-                    "Not determined"
-                    }}
+        formatDate(dialogTaskDetails.task_date_update) ||
+        "Not determined"
+      }}
                   </p>
                   <p>
                     <strong>Plan Start:</strong>
                     {{
-                    formatDate(dialogTaskDetails.task_plan_start) ||
-                    "Not determined"
-                    }}
+          formatDate(dialogTaskDetails.task_plan_start) ||
+          "Not determined"
+        }}
                   </p>
                   <p>
                     <strong>Plan End:</strong>
                     {{
-                    formatDate(dialogTaskDetails.task_plan_end) ||
-                    "Not determined"
-                    }}
+          formatDate(dialogTaskDetails.task_plan_end) ||
+          "Not determined"
+        }}
                   </p>
                   <p>
                     <strong>Actual Start:</strong>
                     {{
-                    formatDate(dialogTaskDetails.task_actual_start) ||
-                    "Not determined"
-                    }}
+          formatDate(dialogTaskDetails.task_actual_start) ||
+          "Not determined"
+        }}
                   </p>
                   <p>
                     <strong>Actual End:</strong>
                     {{
-                    formatDate(dialogTaskDetails.task_actual_end) ||
-                    "Not determined"
-                    }}
+          formatDate(dialogTaskDetails.task_actual_end) ||
+          "Not determined"
+        }}
                   </p>
                 </div>
               </v-col>
@@ -645,38 +624,38 @@
             <!-- โค้ดประสาทีนี้เรียงตาม update_date -->
             <template v-slot:item.update_date="{ item }">
               {{
-              item.update_date ? formatDate(item.update_date) : "No determine"
-              }}
+        item.update_date ? formatDate(item.update_date) : "No determine"
+      }}
             </template>
 
             <!-- ส่วนที่เหลือจะใช้ formatDate ตามปกติ -->
             <template v-slot:item.task_plan_start="{ item }">
               {{
-              item.task_plan_start
-              ? formatDate(item.task_plan_start)
-              : "No determine"
-              }}
+        item.task_plan_start
+          ? formatDate(item.task_plan_start)
+          : "No determine"
+      }}
             </template>
             <template v-slot:item.task_plan_end="{ item }">
               {{
-              item.task_plan_end
-              ? formatDate(item.task_plan_end)
-              : "No determine"
-              }}
+        item.task_plan_end
+          ? formatDate(item.task_plan_end)
+          : "No determine"
+      }}
             </template>
             <template v-slot:item.task_actual_start="{ item }">
               {{
-              item.task_actual_start
-              ? formatDate(item.task_actual_start)
-              : "No determine"
-              }}
+        item.task_actual_start
+          ? formatDate(item.task_actual_start)
+          : "No determine"
+      }}
             </template>
             <template v-slot:item.task_actual_end="{ item }">
               {{
-              item.task_actual_end
-              ? formatDate(item.task_actual_end)
-              : "No determine"
-              }}
+        item.task_actual_end
+          ? formatDate(item.task_actual_end)
+          : "No determine"
+      }}
             </template>
             <!-- โค้ดประสาทีนี้เรียงตาม update_date -->
             <template v-slot:item.task_manday="{ item }">
@@ -767,8 +746,8 @@
                 <v-text-field v-model="editedTask.task_manday" label="Plan Manday" required></v-text-field>
               </v-col>
               <v-col cols="6">
-                <v-select v-model="editedTask.task_type" :items="[ 'Design', 'Develop']" label="Type of Task" required
-                  outlined dense></v-select>
+                <v-text-field v-model="editedTask.task_type" :items="['Design', 'Develop']" label="Type of Task"
+                  required outlined dense @change="updateTaskType" disabled />
               </v-col>
             </v-row>
 
@@ -895,63 +874,63 @@
 
               </v-col>
             </v-row>
-            
-             <div>
-            <h3 style="padding-left: 20px">History tasks</h3>
-          </div>
-          <v-data-table :headers="historyHeaders" :items="historyTasks" item-key="id" class="table-with-border"
-            :sort-by="[{ key: 'update_date', order: 'desc' }]">
-            <template v-slot:item.task_detail="{ item }">
-              {{ item.task_detail ? item.task_detail : "No determine" }}
-            </template>
 
-            <!-- โค้ดประสาทีนี้เรียงตาม update_date -->
-            <template v-slot:item.user_update="{ item }">
-              {{ item.user_update ? item.user_update : "No determine" }}
-            </template>
+            <div>
+              <h3 style="padding-left: 20px">History tasks</h3>
+            </div>
+            <v-data-table :headers="historyHeaders" :items="historyTasks" item-key="id" class="table-with-border"
+              :sort-by="[{ key: 'update_date', order: 'desc' }]">
+              <template v-slot:item.task_detail="{ item }">
+                {{ item.task_detail ? item.task_detail : "No determine" }}
+              </template>
 
-            <!-- โค้ดประสาทีนี้เรียงตาม update_date -->
-            <template v-slot:item.update_date="{ item }">
-              {{
-              item.update_date ? formatDate(item.update_date) : "No determine"
-              }}
-            </template>
+              <!-- โค้ดประสาทีนี้เรียงตาม update_date -->
+              <template v-slot:item.user_update="{ item }">
+                {{ item.user_update ? item.user_update : "No determine" }}
+              </template>
 
-            <!-- ส่วนที่เหลือจะใช้ formatDate ตามปกติ -->
-            <template v-slot:item.task_plan_start="{ item }">
-              {{
-              item.task_plan_start
-              ? formatDate(item.task_plan_start)
-              : "No determine"
-              }}
-            </template>
-            <template v-slot:item.task_plan_end="{ item }">
-              {{
-              item.task_plan_end
-              ? formatDate(item.task_plan_end)
-              : "No determine"
-              }}
-            </template>
-            <template v-slot:item.task_actual_start="{ item }">
-              {{
-              item.task_actual_start
-              ? formatDate(item.task_actual_start)
-              : "No determine"
-              }}
-            </template>
-            <template v-slot:item.task_actual_end="{ item }">
-              {{
-              item.task_actual_end
-              ? formatDate(item.task_actual_end)
-              : "No determine"
-              }}
-            </template>
-            <!-- โค้ดประสาทีนี้เรียงตาม update_date -->
-            <template v-slot:item.task_manday="{ item }">
-              {{ item.task_manday !== null ? item.task_manday : 0 }} days
-            </template>
-          </v-data-table>
-          
+              <!-- โค้ดประสาทีนี้เรียงตาม update_date -->
+              <template v-slot:item.update_date="{ item }">
+                {{
+        item.update_date ? formatDate(item.update_date) : "No determine"
+      }}
+              </template>
+
+              <!-- ส่วนที่เหลือจะใช้ formatDate ตามปกติ -->
+              <template v-slot:item.task_plan_start="{ item }">
+                {{
+        item.task_plan_start
+          ? formatDate(item.task_plan_start)
+          : "No determine"
+      }}
+              </template>
+              <template v-slot:item.task_plan_end="{ item }">
+                {{
+        item.task_plan_end
+          ? formatDate(item.task_plan_end)
+          : "No determine"
+      }}
+              </template>
+              <template v-slot:item.task_actual_start="{ item }">
+                {{
+        item.task_actual_start
+          ? formatDate(item.task_actual_start)
+          : "No determine"
+      }}
+              </template>
+              <template v-slot:item.task_actual_end="{ item }">
+                {{
+        item.task_actual_end
+          ? formatDate(item.task_actual_end)
+          : "No determine"
+      }}
+              </template>
+              <!-- โค้ดประสาทีนี้เรียงตาม update_date -->
+              <template v-slot:item.task_manday="{ item }">
+                {{ item.task_manday !== null ? item.task_manday : 0 }} days
+              </template>
+            </v-data-table>
+
             <!-- Save and Cancel Buttons -->
             <v-row justify="center">
               <v-col cols="auto">
@@ -1042,15 +1021,11 @@
 
               <!-- Status -->
               <v-col cols="12" md="6">
-                <v-select v-model="newTask.task_status" :items="statusOptions" label="Type of Task"></v-select>
+                <v-select v-model="newTask.task_type" :items="typeOptions" label="Type of Task" outlined
+                  dense></v-select>
               </v-col>
             </v-row>
-            <!-- Detail -->
-            <!-- <v-row>
-          <v-col cols="12">
-            <v-text-field v-model="newTask.task_detail" label="Detail"></v-text-field>
-          </v-col>
-        </v-row> -->
+
 
             <v-row justify="center">
               <v-col cols="auto">
@@ -1065,46 +1040,47 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <v-data-table :headers="taskHeaders" :items="filteredTasks" item-key="task_id"  class="elevation-1">
-      
-     <template v-slot:item="{ item }">
-    <tr>
-      <!-- ข้อมูลต่าง ๆ ของ task -->
-      <td>{{ item.task_id }}</td>
-      <td>{{ item.task_name }}</td>
-      <td>
-        <v-progress-linear :color="getProgressColor(parseInt(item.task_progress))" height="20"
-          :value="parseInt(item.task_progress)" striped>
-          <strong>{{ item.task_progress }}%</strong>
-        </v-progress-linear>
-      </td>
-      <td>{{ formatDate(item.task_plan_start) }}</td>
-      <td>{{ formatDate(item.task_plan_end) }}</td>
-      <td>{{ item.task_type }}</td>
+    <v-data-table :headers="taskHeaders" :items="filteredTasks" item-key="task_id" class="elevation-1">
 
-      <!-- Actions column -->
-      <td>
-        <!-- Existing buttons -->
-        <v-btn v-if="user.user_role === 'Admin'" icon color="primary" @click.stop="
-            dialogEditTaskForm = true;
-            editedTask = item;
-          ">
-          <v-icon>mdi-pencil</v-icon>
-        </v-btn>
-        <v-btn v-if="(item.memberDetails && item.memberDetails.id === user.id) || user.user_role === 'Admin'" icon color="primary" @click.stop="openSaveHistoryDialog(item)">
-          <v-icon>mdi-content-save</v-icon>
-        </v-btn>
+      <template v-slot:item="{ item }">
+        <tr>
+          <!-- ข้อมูลต่าง ๆ ของ task -->
+          <td>{{ item.task_id }}</td>
+          <td>{{ item.task_name }}</td>
+          <td>
+            <v-progress-linear :color="getProgressColor(parseInt(item.task_progress))" height="20"
+              :value="parseInt(item.task_progress)" striped>
+              <strong>{{ item.task_progress }}%</strong>
+            </v-progress-linear>
+          </td>
+          <td>{{ formatDate(item.task_plan_start) }}</td>
+          <td>{{ formatDate(item.task_plan_end) }}</td>
+          <td>{{ item.task_type }}</td>
 
-        <!-- New button -->
-        <v-btn icon color="secondary" @click.stop="handleNewAction(item)">
-          <v-icon>mdi-new-icon</v-icon> <!-- Replace mdi-new-icon with the icon you need -->
-        </v-btn>
-      </td>
-    </tr>
-  </template>
+          <!-- Actions column -->
+          <td>
+            <!-- Existing buttons -->
+            <v-btn v-if="user.user_role === 'Admin'" icon color="primary" @click.stop="
+        dialogEditTaskForm = true;
+      editedTask = item;
+      ">
+              <v-icon>mdi-pencil</v-icon>
+            </v-btn>
+            <v-btn v-if="(item.memberDetails && item.memberDetails.id === user.id) || user.user_role === 'Admin'" icon
+              color="primary" @click.stop="openSaveHistoryDialog(item)">
+              <v-icon>mdi-content-save</v-icon>
+            </v-btn>
+
+            <!-- New button -->
+            <v-btn icon color="secondary" @click.stop="handleNewAction(item)">
+              <v-icon>mdi-new-icon</v-icon> <!-- Replace mdi-new-icon with the icon you need -->
+            </v-btn>
+          </td>
+        </tr>
+      </template>
     </v-data-table>
   </div>
-  
+
 </template>
 
 <script>
@@ -1124,15 +1100,15 @@ export default {
       loggedIn: this.$auth.loggedIn,
       user: this.$auth.user,
       dialogSaveTaskForm: false, // Dialog status
-      taskHeaders:[
-      { text: "Task ID", value: "task_id" },
-      { text: "Task Name", value: "task_name" },
-      { text: "Progress" , value: "task_progress" },
-      { text: "Plan Start", value: "task_plan_start" },
-      { text: "Plan End",value: "task_plan_end" },
-      { text: "Task Type", value: "task_type" },
-      { text: "Actions", value: "actions", sortable: false },
-    ],
+      taskHeaders: [
+        { text: "Task ID", value: "task_id" },
+        { text: "Task Name", value: "task_name" },
+        { text: "Progress", value: "task_progress" },
+        { text: "Plan Start", value: "task_plan_start" },
+        { text: "Plan End", value: "task_plan_end" },
+        { text: "Task Type", value: "task_type" },
+        { text: "Actions", value: "actions", sortable: false },
+      ],
       historyTaskData: {
         task_name: "",
         task_detail: "",
@@ -1200,6 +1176,7 @@ export default {
       currentPage: 1,
       perPage: 12,
       statusOptions: ["Design", "Develop"],
+      typeOptions: ['Design', 'Develop'],
       showImageDialog: false,
       showHistoryDialog: false,
       screen_plan_start: "",
@@ -1225,9 +1202,9 @@ export default {
       dialogAddTaskForm: false,
       show: false,
       searchQuery: "",
-      headersDelete: [ 
+      headersDelete: [
         // Data Deleted Tasks History
-        { text: "Task ID", value: "task_id" }, 
+        { text: "Task ID", value: "task_id" },
         { text: "Task Detail", value: "task_detail" },
         { text: "Task Type", value: "task_type" },
         { text: "Plan Start", value: "task_plan_start" },
@@ -1414,9 +1391,9 @@ export default {
     "editedTask.task_plan_end": function (newValue, oldValue) {
       if (this.editedTask.task_plan_start && this.editedTask.task_plan_end) {
         this.calculateMandayEdit();
-      }      
+      }
     },
-    
+
 
     filteredTasks: {
       handler() {
@@ -1428,6 +1405,8 @@ export default {
     // Watcher to update task_manday when task_plan_start or task_plan_end changes
   },
   methods: {
+
+
     calculateMandays() {
       // Check if both start and end dates are selected
       if (this.newTask.task_plan_start && this.newTask.task_plan_end) {
@@ -1782,9 +1761,7 @@ export default {
           await Swal.fire({
             icon: "error",
             title: "Error",
-            text:
-              "Invalid manday value. Please enter a value between 0 and " +
-              differenceInDays,
+            text: "Invalid manday value. Please enter a value between 0 and " + differenceInDays,
             confirmButtonColor: "#009933",
           });
           return; // ออกจากฟังก์ชันหลังจากแสดงข้อความแจ้งเตือน
@@ -1806,33 +1783,30 @@ export default {
 
         // ตรวจสอบว่าค่าวันที่ว่างเปล่าหรือไม่และกำหนดให้เป็น null
         if (this.historyTaskData.task_plan_start) {
-          this.historyTaskData.task_plan_start = this.formatDateSAVE(
-            this.historyTaskData.task_plan_start
-          );
+          this.historyTaskData.task_plan_start = this.formatDateSAVE(this.historyTaskData.task_plan_start);
         } else {
           this.historyTaskData.task_plan_start = null;
         }
         if (this.historyTaskData.task_plan_end) {
-          this.historyTaskData.task_plan_end = this.formatDateSAVE(
-            this.historyTaskData.task_plan_end
-          );
+          this.historyTaskData.task_plan_end = this.formatDateSAVE(this.historyTaskData.task_plan_end);
         } else {
           this.historyTaskData.task_plan_end = null;
         }
         if (this.historyTaskData.task_actual_start) {
-          this.historyTaskData.task_actual_start = this.formatDateSAVE(
-            this.historyTaskData.task_actual_start
-          );
+          this.historyTaskData.task_actual_start = this.formatDateSAVE(this.historyTaskData.task_actual_start);
         } else {
           this.historyTaskData.task_actual_start = null;
         }
         if (this.historyTaskData.task_actual_end) {
-          this.historyTaskData.task_actual_end = this.formatDateSAVE(
-            this.historyTaskData.task_actual_end
-          );
+          this.historyTaskData.task_actual_end = this.formatDateSAVE(this.historyTaskData.task_actual_end);
         } else {
           this.historyTaskData.task_actual_end = null;
         }
+
+        // กำหนดค่า screen_id และ project_id
+        this.historyTaskData.screen_id = this.screenId || this.historyTaskData.screenId;
+        this.historyTaskData.system_id = this.system_id || this.historyTaskData.system_id;
+        this.historyTaskData.project_id = this.project_id || this.historyTaskData.project_id;
 
         // กำหนดค่า user_update
         this.historyTaskData.user_update = this.user.id;
@@ -2017,7 +1991,7 @@ export default {
           this.fetchTasks();
           this.fetchScreenDetail();
           // ปิด dialog หลังจากลบเสร็จ
-        this.dialogEditTaskForm = false;
+          this.dialogEditTaskForm = false;
         }
       } catch (error) {
         console.error("Error deleting task:", error);
@@ -2320,14 +2294,6 @@ export default {
           throw new Error(`Task manday must be between 0 and ${manday + 1}`);
         }
 
-        // เพิ่มเงื่อนไขเพื่อตั้งค่า task_status เป็น "correct" เมื่อ Progress เท่ากับ 100
-        if (taskData.task_progress === 100) {
-          taskData.task_status = "correct";
-        } else if (taskData.task_progress === 0) {
-          taskData.task_status = "Not started yet";
-        } else {
-          taskData.task_status = "start";
-        }
 
         taskData.task_manday = manday;
 
@@ -2392,13 +2358,14 @@ export default {
 </script>
 
 <style scoped>
-
 .progress-row {
-  margin-top: 20px; /* ปรับขนาดตามที่ต้องการ */
+  margin-top: 20px;
+  /* ปรับขนาดตามที่ต้องการ */
 }
 
 .my-progress {
-  margin: 0 1rem; /* เพิ่มระยะห่างด้านซ้ายและขวา */
+  margin: 0 1rem;
+  /* เพิ่มระยะห่างด้านซ้ายและขวา */
 }
 
 .progress-item {
