@@ -4,7 +4,7 @@
     <v-row style="margin-bottom: 20px" align="center">
       <!-- Card detel Project -->
       <v-card class="mx-auto align-start" width="95%" hover>
-        <v-card-item @click="showDetails = !showDetails">
+        <v-card-item @click.stop="showDetails = !showDetails">
           <v-card-title>
             Project name: {{ project.project_name_ENG }}
             <v-spacer></v-spacer>
@@ -16,9 +16,11 @@
             Project Progress
             <v-progress-linear :color="getProgressColor(project.project_progress)" height="50"
               :value="parseInt(project.project_progress)" striped>
-              <strong :style="{ color: '#5E5E5E', fontSize: '20px' }">
-                {{ Math.floor(project.project_progress) || 0 }}%
-              </strong>
+              <template v-slot:default>
+                <strong :style="{ color: '#5E5E5E', fontSize: '20px' }">
+                  {{ Math.floor(project.project_progress) || 0 }}%
+                </strong>
+              </template>
             </v-progress-linear>
           </v-card-subtitle>
         </v-card-item>
