@@ -711,8 +711,8 @@
                 <v-text-field v-model="editedTask.task_manday" label="Plan Manday" required></v-text-field>
               </v-col>
               <v-col cols="6">
-                <v-select v-model="editedTask.task_type" :items="[ 'Design', 'Develop']" label="Type of Task" required
-                  outlined dense></v-select>
+                <v-text-field v-model="editedTask.task_type" :items="[ 'Design', 'Develop']" label="Type of Task" required
+                  outlined dense disabled></v-text-field>
               </v-col>
             </v-row>
 
