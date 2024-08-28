@@ -47,6 +47,59 @@ router.put("/tasks/:id", async (req, res) => {
   }
 });
 
+// Route for creating tasks
+router.post('/createTasks', async (req, res) => {
+    try {
+        const {
+            task_id,
+            task_name,
+            task_detail,
+            task_status,
+            screen_id,
+            project_id,
+            system_id,
+            task_plan_start,
+            task_plan_end,
+            task_member_id,
+            task_manday // เพิ่มฟิลด์ task_manday เข้ามา
+        } = req.body;
+
+        const id = generateId(); // ใช้ generateId() function เพื่อสร้าง ID
+
+        const query =
+            'INSERT INTO tasks (id, task_id, task_name, task_detail, task_status, screen_id, project_id, system_id, task_plan_start, task_plan_end, task_member_id, task_manday) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'; // เพิ่มฟิลด์ task_manday เข้าไปในคำสั่ง SQL
+
+        await new Promise((resolve, reject) => {
+            connection.query(
+                query,
+                [
+                    id,
+                    task_id,
+                    task_name,
+                    task_detail,
+                    task_status,
+                    screen_id,
+                    project_id,
+                    system_id,
+                    task_plan_start,
+                    task_plan_end,
+                    task_member_id,
+                    task_manday // เพิ่ม task_manday เข้าไปใน array ของ parameters
+                ],
+                (err, result) => {
+                    if (err) reject(err);
+                    resolve(result);
+                }
+            );
+        });
+
+        res.send('Task created successfully');
+    } catch (error) {
+        console.error('Error creating task:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 // Route for getting all tasks
 router.get("/getAll", async (req, res) => {
   try {
