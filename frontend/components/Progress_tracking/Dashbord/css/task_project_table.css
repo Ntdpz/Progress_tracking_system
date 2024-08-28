@@ -1,17 +1,16 @@
 .task-count-card {
-    display: inline-flex;
+
     display: inline-flex;
     /* ใช้ inline-flex แทน inline-block เพื่อใช้ Flexbox */
     justify-content: center;
     /* จัดตำแหน่งในแนวนอน */
     align-items: center;
     /* จัดตำแหน่งในแนวตั้ง */
-    border: 2px solid #565656 !important;
+    border: 1px solid #565656 !important;
     /* กำหนดสีกรอบ */
     border-radius: 4px !important;
     /* กำหนดความโค้งมนของกรอบ */
-    padding: 8px 16px !important;
-    /* กำหนดระยะห่างภายในกรอบ */
+    margin-left: 20px !important;
     color: #565656 !important;
     /* กำหนดสีตัวหนังสือ */
     background-color: #ffffff !important;
@@ -19,7 +18,7 @@
     font-weight: bold !important;
     /* ทำให้ตัวหนังสือเป็นตัวหนา */
     width: 85px !important;
-    height: 40px !important;
+    height: 35px !important;
 
 }
 
@@ -28,14 +27,12 @@
 }
 
 .project_task_table .v-data-table-header th {
-    color: #374AAB !important;
+    color: #009933 !important;
     /* กำหนดสีตัวอักษร */
     font-weight: bold;
     /* ทำให้ตัวอักษรหนา */
     font-size: 16px !important;
     /* กำหนดขนาดตัวอักษร */
-    text-align: center !important;
-    /* จัดเรียงตัวอักษรแนวนอนให้อยู่ตรงกลาง */
     vertical-align: middle !important;
     /* จัดเรียงตัวอักษรแนวตั้งให้อยู่ตรงกลาง */
     padding: 10px !important;
@@ -44,36 +41,25 @@
 }
 
 .project_task_table .cell-content {
-    padding: 12px !important;
-    font-size: 14px !important;
     color: #000000 !important;
     /* ข้อความเป็นสีขาวเพื่อให้ชัดเจนบนพื้นหลังที่มีสี */
-    text-align: center !important;
-    vertical-align: middle !important;
-    width: 100%;
-    box-sizing: border-box;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    border-radius: 4px;
-    /* เพิ่มมุมโค้งให้กับพื้นหลัง */
 }
 
 /* ตกแต่งแถวเมื่อมีการ hover */
 .project_task_table .v-data-table__wrapper tbody tr:hover {
-    background-color: #7189ff !important;
+    background-color: #00993331 !important;
 }
 
 /* ตกแต่งคอลัมน์ที่เป็น action ไอคอน */
 .project_task_table .v-icon {
     cursor: pointer;
     margin-left: 10px;
-    color: #629859 !important;
+    color: #009933 !important;
     /* สีของไอคอน */
 }
 
 .project_task_table .v-icon:hover {
-    color: #ffffff !important;
+    color: #004b19 !important;
     /* สีของไอคอนเมื่อ hover */
 }
 
@@ -161,4 +147,79 @@
 .custom-dialog .v-card {
     max-height: 100px;
     /* หรือ height: 500px; ตามความต้องการ */
+}
+
+.project_task_table {
+    table-layout: fixed !important;
+    /* ทำให้ตารางใช้การกำหนดขนาดคอลัมน์ที่แน่นอน */
+    width: 100% !important;
+}
+
+.project_task_table th,
+.project_task_table td {
+    text-align: center !important;
+    /* จัดข้อความให้อยู่กลางคอลัมน์ */
+    padding: 10px !important;
+    overflow: hidden !important;
+    /* ซ่อนส่วนเกินของข้อความที่ยาวเกิน */
+    white-space: normal !important;
+    /* อนุญาตให้ข้อความตัดบรรทัดใหม่ */
+    word-wrap: break-word !important;
+    /* ตัดบรรทัดเมื่อข้อความยาวเกิน */
+}
+
+.project_task_table th:nth-child(1),
+.project_task_table td:nth-child(1) {
+    width: 20%;
+    /* กำหนดความกว้างของคอลัมน์แรก */
+}
+
+.project_task_table th:nth-child(2),
+.project_task_table td:nth-child(2) {
+    width: 20%;
+    /* กำหนดความกว้างของคอลัมน์ที่สอง */
+}
+
+.project_task_table th:nth-child(3),
+.project_task_table td:nth-child(3) {
+    width: 20%;
+    /* กำหนดความกว้างของคอลัมน์ที่สาม */
+
+}
+
+.project_task_table th:nth-child(4),
+.project_task_table td:nth-child(4) {
+    width: 10%;
+    text-align: center !important;
+    vertical-align: middle !important;
+    /* กำหนดความกว้างของคอลัมน์ที่สี่ */
+}
+
+.project_task_table th:nth-child(5),
+.project_task_table td:nth-child(5) {
+    width: 10%;
+    text-align: center !important;
+    vertical-align: middle !important;
+    /* กำหนดความกว้างของคอลัมน์ที่ห้า */
+}
+
+.project_task_table th:nth-child(6),
+.project_task_table td:nth-child(6) {
+    width: 10%;
+    text-align: center !important;
+    vertical-align: middle !important;
+    /* กำหนดความกว้างของคอลัมน์ที่หก */
+}
+
+.project_task_table th:nth-child(7),
+.project_task_table td:nth-child(7) {
+    width: 10%;
+    text-align: center !important;
+    vertical-align: middle !important;
+    /* กำหนดความกว้างของคอลัมน์ที่หก */
+}
+
+.project_task_table td {
+    height: auto;
+    /* เพิ่มความสูงของแถวอัตโนมัติหากข้อมูลยาวเกิน */
 }

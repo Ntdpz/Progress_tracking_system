@@ -25,9 +25,14 @@ export default {
   },
   created() {
     // เช็คตำแหน่งของ user
-    if (this.user.user_position === "Developer") {
+    if (this.user.user_role === "Admin") {
+      // รีไดเรกไปยัง /Progress_Tracking/Dev
+      this.$router.push("/");
+    } else if (this.user.user_position === "Developer") {
       // รีไดเรกไปยัง /Progress_Tracking/Dev
       this.$router.push("/Progress_Tracking/Dashbord");
+    } else if (this.user.user_position === "Implementer") {
+      this.$router.push("/Note_Management/dashboard");
     }
   },
   methods: {},

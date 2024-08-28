@@ -172,6 +172,124 @@
         </v-list>
       </v-list>
 
+      <!-- UserDev menu items -->
+      <v-list class="pa-0" v-show="user_position == 'Developer' && user_role !== 'Admin'" dense rounded>
+        <!-- ติดตามงาน Menu -->
+        <v-list-group
+          v-model="reportActiveworktracking"
+          :prepend-icon="'mdi-pencil'"
+          no-action
+          class="pl-2"
+        >
+          <template v-slot:activator>
+            <v-list-item-content>
+              <v-list-item-title>ProgressTrack</v-list-item-title>
+            </v-list-item-content>
+          </template>
+
+          <v-list-item @click="navigateTo('/manageProject')">
+            <v-list-item-content>
+              <v-list-item-title>
+                <v-icon color="primary" class="mr-2">mdi-puzzle</v-icon>
+                Project
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-group>
+      </v-list>
+
+      <!-- UserImp menu items -->
+      <v-list
+class="pa-0"
+        v-show="user_position == 'Implementer' && user_role !== 'Admin'"
+        dense
+        rounded
+      >
+        <!-- รายงานปัญหา Menu -->
+        <v-list-group
+          v-model="reportIssueGroupActive"
+          :prepend-icon="'mdi-alert-circle'"
+          no-action
+          class="pl-2"
+        >
+          <template v-slot:activator>
+            <v-list-item-content>
+              <v-list-item-title>ReportIssue</v-list-item-title>
+            </v-list-item-content>
+          </template>
+
+          <v-list-item @click="navigateTo('/custom/reportList')">
+            <v-list-item-content>
+              <v-list-item-title>
+                <v-icon color="primary" class="mr-2"
+                  >mdi-format-list-bulleted</v-icon
+                >
+                แสดงรายงานปัญหา
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item @click="navigateTo('/custom/reportCreate')">
+            <v-list-item-content>
+              <v-list-item-title>
+                <v-icon color="primary" class="mr-2">mdi-pencil</v-icon>
+                แจ้งรายงานปัญหา
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          
+
+          <v-list-item @click="navigateTo('/schedule')">
+            <v-list-item-content>
+              <v-list-item-title>
+                <v-icon color="primary" class="mr-2">mdi-calendar-month</v-icon>
+                ตารางงาน
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item @click="navigateTo('/dashboard')">
+            <v-list-item-content>
+              <v-list-item-title>
+                <v-icon color="primary" class="mr-2">mdi-view-dashboard</v-icon>
+                แดชบอร์ดรายงานปัญหา
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-group>
+
+        <!-- รายงานปัญหาเก่า -->
+        <v-list-group
+          v-for="(project, index) in project_issues"
+          :key="index"
+          :prepend-icon="project.action"
+          no-action
+          class="pl-2"
+        >
+          <template v-slot:activator>
+            <v-list-item-content>
+              <v-list-item-title>รายงานปัญหาเก่า</v-list-item-title>
+            </v-list-item-content>
+          </template>
+
+          <v-list-item
+            v-for="child in project.projectList"
+            :key="child.id"
+            :to="`/issueList/${child?.id}`"
+          >
+            <v-list-item-content>
+              <v-list-item-title>
+                <v-icon color="primary" class="mr-2"
+                  >mdi-format-list-bulleted</v-icon
+                >
+                {{ child.project_name_ENG }}
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-group>
+      </v-list>
+
       <!-- Logout button -->
       <v-list class="pt-0" dense rounded>
         <v-list-item @click="handleLogout()">
@@ -276,6 +394,7 @@ export default {
       clipped: false,
 
       user_role: "",
+      user_position: "",
       ownProject: [],
       projectIds: [],
       projectDetails: [
@@ -340,35 +459,7 @@ export default {
     await this.getUser();
     await this.getOwnProject();
   },
-  computed: {
-    filteredItems() {
-      if (this.user_role === "Admin") {
-      } else if (this.user_role === "User") {
-        const UserRole = this.menuOption.filter(
-          (item) => item.title !== "Manage User"
-        );
-        UserRole.splice(0, 0, {
-          icon: "mdi-calendar-month",
-          title: "ตารางงาน",
-          to: "/schedule",
-        });
-        UserRole.splice(0, 0, {
-          icon: "mdi-border-all",
-          title: "จัดการโครงการ",
-          to: "/manageProject",
-        });
-        UserRole.splice(0, 0, {
-          icon: "mdi-border-all",
-          title: "จัดการงาน",
-          to: "/task_management",
-        });
-
-        return UserRole;
-      } else {
-        return this.menuOption;
-      }
-    },
-  },
+  computed: {},
   methods: {
     goBack() {
       this.$router.back();
@@ -408,6 +499,7 @@ export default {
         .then((res) => {
           this.user_role = res.data[0]?.user_role;
           this.user_pic = res.data[0]?.user_pic;
+          this.user_position = res.data[0]?.user_position;
         });
     },
     async handleLogout() {
