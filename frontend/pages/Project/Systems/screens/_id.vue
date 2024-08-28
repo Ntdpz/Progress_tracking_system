@@ -628,62 +628,6 @@
             </v-row>
           </v-card-text>
 
-          <div>
-            <h3 style="padding-left: 20px">History tasks</h3>
-          </div>
-          <v-data-table :headers="historyHeaders" :items="historyTasks" item-key="id" class="table-with-border"
-            :sort-by="[{ key: 'update_date', order: 'desc' }]">
-            <template v-slot:item.task_detail="{ item }">
-              {{ item.task_detail ? item.task_detail : "No determine" }}
-            </template>
-
-            <!-- โค้ดประสาทีนี้เรียงตาม update_date -->
-            <template v-slot:item.user_update="{ item }">
-              {{ item.user_update ? item.user_update : "No determine" }}
-            </template>
-
-            <!-- โค้ดประสาทีนี้เรียงตาม update_date -->
-            <template v-slot:item.update_date="{ item }">
-              {{
-              item.update_date ? formatDate(item.update_date) : "No determine"
-              }}
-            </template>
-
-            <!-- ส่วนที่เหลือจะใช้ formatDate ตามปกติ -->
-            <template v-slot:item.task_plan_start="{ item }">
-              {{
-              item.task_plan_start
-              ? formatDate(item.task_plan_start)
-              : "No determine"
-              }}
-            </template>
-            <template v-slot:item.task_plan_end="{ item }">
-              {{
-              item.task_plan_end
-              ? formatDate(item.task_plan_end)
-              : "No determine"
-              }}
-            </template>
-            <template v-slot:item.task_actual_start="{ item }">
-              {{
-              item.task_actual_start
-              ? formatDate(item.task_actual_start)
-              : "No determine"
-              }}
-            </template>
-            <template v-slot:item.task_actual_end="{ item }">
-              {{
-              item.task_actual_end
-              ? formatDate(item.task_actual_end)
-              : "No determine"
-              }}
-            </template>
-            <!-- โค้ดประสาทีนี้เรียงตาม update_date -->
-            <template v-slot:item.task_manday="{ item }">
-              {{ item.task_manday !== null ? item.task_manday : 0 }} days
-            </template>
-          </v-data-table>
-
           <v-card-actions>
             <v-btn color="error" @click="dialog = false">Close</v-btn>
           </v-card-actions>
@@ -1068,7 +1012,7 @@
     <v-data-table :headers="taskHeaders" :items="filteredTasks" item-key="task_id"  class="elevation-1">
       
      <template v-slot:item="{ item }">
-    <tr>
+    <tr @click="openDialog(item)">
       <!-- ข้อมูลต่าง ๆ ของ task -->
       <td>{{ item.task_id }}</td>
       <td>{{ item.task_name }}</td>
@@ -1093,11 +1037,6 @@
         </v-btn>
         <v-btn v-if="(item.memberDetails && item.memberDetails.id === user.id) || user.user_role === 'Admin'" icon color="primary" @click.stop="openSaveHistoryDialog(item)">
           <v-icon>mdi-content-save</v-icon>
-        </v-btn>
-
-        <!-- New button -->
-        <v-btn icon color="secondary" @click.stop="handleNewAction(item)">
-          <v-icon>mdi-new-icon</v-icon> <!-- Replace mdi-new-icon with the icon you need -->
         </v-btn>
       </td>
     </tr>
