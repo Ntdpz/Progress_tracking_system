@@ -178,368 +178,7 @@
       <v-divider></v-divider>
 
 
-      <!-- v-tabs for filtering tasks by status -->
-      <v-tabs v-model="selectedStatus">
-        <v-tab>All</v-tab>
-        <v-tab v-for="(status, index) in statusOptions" :key="index">{{
-          status
-          }}</v-tab>
-        <v-tab-item>
-          <v-row>
-            <!-- Dropdown for sorting -->
-            <v-col cols="12" class="text-right">
-              <v-menu offset-y>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn text v-bind="attrs" v-on="on" class="text-right">
-                    sort by <v-icon>mdi-menu-down</v-icon>
-                  </v-btn>
-                </template>
-                <v-list>
-                  <v-list-item @click="sortTasks('task_name')">Sort by Task Name A-Z</v-list-item>
-                  <v-list-item @click="sortTasks('-task_name')">Sort by Task Name Z-A</v-list-item>
-                  <v-list-item @click="sortTasks('task_progress')">Sort by Progress (Low to High)</v-list-item>
-                  <v-list-item @click="sortTasks('-task_progress')">Sort by Progress (High to Low)</v-list-item>
-                  <v-list-item @click="sortTasks('task_plan_start')">Sort by Plan Start first date</v-list-item>
-                  <v-list-item @click="sortTasks('task_plan_start_last')">Sort by Plan Start last date</v-list-item>
-                  <v-list-item @click="sortTasks('task_plan_end')">Sort by Plan End first date</v-list-item>
-                  <v-list-item @click="sortTasks('task_plan_end_last')">Sort by Plan End last date</v-list-item>
-                  <!-- Add more sorting options as needed -->
-                </v-list>
-              </v-menu>
-            </v-col>
-
-            <v-col v-for="(task, index) in paginatedTasks" :key="index" cols="12" md="6" lg="4">
-              <v-card class="mb-3" style="overflow-y: auto" @click="openDialog(task)">
-                <v-card-title><span style="margin-right: auto">ชื่องาน: {{ task.task_name }}</span></v-card-title>
-                <v-card-text>
-                  <!-- Row 1: Task Name and Progress -->
-                  <div class="d-flex justify-space-between">
-                    <v-row>
-                      <v-col>
-                        <span style="margin-right: auto; font-size: 17px">Progress :
-                        </span>
-                      </v-col>
-                      <v-col>
-                        <v-progress-linear :color="getProgressColorTask(parseInt(task.task_progress))
-        " height="15" :value="parseInt(task.task_progress)" striped :style="{ width: '100%' }">
-                          <strong :style="{ color: '#5E5E5E' }">{{ parseInt(task.task_progress) }}%</strong>
-                        </v-progress-linear>
-                      </v-col>
-                    </v-row>
-                  </div>
-
-                  <!-- Row 2: Task Detail -->
-                  <p class="clamp-text">
-                    Task Detail:
-                    {{ task.task_detail ? task.task_detail : "Not determined" }}
-                  </p>
-
-                  <!-- Row 3: User Details -->
-                  <div style="height: 100px">
-                    <v-divider></v-divider>
-                    <v-list v-if="task.memberDetails">
-                      <v-list-item>
-                        <v-list-item-avatar>
-                          <img :src="task.memberDetails.user_pic" alt="User Pic" />
-                        </v-list-item-avatar>
-                        <v-list-item-content>
-                          <v-list-item-title>First Name:
-                            {{
-                            task.memberDetails.user_firstname
-                            }}</v-list-item-title>
-                          <v-list-item-subtitle>Last Name:
-                            {{
-                            task.memberDetails.user_lastname
-                            }}</v-list-item-subtitle>
-                          <v-list-item-subtitle>Position:
-                            {{
-                            task.memberDetails.user_position
-                            }}</v-list-item-subtitle>
-                        </v-list-item-content>
-                      </v-list-item>
-                    </v-list>
-                    <v-card-text v-else>
-                      <div style="text-align: center; height: 70px">
-                        <p>User not determined</p>
-                      </div>
-                    </v-card-text>
-                    <v-divider></v-divider>
-                  </div>
-                </v-card-text>
-                <v-card-actions>
-                  <!-- Row 4: Plan Start, Plan End, Buttons -->
-                  <div style="display: flex; flex-direction: column">
-                    <p>Status : {{ task.task_status }}</p>
-                    <!-- Plan Start -->
-                    <p>
-                      Plan Start:
-                      {{
-                      task.task_plan_start
-                      ? formatDate(task.task_plan_start)
-                      : "Not determined"
-                      }}
-                    </p>
-
-                    <!-- Plan End -->
-                    <p>
-                      Plan End:
-                      {{
-                      task.task_plan_end
-                      ? formatDate(task.task_plan_end)
-                      : "Not determined"
-                      }}
-                    </p>
-
-                    <!-- Buttons -->
-                    <div>
-                      <v-btn v-if="user.user_role === 'Admin'" icon color="primary" @click.stop="
-        dialogEditTaskForm = true;
-      editedTask = task;
-      ">
-                        <v-icon>mdi-pencil</v-icon>
-                      </v-btn>
-                      <v-btn v-if="(task.memberDetails &&
-          task.memberDetails.id === user.id) ||
-        user.user_role === 'Admin'
-        " icon color="primary" @click.stop="openSaveHistoryDialog(task)">
-                        <v-icon>mdi-content-save</v-icon>
-                      </v-btn>
-                      <v-btn v-if="(task.memberDetails &&
-          task.memberDetails.id === user.id) ||
-        user.user_role === 'Admin'
-        " icon color="error" @click.stop="deleteTask(task)">
-                        <v-icon>mdi-delete</v-icon>
-                      </v-btn>
-                      <v-btn v-if="!task.memberDetails || !task.memberDetails.id" color="primary"
-                        style="margin-left: 75px" @click.stop="takeTask(task)">
-                        Take this task.
-                      </v-btn>
-                    </div>
-                  </div>
-                </v-card-actions>
-              </v-card>
-            </v-col>
-          </v-row>
-
-          <!-- Pagination -->
-          <v-pagination v-model="currentPage" :length="numberOfPages" @input="changePage" />
-        </v-tab-item>
-
-        <v-tab-item v-for="(status, index) in statusOptions" :key="index">
-          <v-row>
-            <v-col v-for="(task, index) in filteredTasksByStatus(status)" :key="index" cols="12" md="6" lg="4">
-              <v-card class="mb-3" style="overflow-y: auto" @click="openDialog(task)">
-                <v-card-title><span style="margin-right: auto">ชื่องาน: {{ task.task_name }}</span></v-card-title>
-                <v-card-text>
-                  <!-- Row 1: Task Name and Progress -->
-                  <div class="d-flex justify-space-between">
-                    <v-row>
-                      <v-col>
-                        <span style="margin-right: auto; font-size: 17px">Progress :
-                        </span>
-                      </v-col>
-                      <v-col>
-                        <v-progress-linear color="primary" height="15" :value="parseInt(task.task_progress)" striped
-                          :style="{ width: '100%' }">
-                          <strong :style="{ color: 'white' }">{{ parseInt(task.task_progress)
-                            }}%</strong></v-progress-linear>
-                      </v-col>
-                    </v-row>
-                  </div>
-
-                  <!-- Row 2: Task Detail -->
-                  <p style="font-size: 16px; line-height: 1.5em; height: 170px">
-                    Task Detail:
-                    {{ task.task_detail ? task.task_detail : "Not determined" }}
-                  </p>
-
-                  <!-- Row 3: User Details -->
-                  <div style="height: 100px">
-                    <v-divider></v-divider>
-                    <v-list v-if="task.memberDetails">
-                      <v-list-item>
-                        <v-list-item-avatar>
-                          <img :src="task.memberDetails.user_pic" alt="User Pic" />
-                        </v-list-item-avatar>
-                        <v-list-item-content>
-                          <v-list-item-title>First Name:
-                            {{
-                            task.memberDetails.user_firstname
-                            }}</v-list-item-title>
-                          <v-list-item-subtitle>Last Name:
-                            {{
-                            task.memberDetails.user_lastname
-                            }}</v-list-item-subtitle>
-                          <v-list-item-subtitle>Position:
-                            {{
-                            task.memberDetails.user_position
-                            }}</v-list-item-subtitle>
-                        </v-list-item-content>
-                      </v-list-item>
-                    </v-list>
-                    <v-card-text v-else>
-                      <div style="text-align: center; height: 70px">
-                        <p>User not determined</p>
-                      </div>
-                    </v-card-text>
-                    <v-divider></v-divider>
-                  </div>
-                </v-card-text>
-                <v-card-actions>
-                  <!-- Row 4: Plan Start, Plan End, Buttons -->
-                  <div style="display: flex; flex-direction: column">
-                    <p>Status : {{ task.task_status }}</p>
-                    <!-- Plan Start -->
-                    <p>
-                      Plan Start:
-                      {{
-                      task.task_plan_start
-                      ? formatDate(task.task_plan_start)
-                      : "Not determined"
-                      }}
-                    </p>
-
-                    <!-- Plan End -->
-                    <p>
-                      Plan End:
-                      {{
-                      task.task_plan_end
-                      ? formatDate(task.task_plan_end)
-                      : "Not determined"
-                      }}
-                    </p>
-
-                    <!-- Buttons -->
-                    <div>
-                      <v-btn icon color="primary" @click.stop="
-      dialogEditTaskForm = true;
-      editedTask = task;
-      ">
-                        <v-icon>mdi-pencil</v-icon>
-                      </v-btn>
-                      <v-btn icon color="primary" @click.stop="openSaveHistoryDialog(task)">
-                        <v-icon>mdi-content-save</v-icon>
-                      </v-btn>
-
-                      <v-btn icon color="error" @click.stop="deleteTask(task)">
-                        <v-icon>mdi-delete</v-icon>
-                      </v-btn>
-                    </div>
-                  </div>
-                </v-card-actions>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-tab-item>
-
-        <v-tab>Task to day</v-tab>
-        <v-tab-item>
-          <v-row>
-            <v-col v-for="(task, index) in tasksToday" :key="index" cols="12" md="6" lg="4">
-              <v-card class="mb-3" style="overflow-y: auto" @click="openDialog(task)">
-                <v-card-title><span style="margin-right: auto">ชื่องาน: {{ task.task_name }}</span></v-card-title>
-                <v-card-text>
-                  <!-- Row 1: Task Name and Progress -->
-                  <div class="d-flex justify-space-between">
-                    <v-row>
-                      <v-col>
-                        <span style="margin-right: auto; font-size: 17px">Progress :
-                        </span>
-                      </v-col>
-                      <v-col>
-                        <v-progress-linear color="primary" height="15" :value="parseInt(task.task_progress)" striped
-                          :style="{ width: '100%' }">
-                          <strong :style="{ color: 'white' }">{{ parseInt(task.task_progress)
-                            }}%</strong></v-progress-linear>
-                      </v-col>
-                    </v-row>
-                  </div>
-
-                  <!-- Row 2: Task Detail -->
-                  <p style="font-size: 16px; line-height: 1.5em; height: 170px">
-                    Task Detail:
-                    {{ task.task_detail ? task.task_detail : "Not determined" }}
-                  </p>
-
-                  <!-- Row 3: User Details -->
-                  <div style="height: 100px">
-                    <v-divider></v-divider>
-                    <v-list v-if="task.memberDetails">
-                      <v-list-item>
-                        <v-list-item-avatar>
-                          <img :src="task.memberDetails.user_pic" alt="User Pic" />
-                        </v-list-item-avatar>
-                        <v-list-item-content>
-                          <v-list-item-title>First Name:
-                            {{
-                            task.memberDetails.user_firstname
-                            }}</v-list-item-title>
-                          <v-list-item-subtitle>Last Name:
-                            {{
-                            task.memberDetails.user_lastname
-                            }}</v-list-item-subtitle>
-                          <v-list-item-subtitle>Position:
-                            {{
-                            task.memberDetails.user_position
-                            }}</v-list-item-subtitle>
-                        </v-list-item-content>
-                      </v-list-item>
-                    </v-list>
-                    <v-card-text v-else>
-                      <div style="text-align: center; height: 70px">
-                        <p>User not determined</p>
-                      </div>
-                    </v-card-text>
-                    <v-divider></v-divider>
-                  </div>
-                </v-card-text>
-                <v-card-actions>
-                  <!-- Row 4: Plan Start, Plan End, Buttons -->
-                  <div style="display: flex; flex-direction: column">
-                    <p>Status : {{ task.task_status }}</p>
-                    <!-- Plan Start -->
-                    <p>
-                      Plan Start:
-                      {{
-                      task.task_plan_start
-                      ? formatDate(task.task_plan_start)
-                      : "Not determined"
-                      }}
-                    </p>
-
-                    <!-- Plan End -->
-                    <p>
-                      Plan End:
-                      {{
-                      task.task_plan_end
-                      ? formatDate(task.task_plan_end)
-                      : "Not determined"
-                      }}
-                    </p>
-
-                    <!-- Buttons -->
-                    <div>
-                      <v-btn icon color="primary" @click.stop="
-      dialogEditTaskForm = true;
-      editedTask = task;
-      ">
-                        <v-icon>mdi-pencil</v-icon>
-                      </v-btn>
-                      <v-btn icon color="primary" @click.stop="openSaveHistoryDialog(task)">
-                        <v-icon>mdi-content-save</v-icon>
-                      </v-btn>
-
-                      <v-btn icon color="error" @click.stop="deleteTask(task)">
-                        <v-icon>mdi-delete</v-icon>
-                      </v-btn>
-                    </div>
-                  </div>
-                </v-card-actions>
-              </v-card>
-            </v-col>
-          </v-row>
-        </v-tab-item>
-      </v-tabs>
+      
 
       <!-- Dialog for Task Details -->
       <v-dialog v-model="dialog" width="9000px">
@@ -560,7 +199,7 @@
                     {{ dialogTaskDetails.task_detail }}
                   </p>
                   <p>
-                    <strong>Status:</strong> {{ dialogTaskDetails.task_status }}
+                    <strong>Type:</strong> {{ dialogTaskDetails.task_type }}
                   </p>
                   <p>
                     <strong>Manday:</strong>
@@ -986,7 +625,7 @@
 
               <!-- Status -->
               <v-col cols="12" md="6">
-                <v-select v-model="newTask.task_status" :items="statusOptions" label="Type of Task"></v-select>
+                <v-select v-model="newTask.task_type" :items="statusOptions" label="Type of Task"></v-select>
               </v-col>
             </v-row>
             <!-- Detail -->
@@ -1043,7 +682,7 @@
   </template>
     </v-data-table>
   </div>
-  
+  <!-- test -->
 </template>
 
 <script>
@@ -1075,7 +714,7 @@ export default {
       historyTaskData: {
         task_name: "",
         task_detail: "",
-        task_status: "",
+        // task_status: "",
         task_type: "",
         task_progress: "",
         task_plan_start: "",
@@ -1125,7 +764,7 @@ export default {
       editedTask: {
         task_name: "",
         task_detail: "",
-        task_status: "",
+        // task_status: "",
         task_type: "",
         task_manday: "",
         task_progress: "",
@@ -1183,7 +822,6 @@ export default {
       newTask: {
         task_id: "",
         task_name: "",
-        task_status: "Not started yet",
         task_type: "",
         person_in_charge: "",
         task_plan_start: null,
@@ -2129,82 +1767,80 @@ export default {
         params: { id: this.$route.params.id },
       });
     },
-    //Create new task
-    async createTask() {
-      try {
-        const {
-          task_id,
-          task_name,
-          task_detail = "",
-          task_status = "",
-          task_type = "",
-          task_plan_start = "",
-          task_plan_end = "",
-          task_member_id,
-          task_manday = "",
-        } = this.newTask;
+   // Create new task
+async createTask() {
+  try {
+    const {
+      task_id,
+      task_name,
+      task_detail = "",
+      task_type = "",
+      task_plan_start = "",
+      task_plan_end = "",
+      task_member_id,
+      task_manday = "",
+    } = this.newTask;
 
-        if (!task_id || !task_name) {
-          throw new Error("Task ID and Task Name are required.");
-        }
+    // ตรวจสอบว่ามี task_id และ task_name หรือไม่
+    if (!task_id || !task_name) {
+      throw new Error("Task ID and Task Name are required.");
+    }
 
-        const response = await fetch(
-          `http://localhost:7777/tasks/createTasks`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              task_id,
-              task_name,
-              task_detail,
-              task_status,
-              task_type,
-              screen_id: this.screenId,
-              project_id: this.project_id,
-              system_id: this.system_id,
-              task_plan_start,
-              task_plan_end,
-              task_member_id,
-              task_manday,
-            }),
-          }
-        );
+    // ส่งข้อมูลไปยัง backend เพื่อสร้าง task ใหม่
+    const response = await fetch(`http://localhost:7777/tasks/createTasks`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        task_id,
+        task_name,
+        task_detail,
+        task_type,
+        screen_id: this.screenId, // ควรแน่ใจว่า this.screenId ถูกกำหนดค่าแล้ว
+        project_id: this.project_id, // ควรแน่ใจว่า this.project_id ถูกกำหนดค่าแล้ว
+        system_id: this.system_id, // ควรแน่ใจว่า this.system_id ถูกกำหนดค่าแล้ว
+        task_plan_start,
+        task_plan_end,
+        task_member_id,
+        task_manday,
+      }),
+    });
 
-        if (response.ok) {
-          Swal.fire({
-            icon: "success",
-            title: "Task created successfully",
-          });
-          this.dialogAddTaskForm = false;
-          this.fetchTasks();
-          this.fetchScreenDetail();
+    // ตรวจสอบว่าคำสั่ง HTTP สำเร็จหรือไม่
+    if (response.ok) {
+      Swal.fire({
+        icon: "success",
+        title: "Task created successfully",
+      });
+      this.dialogAddTaskForm = false; // ปิดฟอร์มการสร้าง task ใหม่
+      this.fetchTasks(); // โหลดรายการ tasks ใหม่
+      this.fetchScreenDetail(); // โหลดข้อมูล screen ใหม่
 
-          // Reset form after creating the task
-          this.newTask = {
-            task_id: "",
-            task_name: "",
-            task_detail: "",
-            task_status: "",
-            task_type: "",
-            task_plan_start: "",
-            task_plan_end: "",
-            task_member_id: "",
-            task_manday: "",
-          };
-        } else {
-          throw new Error("Failed to create new task");
-        }
-      } catch (error) {
-        console.error("Error creating new task:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Error creating new task",
-          text: "Please try again",
-        });
-      }
-    },
+      // Reset form after creating the task
+      this.newTask = {
+        task_id: "",
+        task_name: "",
+        task_detail: "",
+        task_type: "",
+        task_plan_start: "",
+        task_plan_end: "",
+        task_member_id: "",
+        task_manday: "",
+      };
+    } else {
+      throw new Error("Failed to create new task");
+    }
+  } catch (error) {
+    console.error("Error creating new task:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Error creating new task",
+      text: "Please try again",
+    });
+  }
+},
+
 
     async goToHistoryTasks() {
       await this.fetchDeletedTasks();

@@ -535,5 +535,55 @@ router.get("/history_tasks/:task_id", async (req, res) => {
   }
 });
 
+// Route for creating tasks
+router.post('/createTasks', async (req, res) => {
+    try {
+        const {
+            task_id,
+            task_name,
+            task_detail,
+            task_type,
+            screen_id,
+            project_id,
+            system_id,
+            task_plan_start,
+            task_plan_end,
+            task_member_id,
+            task_manday // เพิ่มฟิลด์ task_manday เข้ามา
+        } = req.body;
+
+        const query =
+          "INSERT INTO tasks (task_id, task_name, task_detail, task_type, screen_id, project_id, system_id, task_plan_start, task_plan_end, task_member_id, task_manday) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        await new Promise((resolve, reject) => {
+            connection.query(
+              query,
+              [
+                task_id,
+                task_name,
+                task_detail,
+                task_type,
+                screen_id,
+                project_id,
+                system_id,
+                task_plan_start,
+                task_plan_end,
+                task_member_id,
+                task_manday
+              ],
+              (err, result) => {
+                if (err) reject(err);
+                resolve(result);
+              }
+            );
+        });
+
+        res.status(200).json({ message: 'Task created successfully' });
+    } catch (error) {
+        console.error('Error creating task:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
 // Exporting the router
 module.exports = router;
