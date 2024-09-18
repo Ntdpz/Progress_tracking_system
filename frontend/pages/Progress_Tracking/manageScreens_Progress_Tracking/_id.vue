@@ -69,7 +69,7 @@
     <div class="screen-cards">
       <v-container fluid>
         <v-row dense>
-          <v-col v-for="screen in paginatedScreens" :key="screen.id" cols="12" sm="6" md="4" lg="3" xl="2"
+          <v-col v-for="screen in paginatedScreens" :key="screen.id" 
             class="screen-card-col">
             <ScreenCard :userSystems="userSystems" :screenProjectId="systemData.project_id"
               :screenSystemId="systemData.id" :screenId="screen.id" :screenCode="screen.screen_code"
@@ -355,6 +355,12 @@ export default {
 
 .large-icon {
   font-size: 40px;
+}
+.screen-card-col {
+  flex: 0 0 325px;
+  /* Set fixed width for each column */
+  margin: 10px;
+  /* Adjust spacing between cards */
 }
 
 .pagination {
