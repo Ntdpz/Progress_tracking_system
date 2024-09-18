@@ -21,7 +21,7 @@
 
         <v-btn v-if="user.user_role === 'Admin'" color="primary" class="text-none mb-4" @click="goToCreateProject"
           style="margin-left: 50px; width: 10%; height: 70%">
-          <v-icon>mdi-plus</v-icon>
+          ADD PROJECT
         </v-btn>
         <v-btn v-if="user.user_role === 'Admin'" color="error" @click="goToHistoryProject"
           style="margin-left: 10px; width: 10%; height: 70%" class="text-none mb-4">

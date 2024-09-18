@@ -4,7 +4,7 @@
     <Loader v-if="$store.getters.isLoading" />
     <v-row style="margin-bottom: 20px" align="center">
       <!-- Card detel Project -->
-      <v-card class="mx-auto align-start" width="95%" hover>
+      <v-card class="mx-auto align-start" width="98%">
         <projectDetail :project="project" />
       </v-card>
 
@@ -64,11 +64,11 @@
 
     <!-- Search bar -->
     <v-row no-gutters>
-      <v-col cols="12">
+      <v-col cols="12" :style="{ 'margin-top': '10px' }">
         <input type="text" v-model="searchQuery" placeholder="Search..." :style="{
           'margin-bottom': '10px',
           width: user.user_role === 'Admin' ? '70%' : '100%', // เพิ่มเงื่อนไขในการกำหนด width
-          padding: '10px',
+          padding: '5px',
           border: '1px solid #ccc',
           'border-radius': '5px',
           'font-size': '16px',
@@ -76,7 +76,8 @@
 
         <v-btn v-if="user.user_role === 'Admin'" color="primary" class="text-none mb-4" @click="goToCreateSystem"
           style="margin-left: 50px; width: 10%; height: 70%">
-          <v-icon>mdi-plus</v-icon></v-btn>
+          ADD SYSTEM
+        </v-btn>
         <!-- เพิ่มปุ่ม Show History System -->
         <v-btn v-if="user.user_role === 'Admin'" color="error" class="text-none mb-4" @click="goToHistorySystems"
           style="margin-left: 10px; width: 10%; height: 70%">
@@ -109,7 +110,7 @@
 
           <td>{{ item.system_manday ? item.system_manday : "0" }}</td>
           <!-- เพิ่มปุ่ม manage user systems -->
-          <td  v-if="user.user_role === 'Admin'">
+          <td v-if="user.user_role === 'Admin'">
             <!-- Dropdown menu for other actions -->
             <v-menu offset-y>
               <template v-slot:activator="{ on, attrs }">
@@ -334,7 +335,7 @@ import axios from "axios";
 import { encodeId, decodeId } from "../../utils/crypto";
 import projectDetail from "@/components/Progress_tracking/Project/projectDetail.vue";
 export default {
-   head() {
+  head() {
     return {
       title: "ManageSystems",
     };
