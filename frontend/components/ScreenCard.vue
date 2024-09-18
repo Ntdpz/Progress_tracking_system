@@ -1,6 +1,6 @@
 <template>
-    <div class="card-wrapper">
-        <div class="card">
+        <v-card>
+            <!-- Image Section -->
             <v-img class="white--text" :height="imageHeight" :src="imageSrc">
                 <v-row class="align-center justify-space-between">
                     <!-- Left Side: ID Chip -->
@@ -23,43 +23,43 @@
                     </v-col>
                 </v-row>
             </v-img>
+
+            <!-- Card Content -->
             <v-card>
                 <v-card-title>
                     <strong>{{ screenName }}</strong>
                 </v-card-title>
                 <v-card-subtitle>
-                    <strong>Plan:</strong> {{ screenPlanStartDate }} - {{ screenPlanEndDate }} <br>
-                    <strong>Actual:</strong> {{ screenActualStartDate }} - {{ screenActualEndDate }}<br>
+                    <strong>Plan:</strong> {{ screenPlanStartDate }} - {{ screenPlanEndDate }} <br />
+                    <strong>Actual:</strong> {{ screenActualStartDate }} - {{ screenActualEndDate }}<br />
                     <strong>Assignee:</strong> {{ screenAssignee }}
                 </v-card-subtitle>
 
+                <!-- Card Actions -->
                 <v-card-actions>
-                    <v-btn color="black" outlined @click="showDialog = true">
-                        Edit
-                    </v-btn>
-
-                    <v-btn color="blue">
-                        Claim
-                    </v-btn>
+                    <v-btn  color="black" outlined @click="showDialog = true">Edit</v-btn>
+                    <v-btn color="blue">Claim</v-btn>
                 </v-card-actions>
             </v-card>
+
+            <!-- Edit Dialog -->
             <v-dialog v-model="showDialog" max-width="800px">
                 <v-card>
-                    <v-card-title class="justify center">
+                    <v-card-title class="justify-center">
                         <span class="text-h4">Edit Screen</span>
                     </v-card-title>
                     <v-card-text>
                         <v-container>
                             <v-row>
                                 <v-col cols="6">
-                                    <v-text-field label="Screen id" v-model="screenId" prepend-inner-icon="mdi-lock"
+                                    <v-text-field label="Screen ID" v-model="screenId" prepend-inner-icon="mdi-lock"
                                         disabled outlined></v-text-field>
                                 </v-col>
                                 <v-col cols="6">
                                     <v-text-field label="Screen Name" v-model="screenName" outlined></v-text-field>
                                 </v-col>
                             </v-row>
-                            <!-- plan start& plan end -->
+                            <!-- Plan Start & End -->
                             <v-row>
                                 <v-col cols="6">
                                     <v-text-field label="Plan Start Date" v-model="screenPlanStartDate"
@@ -88,25 +88,17 @@
                                     <v-text-field label="Screen Tester" v-model="screenTester" outlined></v-text-field>
                                 </v-col>
                             </v-row>
-                            </v-container>
+                        </v-container>
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="blue darken-1" text @click="showDialog = false">
-                            Save
-                        </v-btn>
-                        <v-btn color="blue darken-1" text @click="showDialog = false">
-                            Not Save
-                        </v-btn>
-                        <v-btn color="red darken-1" text @click="showDialog = false">
-                            Delete
-                        </v-btn>
+                        <v-btn color="blue darken-1" text @click="showDialog = false">Save</v-btn>
+                        <v-btn color="blue darken-1" text @click="showDialog = false">Not Save</v-btn>
+                        <v-btn color="red darken-1" text @click="showDialog = false">Delete</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>
-        </div>
-    </div>
-
+        </v-card>
 </template>
 
 <script>
@@ -118,6 +110,10 @@ export default {
     },
     name: "ScreenCard",
     props: {
+        isRestrictedPosition: {
+            type: Boolean,
+            default: false
+        },
         screenId: {
             type: String,
             required: true
@@ -171,24 +167,19 @@ export default {
 </script>
 
 <style scoped>
-.card-wrapper {
-    position: relative;
-    display: inline-block;
-}
+
 .progress-status {
-    background-color: #374AAB;
+    background-color: #374aab;
     border-radius: 20px;
     margin-top: 5px;
     margin-right: 5px;
 }
-.customer-red {
-    color: red;
-}
-/* center the text */
+
 .text-h4 {
     text-align: center;
-    
 }
 
-
+.v-card-actions {
+    justify-content: flex-end;
+}
 </style>

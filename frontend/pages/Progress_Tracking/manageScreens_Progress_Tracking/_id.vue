@@ -67,24 +67,26 @@
 
     <!-- Screen Cards -->
     <div class="screen-cards">
-      <v-row>
-        <v-col cols="12" md="4" v-for="screen in paginatedScreens" :key="screen.id">
-          <ScreenCard :isRestrictedPosition="isRestrictedPosition" :userSystems="userSystems"
-            :screenProjectId="systemData.project_id" :screenSystemId="systemData.id" :screenId="screen.id"
-            :screenCode="screen.screen_code" :screenName="screen.screen_name" :screenLevel="screen.screen_level"
-            :screenStatus="screen.screen_status" :screenProgress="screen.screen_progress"
-            :screenPlanStartDate="screen.screen_plan_start" :screenPlanEndDate="screen.screen_plan_end"
-            :screenActualStartDate="screen.screen_actual_start" :screenActualEndDate="screen.screen_actual_end"
-            :ImageSrc="screen.screen_pic" :design-progress="screen.screen_progress_status_design"
-            :dev-progress="screen.screen_progress_status_dev" @click="navigateToScreen(screen.id)"
-            @update="handleUpdate" @delete="handleDeleteScreen" @submit-edit="handleSubmitEdit" />
-        </v-col>
-      </v-row>
+      <v-container fluid>
+        <v-row dense>
+          <v-col v-for="screen in paginatedScreens" :key="screen.id" cols="12" sm="6" md="4" lg="3" xl="2"
+            class="screen-card-col">
+            <ScreenCard :userSystems="userSystems" :screenProjectId="systemData.project_id"
+              :screenSystemId="systemData.id" :screenId="screen.id" :screenCode="screen.screen_code"
+              :screenName="screen.screen_name" :screenLevel="screen.screen_level" :screenStatus="screen.screen_status"
+              :screenProgress="Number(screen.screen_progress)":screenPlanStartDate="screen.screen_plan_start"
+              :screenPlanEndDate="screen.screen_plan_end" :screenActualStartDate="screen.screen_actual_start"
+              :screenActualEndDate="screen.screen_actual_end" :ImageSrc="screen.screen_pic"
+              :design-progress="screen.screen_progress_status_design" :dev-progress="screen.screen_progress_status_dev"
+              :isRestrictedPosition="isRestrictedPosition" @click="navigateToScreen(screen.id)" @update="handleUpdate"
+              @delete="handleDeleteScreen" @submit-edit="handleSubmitEdit" />
+          </v-col>
+        </v-row>
+      </v-container>
+
+      <!-- Pagination -->
+      <v-pagination v-model="page" :length="totalPages" :total-visible="5" class="pagination"></v-pagination>
     </div>
-
-    <!-- Pagination -->
-    <v-pagination v-model="page" :length="totalPages" :total-visible="5" class="pagination"></v-pagination>
-
     <!-- Dialogs -->
     <v-dialog v-model="addScreenDialog" max-width="800px">
       <add-form :users="userSystems" :systemId="systemid" :projectId="systemData.project_id"
@@ -187,15 +189,9 @@ export default {
 
     try {
       const systemResponse = await $axios.$get(`/systems/getOne/${decodedId}`);
-      let screensResponse;
-
-      if (this.$auth.user.user_position === "Developer" || this.$auth.user.user_position === "Implementer") {
-        const userId = this.$auth.user.user_id;
-        screensResponse = await $axios.$get(`/user_screens/getScreenByUser_id/${systemResponse.project_id}/${decodedId}/${userId}`);
-      } else {
-        screensResponse = await $axios.$get(`/screens/getAll`, { params: { system_id: decodedId } });
-      }
-
+      const screensResponse = await $axios.$get(`/screens/getAll`, {
+        params: { system_id: decodedId },
+      });
       const userSystemsResponse = await $axios.$get(`/user_systems/getAllSystemId/${decodedId}`);
 
       return {
@@ -329,6 +325,7 @@ export default {
 </script>
 
 <style scoped>
+
 .circular .custom-card {
   padding-left: 10px;
   padding-right: 10px;
