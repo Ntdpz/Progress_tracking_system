@@ -21,15 +21,14 @@
             <strong>System:</strong> {{ systemData.system_nameEN || "Wait for name" }}
           </v-card-title>
           <v-card-subtitle>
-            ระบบ: {{ systemData.system_nameTH || "รอการตั้งชื่อ" }}<br />
-            Total Screen: {{ systemData.screen_count || 0 }} screens<br />
-            Plan: {{ formatDate(systemData.system_plan_start) || "Not determined" }}
-            To {{ formatDate(systemData.system_plan_end) || "Not determined" }}<br />
             Manday: {{
               systemData.system_manday !== null && !isNaN(systemData.system_manday)
                 ? Math.round(systemData.system_manday)
                 : 0
             }} days<br />
+            Total Screen: {{ systemData.screen_count || 0 }} screens<br />
+            Plan: {{ formatDate(systemData.system_plan_start) || "Not determined" }}
+            To {{ formatDate(systemData.system_plan_end) || "Not determined" }}<br />
           </v-card-subtitle>
         </v-col>
         <!-- Progress Detail -->
@@ -46,7 +45,7 @@
       <v-row>
         <!-- Search Bar -->
         <v-col cols="12" md="8">
-          <v-text-field  label="Search" append-icon="mdi-magnify" @input="searchScreens" outlined
+          <v-text-field label="Search" append-icon="mdi-magnify" @input="searchScreens" outlined
             placeholder="search by name" dense></v-text-field>
         </v-col>
         <!-- Add and History Buttons -->

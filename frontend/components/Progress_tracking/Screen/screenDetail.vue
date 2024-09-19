@@ -6,13 +6,7 @@
           <v-card-title>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
-                <v-icon
-                  v-bind="attrs"
-                  v-on="on"
-                  @click.stop="showUserDialog = true"
-                  color="#009933"
-                  size="45px"
-                >
+                <v-icon v-bind="attrs" v-on="on" @click.stop="showUserDialog = true" color="#009933" size="45px">
                   mdi-account-multiple
                 </v-icon>
               </template>
@@ -28,11 +22,11 @@
             Tasks Count : {{ screenDetails.task_count }} tasks<br />
             Screen Plan :
             {{
-              screenDetails.screen_plan_start && screenDetails.screen_plan_end
-                ? formatDate(screenDetails.screen_plan_start) +
-                  " To " +
-                  formatDate(screenDetails.screen_plan_end)
-                : "Not determined"
+            screenDetails.screen_plan_start && screenDetails.screen_plan_end
+            ? formatDate(screenDetails.screen_plan_start) +
+            " To " +
+            formatDate(screenDetails.screen_plan_end)
+            : "Not determined"
             }}
           </v-card-subtitle>
         </v-col>
@@ -41,63 +35,38 @@
             <v-row>
               <div class="custom-progress">
                 <v-col cols="auto" class="progress-item">
-                  <v-progress-circular
-                    class="my-progress"
-                    :rotate="360"
-                    :size="100"
-                    :width="15"
-                    :value="
-                      parseInt(screenDetails.screen_progress_status_design) || 0
-                    "
-                    color="purple"
-                  >
-                    {{
-                      parseInt(screenDetails.screen_progress_status_design) || 0
-                    }}%
+                  <v-progress-circular class="my-progress" :rotate="360" :size="100" :width="15" :value="parseInt(screenDetails.screen_progress_status_design) || 0
+                    " color="purple">
+                    {{ parseInt(screenDetails.screen_progress_status_design) || 0 }}%
                   </v-progress-circular>
-                  <v-card-subtitle>Design</v-card-subtitle>
+                  <v-card-subtitle class="subtitle">Design</v-card-subtitle>
                 </v-col>
               </div>
 
               <div class="custom-progress">
                 <v-col cols="auto" class="progress-item">
-                  <v-progress-circular
-                    class="my-progress"
-                    :rotate="-90"
-                    :size="100"
-                    :width="15"
-                    :value="
-                      parseInt(screenDetails.screen_progress_status_dev) || 0
-                    "
-                    color="blue"
-                  >
+                  <v-progress-circular class="my-progress" :rotate="-90" :size="100" :width="15" :value="parseInt(screenDetails.screen_progress_status_dev) || 0
+                    " color="blue">
                     {{ parseInt(screenDetails.screen_progress_status_dev) || 0 }}%
                   </v-progress-circular>
-                  <v-card-subtitle>Develop</v-card-subtitle>
+                  <v-card-subtitle class="subtitle">Develop</v-card-subtitle>
                 </v-col>
               </div>
+
               <div class="custom-progress">
                 <v-col cols="auto" class="progress-item">
-                  <v-progress-circular
-                    class="my-progress"
-                    :rotate="90"
-                    :size="100"
-                    :width="15"
-                    :value="parseInt(screenDetails.screen_progress) || 0"
-                    :color="
-                      getProgressColor(
-                        parseInt(screenDetails.screen_progress) || 0
-                      )
-                    "
-                  >
+                  <v-progress-circular class="my-progress" :rotate="90" :size="100" :width="15"
+                    :value="parseInt(screenDetails.screen_progress) || 0" :color="getProgressColor(parseInt(screenDetails.screen_progress) || 0)
+                      ">
                     {{ parseInt(screenDetails.screen_progress) || 0 }}%
                   </v-progress-circular>
-                  <v-card-subtitle>Total</v-card-subtitle>
+                  <v-card-subtitle class="subtitle">Total</v-card-subtitle>
                 </v-col>
               </div>
             </v-row>
           </div>
         </v-col>
+
       </v-row>
 
       <v-dialog v-model="showUserDialog" max-width="40%">
@@ -167,13 +136,21 @@ export default {
 .custom-progress {
   display: flex;
   flex-direction: column;
-  /* ให้เนื้อหาภายในจัดแนวในแนวตั้ง */
   align-items: center;
-  /* จัดแนวให้อยู่ตรงกลางในแนวตั้ง */
-
   margin: 20px;
-  /* เพิ่มระยะห่างรอบๆ ขอบของ div */
   padding: 10px;
-  /* เพิ่มระยะห่างภายใน div */
+}
+
+.progress-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.subtitle {
+  /* เพิ่มระยะห่างระหว่าง progress กับ subtitle */
+  font-size: 1rem;
+  text-align: center;
 }
 </style>

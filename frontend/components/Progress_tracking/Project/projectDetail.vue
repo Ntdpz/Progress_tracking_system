@@ -24,7 +24,7 @@
         <v-card-subtitle>
           Project Name Eng : {{ project.project_name_ENG }} <br />
           Project Manday :
-          {{ project.project_manday ? project.project_manday : "0" }} Days<br />
+          {{ project.project_manday ? project.project_manday : "0" }} days<br />
           Systems Count : {{ project.system_count }} systems<br />
           Project Plan :
           {{
