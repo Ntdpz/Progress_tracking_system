@@ -171,7 +171,7 @@
 
         <!-- ManageUsers button -->
         <v-list class="pt-0" dense rounded>
-          <v-list-item @click="navigateTo('/manageUser')">
+          <v-list-item v-if="!isRestrictedPosition()" @click="navigateTo('/manageUser')">
             <v-list-item-action>
               <v-icon color="black">mdi-account</v-icon>
               <!-- ใส่ไอคอนที่ต้องการ -->
@@ -407,6 +407,7 @@ export default {
   middleware: "auth",
   data() {
     return {
+      user: this.$auth.user,
       reportActiveworktracking: false,
       reportIssueGroupActive: false,
 
@@ -484,6 +485,10 @@ export default {
   },
   computed: {},
   methods: {
+      isRestrictedPosition() {
+      return this.user && this.user.user_position === "Admin";
+      },
+
     goBack() {
       this.$router.back();
     },
