@@ -53,7 +53,7 @@ export default {
   },
   computed: {
     user_systems() {
-      return this.userSystems; // Directly use the prop
+      return this.sortByPosition(this.userSystems);
     },
   },
   methods: {
@@ -71,16 +71,22 @@ export default {
     },
     getBase64Image(base64String) {
       if (!base64String) {
-        // If base64String is null or undefined, return an empty string or a placeholder image
         return "";
       }
       if (base64String.startsWith("data:image/jpeg;base64,")) {
-        // If the base64 string already includes the prefix, return it as is
         return base64String;
       } else {
-        // Otherwise, add the prefix and return the modified string
         return `data:image/jpeg;base64,${base64String}`;
       }
+    },
+    sortByPosition(userSystems) {
+      const positionOrder = ["System Analyst", "Developer", "Implementer"];
+      return userSystems.sort((a, b) => {
+        return (
+          positionOrder.indexOf(a.user_position) -
+          positionOrder.indexOf(b.user_position)
+        );
+      });
     },
   },
 };

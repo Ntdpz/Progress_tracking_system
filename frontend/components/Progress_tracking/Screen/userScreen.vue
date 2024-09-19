@@ -59,11 +59,12 @@ export default {
       const response = await this.$axios.$get(
         `/user_screens/getUserScreenByScreenId/${screenId}`
       );
-      this.userProjects = response;
+      this.userProjects = this.sortByPosition(response);
     } catch (error) {
       console.error(error);
     }
   },
+
   methods: {
     getColor(position) {
       switch (position) {
@@ -86,6 +87,15 @@ export default {
       } else {
         return `data:image/jpeg;base64,${base64String}`;
       }
+    },
+    sortByPosition(userProjects) {
+      const positionOrder = ["System Analyst", "Developer", "Implementer"];
+      return userProjects.sort((a, b) => {
+        return (
+          positionOrder.indexOf(a.user_position) -
+          positionOrder.indexOf(b.user_position)
+        );
+      });
     },
   },
 };
