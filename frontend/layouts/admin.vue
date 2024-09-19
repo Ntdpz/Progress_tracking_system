@@ -486,7 +486,7 @@ export default {
   computed: {},
   methods: {
       isRestrictedPosition() {
-      return this.user && this.user.user_position === "Admin";
+      return this.user && this.user.user_position !== "Admin";
       },
 
     goBack() {
