@@ -4,7 +4,7 @@
             <v-progress-circular :rotate="360" :size="100" :width="15" :value="value || 0" :color="computedColor">
                 {{ value || 0 }}%
             </v-progress-circular>
-            <h5>{{ label }}</h5>
+            <p>{{ label }}</p>
         </div>
     </v-col>
 </template>
