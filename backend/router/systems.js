@@ -322,12 +322,10 @@ router.get('/searchByProjectId_delete/:project_id', async (req, res) => {
 router.post("/createSystem", async (req, res) => {
   const {
     project_id,
-
     system_nameTH,
     system_nameEN,
     system_shortname,
-    selectedUser,
-    screen_progress // เพิ่มการรับค่า screen_progress จากข้อมูลที่ส่งมา
+    selectedUser, // ตรวจสอบว่า selectedUser มีค่าเป็น array หรือไม่
   } = req.body;
 
   const id = generateId(); // Generate a valid ID using generateId() function
@@ -338,15 +336,12 @@ router.post("/createSystem", async (req, res) => {
       [id, project_id, system_nameTH, system_nameEN, system_shortname], // Use the generated ID
       (err, results, fields) => {
         if (err) {
-          console.error(
-            "Error while inserting a system into the database",
-            err
-          );
+          console.error("Error while inserting a system into the database", err);
           return res.status(400).send();
         }
 
         // Create user_system relations if selectedUsers are provided
-        if (selectedUser) {
+        if (Array.isArray(selectedUser) && selectedUser.length > 0) {
           const userSystemValues = selectedUser.map((user_id) => [
             user_id,
             id, // Use the provided system_id
@@ -358,10 +353,7 @@ router.post("/createSystem", async (req, res) => {
             [userSystemValues],
             (error, results, fields) => {
               if (error) {
-                console.error(
-                  "Error while inserting users into the system",
-                  error
-                );
+                console.error("Error while inserting users into the system", error);
                 return res.status(400).send();
               }
               return res
@@ -381,6 +373,7 @@ router.post("/createSystem", async (req, res) => {
     return res.status(500).send();
   }
 });
+
 
 
 // Route to update system details
