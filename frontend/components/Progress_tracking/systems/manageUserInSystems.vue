@@ -3,7 +3,7 @@
     <v-card>
       <!-- Current User Title -->
       <v-card-title color="black">
-        Manage users in Project : {{ systemsDetails.system_nameEN }}
+        Manage users in System : {{ systemsDetails.system_nameEN }}
       </v-card-title>
       <v-card-text>
         <!-- Current User Table -->
