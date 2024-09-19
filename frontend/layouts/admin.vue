@@ -85,7 +85,7 @@
             </v-list-item-content>
           </template>
 
-          <v-list-item @click="navigateTo('/custom/reportList')">
+          <!-- <v-list-item @click="navigateTo('/custom/reportList')">
             <v-list-item-content>
               <v-list-item-title>
                 <v-icon color="primary" class="mr-2"
@@ -94,8 +94,8 @@
                 แสดงรายงานปัญหา
               </v-list-item-title>
             </v-list-item-content>
-          </v-list-item>
-
+          </v-list-item> -->
+          <!-- 
           <v-list-item @click="navigateTo('/custom/reportCreate')">
             <v-list-item-content>
               <v-list-item-title>
@@ -103,7 +103,7 @@
                 แจ้งรายงานปัญหา
               </v-list-item-title>
             </v-list-item-content>
-          </v-list-item>
+          </v-list-item> -->
 
           <v-list-item
             @click="navigateTo('/Note_Management/dashboard_Note_Management')"
@@ -239,7 +239,7 @@
             </v-list-item-content>
           </template>
 
-          <v-list-item @click="navigateTo('/custom/reportList')">
+          <!-- <v-list-item @click="navigateTo('/custom/reportList')">
             <v-list-item-content>
               <v-list-item-title>
                 <v-icon color="primary" class="mr-2"
@@ -248,16 +248,16 @@
                 แสดงรายงานปัญหา
               </v-list-item-title>
             </v-list-item-content>
-          </v-list-item>
+          </v-list-item> -->
 
-          <v-list-item @click="navigateTo('/custom/reportCreate')">
+          <!-- <v-list-item @click="navigateTo('/custom/reportCreate')">
             <v-list-item-content>
               <v-list-item-title>
                 <v-icon color="primary" class="mr-2">mdi-pencil</v-icon>
                 แจ้งรายงานปัญหา
               </v-list-item-title>
             </v-list-item-content>
-          </v-list-item>
+          </v-list-item> -->
 
           <v-list-item
             @click="navigateTo('/Note_Management/schedule_Note_Management')"
@@ -421,26 +421,6 @@ export default {
       user_position: "",
       ownProject: [],
       projectIds: [],
-      projectDetails: [
-        // Existing items
-        {
-          action: "mdi-alert-circle",
-          active: false,
-          title: "รายงานปัญหา",
-          projectList: [
-            {
-              id: 1,
-              project_name_ENG: "แสดงรายงานปัญหา",
-              path: "/custom/reportList",
-            },
-            {
-              id: 2,
-              project_name_ENG: "แจ้งรายงานปัญหา",
-              path: "/custom/reportCreate",
-            },
-          ],
-        },
-      ],
 
       logout: [
         {
@@ -485,9 +465,9 @@ export default {
   },
   computed: {},
   methods: {
-  isAdmin() {
-    return this.user && this.user.user_position === "Admin";
-  },
+    isAdmin() {
+      return this.user && this.user.user_position === "Admin";
+    },
     goBack() {
       this.$router.back();
     },
