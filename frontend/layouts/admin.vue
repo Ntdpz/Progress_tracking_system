@@ -127,7 +127,7 @@
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item
+          <!-- <v-list-item
             @click="navigateTo('/Note_Management/dashboard_Note_Management')"
           >
             <v-list-item-content>
@@ -136,7 +136,7 @@
                 แดชบอร์ดรายงานปัญหา
               </v-list-item-title>
             </v-list-item-content>
-          </v-list-item>
+          </v-list-item> -->
         </v-list-group>
 
         <!-- รายงานปัญหาเก่า -->
@@ -270,7 +270,7 @@
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item
+          <!-- <v-list-item
             @click="navigateTo('/Note_Management/dashboard_Note_Management')"
           >
             <v-list-item-content>
@@ -279,7 +279,7 @@
                 แดชบอร์ดรายงานปัญหา
               </v-list-item-title>
             </v-list-item-content>
-          </v-list-item>
+          </v-list-item> -->
         </v-list-group>
 
         <!-- รายงานปัญหาเก่า -->
