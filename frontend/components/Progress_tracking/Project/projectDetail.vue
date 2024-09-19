@@ -25,7 +25,7 @@
           Project Name Eng : {{ project.project_name_ENG }} <br />
           Project Manday :
           {{ project.project_manday ? project.project_manday : "0" }} Days<br />
-          Systems Count : {{ project.system_count }} Systems<br />
+          Systems Count : {{ project.system_count }} systems<br />
           Project Plan :
           {{
             project.project_plan_start && project.project_plan_end

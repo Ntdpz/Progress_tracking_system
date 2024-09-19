@@ -26,8 +26,8 @@
           System Shortname : {{ systemData.system_shortname }} <br />
           System Manday :
           {{ systemData.system_manday ? systemData.system_manday : "0" }}
-          Days<br />
-          Screen Count : {{ systemData.screen_count }} Screens<br />
+          days<br />
+          Screen Count : {{ systemData.screen_count }} screens<br />
           Project Plan :
           {{
             systemData.system_plan_start && systemData.system_plan_end

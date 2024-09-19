@@ -24,8 +24,8 @@
           <v-card-subtitle>
             Screen Manday :
             {{ screenDetails.screen_manday ? screenDetails.screen_manday : "0" }}
-            Days<br />
-            Tasks Count : {{ screenDetails.task_count }} Tasks<br />
+            days<br />
+            Tasks Count : {{ screenDetails.task_count }} tasks<br />
             Screen Plan :
             {{
               screenDetails.screen_plan_start && screenDetails.screen_plan_end
