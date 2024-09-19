@@ -29,7 +29,7 @@
               systemData.system_manday !== null && !isNaN(systemData.system_manday)
                 ? Math.round(systemData.system_manday)
                 : 0
-            }}<br />
+            }} days<br />
           </v-card-subtitle>
         </v-col>
         <!-- Progress Detail -->
@@ -232,8 +232,8 @@ export default {
     },
     formatDate(dateString) {
       if (!dateString) return null;
-      const options = { year: "numeric", month: "long", day: "numeric" };
-      return new Date(dateString).toLocaleDateString(undefined, options);
+      const options = { day: "2-digit", month: "2-digit", year: "numeric" };
+      return new Date(dateString).toLocaleDateString(undefined, options).replace(/\//g, '-');
     },
     openAddScreenDialog() {
       this.addScreenDialog = true;

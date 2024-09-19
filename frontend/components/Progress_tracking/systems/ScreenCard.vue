@@ -34,8 +34,8 @@
             {{ Math.round(designProgress || 0) }}%
           </span>
           {{
-            truncateName(getUserNamesByPosition("System Analyst")) ||
-            "No assignee"
+          truncateName(getUserNamesByPosition("System Analyst")) ||
+          "No assignee"
           }}
           <span>&nbsp;</span>
           <br />
@@ -44,13 +44,13 @@
             {{ Math.round(devProgress || 0) }}%
           </span>
           {{
-            truncateName(getUserNamesByPosition("Developer")) || "No assignee"
+          truncateName(getUserNamesByPosition("Developer")) || "No assignee"
           }}
           <span>&nbsp;</span>
           <br />
           <strong>Implementer:</strong>
           {{
-            truncateName(getUserNamesByPosition("Implementer")) || "No assignee"
+          truncateName(getUserNamesByPosition("Implementer")) || "No assignee"
           }}
         </v-card-subtitle>
         <v-card-actions>
@@ -100,7 +100,7 @@
     <v-dialog v-model="editScreenUserDialog" max-width="1200px">
       <v-card>
         <!-- Current User Title -->
-        <v-card-title color="black">Current Users</v-card-title>
+        <v-card-title color="black"> Manage users in Screen : {{ screenName }}</v-card-title>
         <v-card-text>
           <!-- Current User Table -->
           <v-data-table :headers="headers" :items="users" class="elevation-1 mt-4 mb-3">
