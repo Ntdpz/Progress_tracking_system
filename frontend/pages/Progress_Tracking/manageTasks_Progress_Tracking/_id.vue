@@ -489,7 +489,7 @@
       class="elevation-1"
     >
       <template v-slot:item="{ item }">
-        <tr @click="openDialog(item)">
+        <tr >
           <!-- ข้อมูลต่าง ๆ ของ task -->
           <td>{{ item.task_id }}</td>
           <td>{{ item.task_name }}</td>
@@ -646,6 +646,7 @@ export default {
         { text: "Task Type", value: "task_type" },
         { text: "Actions", value: "actions", sortable: false },
       ],
+      taskTypeOrder: ["Design", "Develop", "Test", "Maintenance"], // กำหนดลำดับของ task types
       historyTaskData: {
         task_name: "",
         task_detail: "",
@@ -787,7 +788,8 @@ export default {
       hoveredUser: null,
     };
   },
-  mounted() {
+  mounted() 
+  {
     this.interval = setInterval(() => {
       if (this.value >= 100) {
         this.value = 0;
@@ -801,6 +803,7 @@ export default {
       clearInterval(this.interval);
     }
   },
+  
 
   computed: {
     getProgressColorTask() {
@@ -861,23 +864,50 @@ export default {
       return Math.ceil(this.tasks.length / this.pageSize);
     },
     filteredTasks() {
-      if (this.tasks && Array.isArray(this.tasks)) {
-        return this.tasks.filter((task) => {
-          // ตรวจสอบว่า task_name, task_id มีค่าหรือไม่
-          if (task.task_name && task.task_id) {
-            // นำเนื้อหาของ task_name, task_id มาต่อกันเพื่อค้นหา
-            const searchText =
-              `${task.task_name} ${task.task_id}`.toLowerCase();
-            // ค้นหาโดยใช้ searchQuery ที่ผูกกับ input และคืนค่า true เมื่อพบข้อความที่ค้นหา
-            return searchText.includes(this.searchQuery.toLowerCase());
-          } else {
-            return false;
-          }
-        });
+  if (this.tasks && Array.isArray(this.tasks)) {
+    // ทำการกรองข้อมูลตาม searchQuery
+    let filtered = this.tasks.filter((task) => {
+      if (task.task_name && task.task_id) {
+        const searchText = `${task.task_name} ${task.task_id}`.toLowerCase();
+        return searchText.includes(this.searchQuery.toLowerCase());
       } else {
-        return [];
+        return false;
       }
-    },
+    });
+
+    // เรียงลำดับข้อมูลที่กรองแล้วตามเงื่อนไขที่กำหนด
+    filtered.sort((a, b) => {
+      // จัดเรียงตาม task_type โดยใช้ลำดับที่กำหนดไว้ใน taskTypeOrder
+      const typeOrderA = this.taskTypeOrder.indexOf(a.task_type);
+      const typeOrderB = this.taskTypeOrder.indexOf(b.task_type);
+
+      if (typeOrderA !== typeOrderB) {
+        return typeOrderA - typeOrderB;
+      }
+
+      // ถ้าหาก task_type เหมือนกัน ให้จัดเรียงตาม task_progress จากน้อยไปมาก
+      const progressA = parseInt(a.task_progress);
+      const progressB = parseInt(b.task_progress);
+      if (progressA !== progressB) {
+        return progressA - progressB;
+      }
+
+      // ถ้าหาก task_progress เหมือนกัน ให้จัดเรียงตาม user_position
+      const userPositionOrder = ['System Analyst', 'Developer', 'Implementer'];
+      const positionA = this.getUserPosition(a.task_member_id);
+      const positionB = this.getUserPosition(b.task_member_id);
+
+      const positionOrderA = userPositionOrder.indexOf(positionA);
+      const positionOrderB = userPositionOrder.indexOf(positionB);
+
+      return positionOrderA - positionOrderB;
+    });
+
+    return filtered;
+  } else {
+    return [];
+  }
+},
   },
 
   mounted() {
@@ -887,6 +917,7 @@ export default {
       .then(() => this.fetchScreenDetail())
       .then(() => this.fetchUserList())
       .then(() => this.fetchTasks())
+      .then(() => this.sortTasks())
       .catch((error) => {
         console.error("Error:", error);
         // Handle error here
@@ -924,6 +955,7 @@ export default {
     filteredTasks: {
       handler() {
         // เรียกใช้ฟังก์ชันเมื่อมีการเปลี่ยนแปลงใน Task ของคุณ
+        this.sortTasks();
         this.getTasksToday();
       },
       deep: true,
@@ -931,6 +963,39 @@ export default {
     // Watcher to update task_manday when task_plan_start or task_plan_end changes
   },
   methods: {
+//     sortTasks() {
+//   this.filteredTasks.sort((a, b) => {
+//     // จัดเรียงตาม task_type โดยใช้ลำดับที่กำหนดไว้ใน taskTypeOrder
+//     const typeOrderA = this.taskTypeOrder.indexOf(a.task_type);
+//     const typeOrderB = this.taskTypeOrder.indexOf(b.task_type);
+
+//     if (typeOrderA !== typeOrderB) {
+//       return typeOrderA - typeOrderB;
+//     }
+
+//     // ถ้าหาก task_type เหมือนกัน ให้จัดเรียงตาม task_progress จากน้อยไปมาก
+//     const progressA = parseInt(a.task_progress);
+//     const progressB = parseInt(b.task_progress);
+//     if (progressA !== progressB) {
+//       return progressA - progressB;
+//     }
+
+//     // ถ้าหาก task_progress เหมือนกัน ให้จัดเรียงตาม user_position
+//     const userPositionOrder = ['System Analyst', 'Developer', 'Implementer'];
+//     const positionA = this.getUserPosition(a.task_member_id);
+//     const positionB = this.getUserPosition(b.task_member_id);
+
+//     const positionOrderA = userPositionOrder.indexOf(positionA);
+//     const positionOrderB = userPositionOrder.indexOf(positionB);
+
+//     return positionOrderA - positionOrderB;
+//   });
+// },
+
+getUserPosition(userId) {
+  const user = this.userList.find(user => user.user_id === userId);
+  return user ? user.user_position : 'Unknown';
+},
     refreshTable() {
       // Logic to refresh the table, e.g., re-fetch data
       this.fetchTasks(); // Replace with actual method to refresh data
