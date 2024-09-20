@@ -29,7 +29,7 @@
                 >
                   <v-tab class="custom-tab">ToDay</v-tab>
                   <v-tab class="custom-tab">All</v-tab>
-                  <v-tab class="custom-tab">Archive</v-tab>
+                  <v-tab class="custom-tab">Closed Task</v-tab>
                 </v-tabs>
               </v-row>
               <v-tabs-items v-model="project.tab">

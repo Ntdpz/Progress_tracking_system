@@ -418,14 +418,14 @@ export default {
         ) {
           Swal.fire({
             title: "Task Completed",
-            text: "Would you like to archive this task?",
+            text: "Would you like to close this task?",
             icon: "success",
             confirmButtonText: "OK",
             confirmButtonColor: "#629859",
             showCancelButton: true,
             cancelButtonText: "Cancel",
             html: `<input type="checkbox" id="archiveTask" checked /> 
-               <label for="archiveTask">Archive</label>`, // Checkbox
+               <label for="archiveTask">Close Task</label>`, // Checkbox
           }).then(async (result) => {
             if (result.isConfirmed) {
               const archiveTaskChecked =
