@@ -434,7 +434,7 @@ export default {
 
               // เรียก API เพื่ออัปเดตค่า is_archived
               await this.$axios.put(
-                `/tasks/save_history_tasks/${this.task.id}`,
+                `/tasks/updateTasks/${this.task.id}`,
                 {
                   task_name: this.task.task_name,
                   task_detail: this.taskData.task_detail,

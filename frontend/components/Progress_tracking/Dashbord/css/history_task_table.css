@@ -35,7 +35,7 @@
 .custom-table th:nth-child(1),
 .custom-table td:nth-child(1) {
     /* date */
-    width: 10% !important;
+    width: 15% !important;
     text-align: center !important;
     vertical-align: middle !important;
 }
@@ -51,7 +51,7 @@
 .custom-table th:nth-child(3),
 .custom-table td:nth-child(3) {
     /* Plan Start */
-    width: 10% !important;
+    width: 13% !important;
     text-align: center !important;
     vertical-align: middle !important;
 }
@@ -59,7 +59,7 @@
 .custom-table th:nth-child(4),
 .custom-table td:nth-child(4) {
     /* Plan End */
-    width: 10% !important;
+    width: 13% !important;
     text-align: center !important;
     vertical-align: middle !important;
 }
@@ -67,7 +67,7 @@
 .custom-table th:nth-child(5),
 .custom-table td:nth-child(5) {
     /* Actual Start */
-    width: 10% !important;
+    width: 13% !important;
     text-align: center !important;
     vertical-align: middle !important;
 }
@@ -75,7 +75,7 @@
 .custom-table th:nth-child(6),
 .custom-table td:nth-child(6) {
     /* Actual End */
-    width: 10% !important;
+    width: 13% !important;
     text-align: center !important;
     vertical-align: middle !important;
 }
@@ -83,7 +83,7 @@
 .custom-table th:nth-child(7),
 .custom-table td:nth-child(7) {
     width: 45% !important;
-    
+
 }
 
 .custom-table th:nth-child(7) {
