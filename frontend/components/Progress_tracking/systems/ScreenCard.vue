@@ -574,10 +574,16 @@ export default {
     },
     // Utility methods for UI
     getColorClass(progress) {
-      if (progress === 100) return "green";
-      if (progress >= 75) return "blue";
-      if (progress >= 50) return "yellow";
-      return "orange";
+      if (progress >= 75 && progress <= 100) {
+        return "#4CAF50"; // สีเขียว
+      } else if (progress >= 51 && progress <= 74) {
+        return "#03A9F4"; // สีฟ้า
+      } else if (progress >= 26 && progress <= 50) {
+        return "#FFD700"; // สีเหลืองทอง
+      } else if (progress >= 0 && progress <= 25) {
+        return "#FC8705"; // สีส้ม
+      }
+      return "#000000"; // สีดำเป็นค่าเริ่มต้นถ้าค่าผิดพลาด
     },
     truncateName(name, maxLength = 20) {
       if (!name) return "";

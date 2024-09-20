@@ -7,12 +7,7 @@
       </v-card-title>
       <v-card-text>
         <!-- Current User Table -->
-        <v-data-table
-          :headers="headers"
-          :items="sortedUsers"
-          class="elevation-1 mt-4 mb-3"
-          :items-per-page="5"
-        >
+        <v-data-table :headers="headers" :items="sortedUsers" class="elevation-1 mt-4 mb-3" :items-per-page="5">
           <!-- User Avatar in the "Image" column -->
           <template v-slot:item.user_pic="{ item }">
             <v-avatar>
@@ -27,17 +22,15 @@
 
           <!-- User Position in the "User Position" column -->
           <template v-slot:item.user_position="{ item }">
-            <v-chip
-              :style="{
-                width: '120px',
-                display: 'flex',
-                justifyContent: 'center',
-              }"
-              :color="getColor(item.user_position)"
-              dark
-            >
+            <v-chip :style="{
+              width: '120px',
+              display: 'flex',
+              justifyContent: 'center',
+              pointerEvents: 'none',
+            }" :color="getColor(item.user_position)" dark>
               {{ item.user_position }}
             </v-chip>
+
           </template>
 
           <!-- Action buttons in the "Action" column -->
@@ -59,13 +52,8 @@
 
     <!-- Assign User Dialog -->
     <v-dialog v-model="assignUserDialog" max-width="600px">
-      <AssignUserSystemsDialog
-        ref="assignUserDialogRef"
-        :project_id="project_id"
-        :systems_id="systems_id"
-        @usersAssigned="fetchUsers"
-        @close="assignUserDialog = false"
-      />
+      <AssignUserSystemsDialog ref="assignUserDialogRef" :project_id="project_id" :systems_id="systems_id"
+        @usersAssigned="fetchUsers" @close="assignUserDialog = false" />
     </v-dialog>
   </v-card>
 </template>
