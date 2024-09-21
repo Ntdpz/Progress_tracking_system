@@ -69,7 +69,7 @@
         <v-col cols="12" md="2" class="text-mid">
           <v-row>
             <v-col cols="12">
-              <v-btn class="rounded-btn" color="primary" @click="dialogAddTaskForm = true" style="width: 100%">
+              <v-btn class="rounded-btn" color="primary" @click="handleAddTaskClick " style="width: 100%">
                 Add Task
               </v-btn>
             </v-col>
@@ -949,6 +949,16 @@ export default {
     // Watcher to update task_manday when task_plan_start or task_plan_end changes
   },
   methods: {
+  handleAddTaskClick() {
+    if (this.user.user_position === "Developer") {
+      this.DevdialogAddTaskForm = true;
+    } else if (this.user.user_position === "Implementer") {
+      this.ImpdialogAddTaskForm = true;
+    } else {
+      this.dialogAddTaskForm = true; // ค่าเริ่มต้นหรือสำหรับตำแหน่งอื่นๆ
+    }
+  },
+
 sortByPosition(userProjects) {
       const positionOrder = ["System Analyst", "Developer", "Implementer"];
       return userProjects.sort((a, b) => {
