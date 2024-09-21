@@ -55,6 +55,16 @@
 
               <div class="custom-progress">
                 <v-col cols="auto" class="progress-item">
+                  <v-progress-circular class="my-progress" :rotate="-90" :size="100" :width="15" :value="parseInt(screenDetails.screen_progress_status_dev) || 0
+                    " color="orange">
+                    {{ parseInt(screenDetails.screen_progress_status_dev) || 0 }}%
+                  </v-progress-circular>
+                  <v-card-subtitle class="subtitle">Test</v-card-subtitle>
+                </v-col>
+              </div>
+
+              <div class="custom-progress">
+                <v-col cols="auto" class="progress-item">
                   <v-progress-circular class="my-progress" :rotate="90" :size="100" :width="15"
                     :value="parseInt(screenDetails.screen_progress) || 0" :color="getProgressColor(parseInt(screenDetails.screen_progress) || 0)
                       ">
