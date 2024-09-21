@@ -32,10 +32,10 @@
                   </v-list-item-title>
                   <v-list-item-subtitle>{{
                     user.user_position
-                  }}</v-list-item-subtitle>
+                    }}</v-list-item-subtitle>
                   <v-list-item-subtitle>{{
                     user.user_department
-                  }}</v-list-item-subtitle>
+                    }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
             </v-list>
@@ -177,7 +177,7 @@
                     <v-list-item-content>
                       <v-list-item-title>{{
                         item.user_name
-                      }}</v-list-item-title>
+                        }}</v-list-item-title>
                     </v-list-item-content>
                   </template>
                 </v-select>
@@ -190,10 +190,10 @@
               </v-col>
               <v-col cols="auto">
                 <v-btn v-if="
-                  (editedTask.memberDetails &&
-                    editedTask.memberDetails.id === user.id) ||
-                  user.user_role === 'Admin'
-                " color="error" @click.stop="deleteTask(editedTask)">
+                    (editedTask.memberDetails &&
+                      editedTask.memberDetails.id === user.id) ||
+                    user.user_role === 'Admin'
+                  " color="error" @click.stop="deleteTask(editedTask)">
                   Delete
                 </v-btn>
               </v-col>
@@ -274,7 +274,7 @@
                     <v-list-item-content>
                       <v-list-item-title>{{
                         item.user_name
-                      }}</v-list-item-title>
+                        }}</v-list-item-title>
                     </v-list-item-content>
                   </template>
                 </v-select>
@@ -517,9 +517,6 @@
               </v-card-title>
             </v-tooltip>
           </td>
-          <td>
-            {{ getUserFirstName(item.task_member_id) }}
-          </td>
           <td class="progress-cell">
             <v-progress-linear :color="getProgressColor(parseInt(item.task_progress))" height="20"
               :value="parseInt(item.task_progress)">
@@ -534,15 +531,15 @@
           <td>
             <!-- Existing buttons -->
             <v-btn v-if="user.user_role === 'Admin'" icon color="primary" @click.stop="
-              dialogEditTaskForm = true;
-            editedTask = item;
-            ">
+                dialogEditTaskForm = true;
+                editedTask = item;
+              ">
               <v-icon>mdi-pencil</v-icon>
             </v-btn>
             <v-btn v-if="
-              (item.memberDetails && item.memberDetails.id === user.id) ||
-              user.user_role === 'Admin'
-            " icon color="primary" @click.stop="openSaveHistoryDialog(item)">
+                (item.memberDetails && item.memberDetails.id === user.id) ||
+                user.user_role === 'Admin'
+              " icon color="primary" @click.stop="openSaveHistoryDialog(item)">
               <v-icon>mdi-content-save</v-icon>
             </v-btn>
           </td>
@@ -631,7 +628,6 @@ export default {
         { text: "Task ID", value: "task_id" },
         { text: "Task Name", value: "task_name" },
         { text: "Task User", value: "user_id" },
-        { text: "Position", value: "task_member_id" },
         { text: "Progress", value: "task_progress" },
         { text: "Plan Start", value: "task_plan_start" },
         { text: "Plan End", value: "task_plan_end" },
@@ -801,7 +797,7 @@ export default {
       clearInterval(this.interval);
     }
   },
-
+  
 
   computed: {
     getProgressColorTask() {
@@ -862,50 +858,15 @@ export default {
       return Math.ceil(this.tasks.length / this.pageSize);
     },
     filteredTasks() {
-      if (this.tasks && Array.isArray(this.tasks)) {
-        // ทำการกรองข้อมูลตาม searchQuery
-        let filtered = this.tasks.filter((task) => {
-          if (task.task_name && task.task_id) {
-            const searchText = `${task.task_name} ${task.task_id}`.toLowerCase();
-            return searchText.includes(this.searchQuery.toLowerCase());
-          } else {
-            return false;
-          }
-        });
-
-        // เรียงลำดับข้อมูลที่กรองแล้วตามเงื่อนไขที่กำหนด
-        filtered.sort((a, b) => {
-          // จัดเรียงตาม task_type โดยใช้ลำดับที่กำหนดไว้ใน taskTypeOrder
-          const typeOrderA = this.taskTypeOrder.indexOf(a.task_type);
-          const typeOrderB = this.taskTypeOrder.indexOf(b.task_type);
-
-          if (typeOrderA !== typeOrderB) {
-            return typeOrderA - typeOrderB;
-          }
-
-          // ถ้าหาก task_type เหมือนกัน ให้จัดเรียงตาม task_progress จากน้อยไปมาก
-          const progressA = parseInt(a.task_progress);
-          const progressB = parseInt(b.task_progress);
-          if (progressA !== progressB) {
-            return progressA - progressB;
-          }
-
-          // ถ้าหาก task_progress เหมือนกัน ให้จัดเรียงตาม user_position
-          const userPositionOrder = ['System Analyst', 'Developer', 'Implementer'];
-          const positionA = this.getUserPosition(a.task_member_id);
-          const positionB = this.getUserPosition(b.task_member_id);
-
-          const positionOrderA = userPositionOrder.indexOf(positionA);
-          const positionOrderB = userPositionOrder.indexOf(positionB);
-
-          return positionOrderA - positionOrderB;
-        });
-
-        return filtered;
+  if (this.tasks && Array.isArray(this.tasks)) {
+    // ทำการกรองข้อมูลตาม searchQuery
+    let filtered = this.tasks.filter((task) => {
+      if (task.task_name && task.task_id) {
+        const searchText = `${task.task_name} ${task.task_id}`.toLowerCase();
+        return searchText.includes(this.searchQuery.toLowerCase());
       } else {
-        return [];
+        return false;
       }
-<<<<<<< HEAD
     });
 
     // เรียงลำดับข้อมูลที่กรองแล้วตามเงื่อนไขที่กำหนด
@@ -934,9 +895,6 @@ export default {
     return [];
   }
 },
-=======
-    },
->>>>>>> b1ba9bd5134c16d6184593477128583c14cb6901
   },
 
   mounted() {
@@ -991,7 +949,6 @@ export default {
     // Watcher to update task_manday when task_plan_start or task_plan_end changes
   },
   methods: {
-<<<<<<< HEAD
   handleAddTaskClick() {
     if (this.user.user_position === "Developer") {
       this.DevdialogAddTaskForm = true;
@@ -1012,41 +969,6 @@ sortByPosition(userProjects) {
       });
     },
 
-=======
-    //     sortTasks() {
-    //   this.filteredTasks.sort((a, b) => {
-    //     // จัดเรียงตาม task_type โดยใช้ลำดับที่กำหนดไว้ใน taskTypeOrder
-    //     const typeOrderA = this.taskTypeOrder.indexOf(a.task_type);
-    //     const typeOrderB = this.taskTypeOrder.indexOf(b.task_type);
-
-    //     if (typeOrderA !== typeOrderB) {
-    //       return typeOrderA - typeOrderB;
-    //     }
-
-    //     // ถ้าหาก task_type เหมือนกัน ให้จัดเรียงตาม task_progress จากน้อยไปมาก
-    //     const progressA = parseInt(a.task_progress);
-    //     const progressB = parseInt(b.task_progress);
-    //     if (progressA !== progressB) {
-    //       return progressA - progressB;
-    //     }
-
-    //     // ถ้าหาก task_progress เหมือนกัน ให้จัดเรียงตาม user_position
-    //     const userPositionOrder = ['System Analyst', 'Developer', 'Implementer'];
-    //     const positionA = this.getUserPosition(a.task_member_id);
-    //     const positionB = this.getUserPosition(b.task_member_id);
-
-    //     const positionOrderA = userPositionOrder.indexOf(positionA);
-    //     const positionOrderB = userPositionOrder.indexOf(positionB);
-
-    //     return positionOrderA - positionOrderB;
-    //   });
-    // },
-
-    getUserPosition(userId) {
-      const user = this.userList.find(user => user.user_id === userId);
-      return user ? user.user_position : 'Unknown';
-    },
->>>>>>> b1ba9bd5134c16d6184593477128583c14cb6901
     refreshTable() {
       // Logic to refresh the table, e.g., re-fetch data
       this.fetchTasks(); // Replace with actual method to refresh data
@@ -1061,11 +983,7 @@ sortByPosition(userProjects) {
       const user = this.userList.find((user) => user.user_id === userId);
       return user ? user.user_name : "Unknown";
     },
-    getUserFirstName(userId) {
-      const user = this.userList.find(u => u.user_id === userId);
-      return user ? user.user_name.split(' : ')[0] : 'Unknown';
-    },
-    
+
     calculateMandays() {
       // Check if both start and end dates are selected
       if (this.newTask.task_plan_start && this.newTask.task_plan_end) {
