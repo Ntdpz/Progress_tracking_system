@@ -26,7 +26,6 @@
               width: '120px',
               backgroundColor: getColor(item.user_position),
               color: 'white',
-              padding: '8px',
               borderRadius: '20px',
               textAlign: 'center',
               display: 'inline-block',

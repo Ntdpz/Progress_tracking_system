@@ -18,13 +18,13 @@
       <template v-slot:item.user_position="{ item }">
         <div :style="{
           width: '120px',
-
           backgroundColor: getColor(item.user_position),
           color: 'white',
-          padding: '8px',
           borderRadius: '20px',
           textAlign: 'center',
           display: 'inline-block',
+          paddingTop: '5px',
+          paddingBottom: '5px',
         }">
           {{ item.user_position }}
         </div>
@@ -96,5 +96,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
