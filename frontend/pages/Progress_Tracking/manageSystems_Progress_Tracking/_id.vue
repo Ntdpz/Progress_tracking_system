@@ -4,50 +4,8 @@
     <Loader v-if="$store.getters.isLoading" />
     <v-row style="margin-bottom: 20px" align="center">
       <!-- Card detel Project -->
-<<<<<<< HEAD:frontend/pages/Project/_id.vue
-      <v-card class="mx-auto align-start" width="95%" hover>
-        <v-card-item @click.stop="showDetails = !showDetails">
-          <v-card-title>
-            Project name: {{ project.project_name_ENG }}
-            <v-spacer></v-spacer>
-            <v-icon @click.stop="showUserDialog = true">
-              mdi-account-multiple
-            </v-icon>
-          </v-card-title>
-          <v-card-subtitle>
-            Project Progress
-            <v-progress-linear :color="getProgressColor(project.project_progress)" height="50"
-              :value="parseInt(project.project_progress)" striped>
-              <template v-slot:default>
-                <strong :style="{ color: '#5E5E5E', fontSize: '20px' }">
-                  {{ Math.floor(project.project_progress) || 0 }}%
-                </strong>
-              </template>
-            </v-progress-linear>
-          </v-card-subtitle>
-        </v-card-item>
-
-        <v-expand-transition>
-          <div v-show="showDetails">
-            <v-divider></v-divider>
-            <v-card-text>
-              <p>Project Manday : {{ project.project_manday || 0 }}</p>
-              <p>System Count : {{ project.system_count || 0 }}</p>
-              <p>
-                Project Plan Start :
-                {{ formatDate(project.project_plan_start) || "Not determined" }}
-              </p>
-              <p>
-                Project Plan End :
-                {{ formatDate(project.project_plan_end) || "Not determined" }}
-              </p>
-            </v-card-text>
-          </div>
-        </v-expand-transition>
-=======
       <v-card class="mx-auto align-start" width="98%">
         <projectDetail :project="project" />
->>>>>>> 57ae2a44ac639b386f73c930bb75a2a326977e28:frontend/pages/Progress_Tracking/manageSystems_Progress_Tracking/_id.vue
       </v-card>
 
       <!-- Dialog แสดง User ในโปรเจค -->
