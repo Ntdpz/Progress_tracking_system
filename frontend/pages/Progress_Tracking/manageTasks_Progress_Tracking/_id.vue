@@ -203,7 +203,7 @@
       </v-card>
     </v-dialog>
 
-    <!-- Create task dialog -->
+    <!-- Create task dialog SA -->
     <v-dialog v-model="dialogAddTaskForm" max-width="600px">
       <v-card>
         <v-card-title>
@@ -283,6 +283,202 @@
               <!-- Status -->
               <v-col cols="12" md="6">
                 <v-select v-model="newTask.task_type" :items="statusOptions" label="Type of Task"
+                  :rules="[(v) => !!v || 'Task Type is required']" required></v-select>
+              </v-col>
+            </v-row>
+
+            <v-row justify="center">
+              <v-col cols="auto">
+                <!-- Submit button -->
+                <v-btn color="primary" :disabled="!newTask.task_id || !newTask.task_name" type="submit">
+                  Create</v-btn>
+                <!-- Cancel button -->
+                <v-btn color="error" @click="cancel">Cancel</v-btn>
+              </v-col>
+            </v-row>
+          </v-form>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+     <!-- Create task dialog Dev-->
+    <v-dialog v-model="DevdialogAddTaskForm" max-width="600px">
+      <v-card>
+        <v-card-title>
+          <h2>Create Task</h2>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="DevdialogAddTaskForm = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text>
+          <!-- Create task form -->
+          <v-form @submit.prevent="createTask(newTask)">
+            <h1></h1>
+            <v-row>
+              <!-- Task ID -->
+              <v-col cols="12" md="6">
+                <v-text-field v-model="newTask.task_id" label="Task ID" :rules="[(v) => !!v || 'Task ID is required']"
+                  required append-icon="mdi-alert-circle"></v-text-field>
+              </v-col>
+              <!-- Task Name -->
+              <v-col cols="12" md="6">
+                <v-text-field v-model="newTask.task_name" label="Task Name"
+                  :rules="[(v) => !!v || 'Task Name is required']" required
+                  append-icon="mdi-alert-circle"></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row>
+              <!-- Plan Start -->
+              <v-col cols="12" md="4">
+                <v-menu v-model="planStartMenu" :close-on-content-click="false" :nudge-right="40"
+                  transition="scale-transition" offset-y max-width="300px">
+                  <template v-slot:activator="{ on }">
+                    <v-text-field label="Plan Start" prepend-icon="mdi-calendar" readonly v-on="on"
+                      :value="formatDate(newTask.task_plan_start)"></v-text-field>
+                  </template>
+                  <v-date-picker v-model="newTask.task_plan_start" no-title scrollable
+                    max-width="300px"></v-date-picker>
+                </v-menu>
+              </v-col>
+              <!-- Plan End -->
+              <v-col cols="12" md="4">
+                <v-menu v-model="planEndMenu" :close-on-content-click="false" :nudge-right="40"
+                  transition="scale-transition" offset-y max-width="300px">
+                  <template v-slot:activator="{ on }">
+                    <v-text-field label="Plan End" prepend-icon="mdi-calendar" readonly v-on="on"
+                      :min="newTask.task_plan_start" :value="formatDate(newTask.task_plan_end)"></v-text-field>
+                  </template>
+                  <v-date-picker v-model="newTask.task_plan_end" no-title scrollable max-width="300px"
+                    :min="newTask.task_plan_start"></v-date-picker>
+                </v-menu>
+              </v-col>
+
+              <v-col cols="12" md="4">
+                <v-text-field v-model="newTask.task_manday" label="Plan Manday" outlined readonly
+                  :style="{ opacity: 0.5 }"></v-text-field>
+              </v-col>
+            </v-row>
+
+            <v-row>
+              <!-- Member ID -->
+              <v-col cols="12" md="6">
+                <v-select v-model="newTask.task_member_id" :items="userListCreate" item-value="user_id"
+                  item-text="user_name" label="Assign To" :disabled="user.user_role === 'User'">
+                  <template v-slot:item="{ item }">
+                    <v-list-item-avatar>
+                      <v-img :src="item.user_pic" />
+                    </v-list-item-avatar>
+                    <v-list-item-content>
+                      <v-list-item-title>{{
+                        item.user_name
+                        }}</v-list-item-title>
+                    </v-list-item-content>
+                  </template>
+                </v-select>
+              </v-col>
+
+              <!-- Status -->
+              <v-col cols="12" md="6">
+                <v-select v-model="newTask.task_type" :items="statusOptionsDev" label="Type of Task"
+                  :rules="[(v) => !!v || 'Task Type is required']" required></v-select>
+              </v-col>
+            </v-row>
+
+            <v-row justify="center">
+              <v-col cols="auto">
+                <!-- Submit button -->
+                <v-btn color="primary" :disabled="!newTask.task_id || !newTask.task_name" type="submit">
+                  Create</v-btn>
+                <!-- Cancel button -->
+                <v-btn color="error" @click="cancel">Cancel</v-btn>
+              </v-col>
+            </v-row>
+          </v-form>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
+     <!-- Create task dialog Imp-->
+    <v-dialog v-model="ImpdialogAddTaskForm" max-width="600px">
+      <v-card>
+        <v-card-title>
+          <h2>Create Task</h2>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="ImpdialogAddTaskForm = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text>
+          <!-- Create task form -->
+          <v-form @submit.prevent="createTask(newTask)">
+            <h1></h1>
+            <v-row>
+              <!-- Task ID -->
+              <v-col cols="12" md="6">
+                <v-text-field v-model="newTask.task_id" label="Task ID" :rules="[(v) => !!v || 'Task ID is required']"
+                  required append-icon="mdi-alert-circle"></v-text-field>
+              </v-col>
+              <!-- Task Name -->
+              <v-col cols="12" md="6">
+                <v-text-field v-model="newTask.task_name" label="Task Name"
+                  :rules="[(v) => !!v || 'Task Name is required']" required
+                  append-icon="mdi-alert-circle"></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row>
+              <!-- Plan Start -->
+              <v-col cols="12" md="4">
+                <v-menu v-model="planStartMenu" :close-on-content-click="false" :nudge-right="40"
+                  transition="scale-transition" offset-y max-width="300px">
+                  <template v-slot:activator="{ on }">
+                    <v-text-field label="Plan Start" prepend-icon="mdi-calendar" readonly v-on="on"
+                      :value="formatDate(newTask.task_plan_start)"></v-text-field>
+                  </template>
+                  <v-date-picker v-model="newTask.task_plan_start" no-title scrollable
+                    max-width="300px"></v-date-picker>
+                </v-menu>
+              </v-col>
+              <!-- Plan End -->
+              <v-col cols="12" md="4">
+                <v-menu v-model="planEndMenu" :close-on-content-click="false" :nudge-right="40"
+                  transition="scale-transition" offset-y max-width="300px">
+                  <template v-slot:activator="{ on }">
+                    <v-text-field label="Plan End" prepend-icon="mdi-calendar" readonly v-on="on"
+                      :min="newTask.task_plan_start" :value="formatDate(newTask.task_plan_end)"></v-text-field>
+                  </template>
+                  <v-date-picker v-model="newTask.task_plan_end" no-title scrollable max-width="300px"
+                    :min="newTask.task_plan_start"></v-date-picker>
+                </v-menu>
+              </v-col>
+
+              <v-col cols="12" md="4">
+                <v-text-field v-model="newTask.task_manday" label="Plan Manday" outlined readonly
+                  :style="{ opacity: 0.5 }"></v-text-field>
+              </v-col>
+            </v-row>
+
+            <v-row>
+              <!-- Member ID -->
+              <v-col cols="12" md="6">
+                <v-select v-model="newTask.task_member_id" :items="userListCreate" item-value="user_id"
+                  item-text="user_name" label="Assign To" :disabled="user.user_role === 'User'">
+                  <template v-slot:item="{ item }">
+                    <v-list-item-avatar>
+                      <v-img :src="item.user_pic" />
+                    </v-list-item-avatar>
+                    <v-list-item-content>
+                      <v-list-item-title>{{
+                        item.user_name
+                        }}</v-list-item-title>
+                    </v-list-item-content>
+                  </template>
+                </v-select>
+              </v-col>
+
+              <!-- Status -->
+              <v-col cols="12" md="6">
+                <v-select v-model="newTask.task_type" :items="statusOptionsImp" label="Type of Task"
                   :rules="[(v) => !!v || 'Task Type is required']" required></v-select>
               </v-col>
             </v-row>
@@ -440,6 +636,7 @@ export default {
         { text: "Actions", value: "actions", sortable: false },
       ],
       taskTypeOrder: ["Design", "Develop", "Test", "Maintenance"], // กำหนดลำดับของ task types
+      userProjects: [], 
       historyTaskData: {
         task_name: "",
         task_detail: "",
@@ -509,6 +706,8 @@ export default {
       currentPage: 1,
       perPage: 12,
       statusOptions: ["Design", "Develop"],
+      statusOptionsDev: ["Develop","Maintenance",],
+      statusOptionsImp: ["Document","Test",],
       showImageDialog: false,
       showHistoryDialog: false,
       screen_plan_start: "",
@@ -535,6 +734,8 @@ export default {
       // Dialogs
       dialogEditTaskForm: false,
       dialogAddTaskForm: false,
+      DevdialogAddTaskForm: false,
+      ImpdialogAddTaskForm: false,
       show: false,
       searchQuery: "",
       headersDelete: [
@@ -685,15 +886,8 @@ export default {
         return progressA - progressB;
       }
 
-      // ถ้าหาก task_progress เหมือนกัน ให้จัดเรียงตาม user_position
-      const userPositionOrder = ['System Analyst', 'Developer', 'Implementer'];
-      const positionA = this.getUserPosition(a.task_member_id);
-      const positionB = this.getUserPosition(b.task_member_id);
-
-      const positionOrderA = userPositionOrder.indexOf(positionA);
-      const positionOrderB = userPositionOrder.indexOf(positionB);
-
-      return positionOrderA - positionOrderB;
+      // เรียกใช้ฟังก์ชัน sortByPosition เพื่อตรวจสอบตำแหน่งงาน
+        return this.sortByPosition([{ user_position: a.task_member_position }, { user_position: b.task_member_position }]);
     });
 
     return filtered;
@@ -710,7 +904,7 @@ export default {
       .then(() => this.fetchScreenDetail())
       .then(() => this.fetchUserList())
       .then(() => this.fetchTasks())
-      .then(() => this.sortTasks())
+      
       .catch((error) => {
         console.error("Error:", error);
         // Handle error here
@@ -748,7 +942,6 @@ export default {
     filteredTasks: {
       handler() {
         // เรียกใช้ฟังก์ชันเมื่อมีการเปลี่ยนแปลงใน Task ของคุณ
-        this.sortTasks();
         this.getTasksToday();
       },
       deep: true,
@@ -756,39 +949,16 @@ export default {
     // Watcher to update task_manday when task_plan_start or task_plan_end changes
   },
   methods: {
-//     sortTasks() {
-//   this.filteredTasks.sort((a, b) => {
-//     // จัดเรียงตาม task_type โดยใช้ลำดับที่กำหนดไว้ใน taskTypeOrder
-//     const typeOrderA = this.taskTypeOrder.indexOf(a.task_type);
-//     const typeOrderB = this.taskTypeOrder.indexOf(b.task_type);
+sortByPosition(userProjects) {
+      const positionOrder = ["System Analyst", "Developer", "Implementer"];
+      return userProjects.sort((a, b) => {
+        return (
+          positionOrder.indexOf(a.user_position) -
+          positionOrder.indexOf(b.user_position)
+        );
+      });
+    },
 
-//     if (typeOrderA !== typeOrderB) {
-//       return typeOrderA - typeOrderB;
-//     }
-
-//     // ถ้าหาก task_type เหมือนกัน ให้จัดเรียงตาม task_progress จากน้อยไปมาก
-//     const progressA = parseInt(a.task_progress);
-//     const progressB = parseInt(b.task_progress);
-//     if (progressA !== progressB) {
-//       return progressA - progressB;
-//     }
-
-//     // ถ้าหาก task_progress เหมือนกัน ให้จัดเรียงตาม user_position
-//     const userPositionOrder = ['System Analyst', 'Developer', 'Implementer'];
-//     const positionA = this.getUserPosition(a.task_member_id);
-//     const positionB = this.getUserPosition(b.task_member_id);
-
-//     const positionOrderA = userPositionOrder.indexOf(positionA);
-//     const positionOrderB = userPositionOrder.indexOf(positionB);
-
-//     return positionOrderA - positionOrderB;
-//   });
-// },
-
-getUserPosition(userId) {
-  const user = this.userList.find(user => user.user_id === userId);
-  return user ? user.user_position : 'Unknown';
-},
     refreshTable() {
       // Logic to refresh the table, e.g., re-fetch data
       this.fetchTasks(); // Replace with actual method to refresh data
@@ -1445,6 +1615,8 @@ getUserPosition(userId) {
     //Cancel create task
     cancel() {
       this.dialogAddTaskForm = false;
+      this.DevdialogAddTaskForm = false;
+      this.ImpdialogAddTaskForm = false;
     },
     //fetch task
     async fetchTasks() {
@@ -1526,6 +1698,8 @@ getUserPosition(userId) {
             confirmButtonColor: "#009933",
           });
           this.dialogAddTaskForm = false; // ปิดฟอร์มการสร้าง task ใหม่
+          this.DevdialogAddTaskForm = false;
+          this.ImpdialogAddTaskForm = false; 
           await this.fetchTasks(); // โหลดรายการ tasks ใหม่
           await this.fetchScreenDetail(); // โหลดข้อมูล screen ใหม่
 
