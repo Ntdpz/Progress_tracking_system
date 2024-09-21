@@ -45,26 +45,6 @@ router.get("/getOneUserID/:user_id", async (req, res) => {
     }
 });
 
-//* GET one by project_id
-router.get("/getOneScreenID/:project_id", async (req, res) => {
-    const project_id = req.params.project_id;
-    try {
-        connection.query(
-            "SELECT users.id, users.user_firstname,users.user_position FROM user_projects INNER JOIN users ON user_projects.user_id = users.id INNER JOIN projects ON user_projects.project_id = projects.id WHERE user_projects.project_id = ?",
-            [project_id],
-            (err, results, fields) => {
-                if (err) {
-                    console.log(err);
-                    return res.status(400).send();
-                }
-                res.status(200).json(results);
-            }
-        );
-    } catch (err) {
-        console.log(err);
-        return res.status(500).send();
-    }
-});
 
 // * POST FROM user_projects
 router.post("/createUser_project", async (req, res) => {
@@ -135,6 +115,7 @@ router.delete("/deleteUserID/:user_id", async (req, res) => {
         return res.status(500).send();
     }
 });
+
 router.delete("/deleteUserProjectById/:project_id/:user_id", async (req, res) => {
     const { project_id, user_id } = req.params;
     try {
@@ -210,7 +191,7 @@ router.get("/getUsersNotInProject/:project_id", async (req, res) => {
     const project_id = req.params.project_id;
     try {
         connection.query(
-            `SELECT users.id, users.user_firstname, users.user_lastname, users.user_position 
+            `SELECT users.id, users.user_firstname, users.user_lastname, users.user_position , users.user_id, users.user_department, users.user_pic
             FROM users 
             LEFT JOIN user_projects ON users.id = user_projects.user_id AND user_projects.project_id = ? 
             WHERE user_projects.project_id IS NULL`,

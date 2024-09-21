@@ -48,7 +48,9 @@
             </v-list-item-content>
           </template>
 
-          <v-list-item @click="navigateTo('/Progress_Tracking/Dashbord')">
+          <v-list-item
+            @click="navigateTo('/Progress_Tracking/Dashbord_Progress_Tracking')"
+          >
             <v-list-item-content>
               <v-list-item-title>
                 <v-icon color="primary" class="mr-2">mdi-table-edit</v-icon>
@@ -57,7 +59,11 @@
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item @click="navigateTo('/manageProject')">
+          <v-list-item
+            @click="
+              navigateTo('/Progress_Tracking/manageProject_Progress_Tracking')
+            "
+          >
             <v-list-item-content>
               <v-list-item-title>
                 <v-icon color="primary" class="mr-2">mdi-puzzle</v-icon>
@@ -79,7 +85,7 @@
             </v-list-item-content>
           </template>
 
-          <v-list-item @click="navigateTo('/custom/reportList')">
+          <!-- <v-list-item @click="navigateTo('/custom/reportList')">
             <v-list-item-content>
               <v-list-item-title>
                 <v-icon color="primary" class="mr-2"
@@ -88,8 +94,8 @@
                 แสดงรายงานปัญหา
               </v-list-item-title>
             </v-list-item-content>
-          </v-list-item>
-
+          </v-list-item> -->
+          <!-- 
           <v-list-item @click="navigateTo('/custom/reportCreate')">
             <v-list-item-content>
               <v-list-item-title>
@@ -97,9 +103,11 @@
                 แจ้งรายงานปัญหา
               </v-list-item-title>
             </v-list-item-content>
-          </v-list-item>
+          </v-list-item> -->
 
-          <v-list-item @click="navigateTo('/Note_Management/dashboard')">
+          <v-list-item
+            @click="navigateTo('/Note_Management/dashboard_Note_Management')"
+          >
             <v-list-item-content>
               <v-list-item-title>
                 <v-icon color="primary" class="mr-2">mdi-table</v-icon>
@@ -108,7 +116,9 @@
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item @click="navigateTo('/schedule')">
+          <v-list-item
+            @click="navigateTo('/Note_Management/schedule_Note_Management')"
+          >
             <v-list-item-content>
               <v-list-item-title>
                 <v-icon color="primary" class="mr-2">mdi-calendar-month</v-icon>
@@ -117,14 +127,16 @@
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item @click="navigateTo('/dashboard')">
+          <!-- <v-list-item
+            @click="navigateTo('/Note_Management/dashboard_Note_Management')"
+          >
             <v-list-item-content>
               <v-list-item-title>
                 <v-icon color="primary" class="mr-2">mdi-view-dashboard</v-icon>
                 แดชบอร์ดรายงานปัญหา
               </v-list-item-title>
             </v-list-item-content>
-          </v-list-item>
+          </v-list-item> -->
         </v-list-group>
 
         <!-- รายงานปัญหาเก่า -->
@@ -144,7 +156,7 @@
           <v-list-item
             v-for="child in project.projectList"
             :key="child.id"
-            :to="`/issueList/${child?.id}`"
+            :to="`/Note_Management/issueList/${child?.id}`"
           >
             <v-list-item-content>
               <v-list-item-title>
@@ -159,7 +171,7 @@
 
         <!-- ManageUsers button -->
         <v-list class="pt-0" dense rounded>
-          <v-list-item @click="navigateTo('/manageUser')">
+          <v-list-item v-if="isAdmin()" @click="navigateTo('/manageUser')">
             <v-list-item-action>
               <v-icon color="black">mdi-account</v-icon>
               <!-- ใส่ไอคอนที่ต้องการ -->
@@ -173,7 +185,12 @@
       </v-list>
 
       <!-- UserDev menu items -->
-      <v-list class="pa-0" v-show="user_position == 'Developer' && user_role !== 'Admin'" dense rounded>
+      <v-list
+        class="pa-0"
+        v-show="user_position == 'Developer' && user_role !== 'Admin'"
+        dense
+        rounded
+      >
         <!-- ติดตามงาน Menu -->
         <v-list-group
           v-model="reportActiveworktracking"
@@ -187,7 +204,11 @@
             </v-list-item-content>
           </template>
 
-          <v-list-item @click="navigateTo('/manageProject')">
+          <v-list-item
+            @click="
+              navigateTo('/Progress_Tracking/manageProject_Progress_Tracking')
+            "
+          >
             <v-list-item-content>
               <v-list-item-title>
                 <v-icon color="primary" class="mr-2">mdi-puzzle</v-icon>
@@ -200,7 +221,7 @@
 
       <!-- UserImp menu items -->
       <v-list
-class="pa-0"
+        class="pa-0"
         v-show="user_position == 'Implementer' && user_role !== 'Admin'"
         dense
         rounded
@@ -218,7 +239,7 @@ class="pa-0"
             </v-list-item-content>
           </template>
 
-          <v-list-item @click="navigateTo('/custom/reportList')">
+          <!-- <v-list-item @click="navigateTo('/custom/reportList')">
             <v-list-item-content>
               <v-list-item-title>
                 <v-icon color="primary" class="mr-2"
@@ -227,20 +248,20 @@ class="pa-0"
                 แสดงรายงานปัญหา
               </v-list-item-title>
             </v-list-item-content>
-          </v-list-item>
+          </v-list-item> -->
 
-          <v-list-item @click="navigateTo('/custom/reportCreate')">
+          <!-- <v-list-item @click="navigateTo('/custom/reportCreate')">
             <v-list-item-content>
               <v-list-item-title>
                 <v-icon color="primary" class="mr-2">mdi-pencil</v-icon>
                 แจ้งรายงานปัญหา
               </v-list-item-title>
             </v-list-item-content>
-          </v-list-item>
+          </v-list-item> -->
 
-          
-
-          <v-list-item @click="navigateTo('/schedule')">
+          <v-list-item
+            @click="navigateTo('/Note_Management/schedule_Note_Management')"
+          >
             <v-list-item-content>
               <v-list-item-title>
                 <v-icon color="primary" class="mr-2">mdi-calendar-month</v-icon>
@@ -249,14 +270,16 @@ class="pa-0"
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item @click="navigateTo('/dashboard')">
+          <!-- <v-list-item
+            @click="navigateTo('/Note_Management/dashboard_Note_Management')"
+          >
             <v-list-item-content>
               <v-list-item-title>
                 <v-icon color="primary" class="mr-2">mdi-view-dashboard</v-icon>
                 แดชบอร์ดรายงานปัญหา
               </v-list-item-title>
             </v-list-item-content>
-          </v-list-item>
+          </v-list-item> -->
         </v-list-group>
 
         <!-- รายงานปัญหาเก่า -->
@@ -276,7 +299,7 @@ class="pa-0"
           <v-list-item
             v-for="child in project.projectList"
             :key="child.id"
-            :to="`/issueList/${child?.id}`"
+            :to="`/Note_Management/issueList/${child?.id}`"
           >
             <v-list-item-content>
               <v-list-item-title>
@@ -384,6 +407,7 @@ export default {
   middleware: "auth",
   data() {
     return {
+      user: this.$auth.user,
       reportActiveworktracking: false,
       reportIssueGroupActive: false,
 
@@ -397,26 +421,6 @@ export default {
       user_position: "",
       ownProject: [],
       projectIds: [],
-      projectDetails: [
-        // Existing items
-        {
-          action: "mdi-alert-circle",
-          active: false,
-          title: "รายงานปัญหา",
-          projectList: [
-            {
-              id: 1,
-              project_name_ENG: "แสดงรายงานปัญหา",
-              path: "/custom/reportList",
-            },
-            {
-              id: 2,
-              project_name_ENG: "แจ้งรายงานปัญหา",
-              path: "/custom/reportCreate",
-            },
-          ],
-        },
-      ],
 
       logout: [
         {
@@ -461,6 +465,9 @@ export default {
   },
   computed: {},
   methods: {
+    isAdmin() {
+      return this.user && this.user.user_position === "Admin";
+    },
     goBack() {
       this.$router.back();
     },

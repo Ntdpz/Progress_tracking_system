@@ -2,7 +2,7 @@
   <div>
     <!-- แสดงข้อความต้อนรับ เวลา และจำนวนโปรเจกต์ที่ผู้ใช้มี -->
     <p class="text-01">
-      {{ greeting }}, ,  You Currently have 
+      {{ greeting }} , {{ currentDateTime }} , You Currently have
       {{ projects.length }} Projects
     </p>
   </div>
@@ -22,7 +22,7 @@ export default {
   data() {
     return {
       // เก็บข้อมูลโปรเจกต์ของผู้ใช้
-      projects: [], 
+      projects: [],
       // เก็บข้อความต้อนรับ (Good Morning, Good Afternoon, Good Evening)
       greeting: "",
       // เก็บเวลาปัจจุบันในรูปแบบที่กำหนดเอง
@@ -44,7 +44,7 @@ export default {
       this.greeting = this.getGreeting(now); // เรียกฟังก์ชัน getGreeting เพื่อรับข้อความต้อนรับตามเวลา
       this.currentDateTime = this.formatCustomDateTime(now); // แปลงวันที่และเวลาให้อยู่ในรูปแบบที่กำหนด
     },
-    
+
     // ฟังก์ชันสำหรับเลือกข้อความต้อนรับตามเวลาของวัน
     getGreeting(date) {
       const hour = date.getHours(); // ดึงค่าชั่วโมงของวัน
@@ -72,7 +72,7 @@ export default {
       const day = date.getDate();
       const monthName = date.toLocaleDateString("en-US", { month: "long" });
       const year = date.getFullYear();
-      
+
       // ตัวเลือกสำหรับแปลงเวลา (ชั่วโมง, นาที, วินาที)
       const timeOptions = {
         hour: "2-digit",
@@ -80,7 +80,7 @@ export default {
         second: "2-digit",
         hour12: false, // ใช้รูปแบบ 24 ชั่วโมง
       };
-      
+
       // แปลงเวลาให้อยู่ในรูปแบบที่ต้องการ
       const time = date.toLocaleTimeString("en-US", timeOptions);
 

@@ -1,15 +1,26 @@
 const mysql = require('mysql2');
 
 const dbConfig = {
-  host: 'db',
-  port: 3306,
-  user: 'root',
-  password: 'root',
-  database: 'seniorprojectprogresstracking_term1',
+  host: 'prog.desigram-studio.com',
+
+  user: 'desigram_prog',
+  password: 'prog@password',
+  database: 'prog_track_db',
   waitForConnections: true,
   connectionLimit: 10, // จำนวน connection สูงสุดที่ pool สามารถจัดการได้
   queueLimit: 0, // 0 หมายถึงไม่จำกัดจำนวน connection ที่รอ
 };
+
+// const dbConfig = {
+//   host: 'db',
+//   port: 3306,
+//   user: 'root',
+//   password: 'root',
+//   database: 'seniorprojectprogresstracking_term1',
+//   waitForConnections: true,
+//   connectionLimit: 10, // จำนวน connection สูงสุดที่ pool สามารถจัดการได้
+//   queueLimit: 0, // 0 หมายถึงไม่จำกัดจำนวน connection ที่รอ
+// };
 
 const pool = mysql.createPool(dbConfig);
 

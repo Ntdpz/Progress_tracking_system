@@ -28,9 +28,8 @@
       :items="tasks"
       class="project_task_table"
       item-key="task_id"
-      @click:row="handleRowClick"
       :sort-by="['task_plan_start']"
-      :sort-desc="[false]"  
+      :sort-desc="[false]"
     >
       <!-- กำหนดการแสดงผลในหัวตาราง -->
       <template v-slot:column.header="{ column }">
@@ -89,20 +88,13 @@
     <!-- กรณีไม่มี Tasks -->
     <div v-else class="no-tasks-container">
       <p class="no-tasks-message">
-        <img
-          src="../../../static/fetching_tasks,_No_task_data.gif"
-          alt="No tasks found"
-        />
+        <v-icon class="alert-icon">mdi-alert-circle-outline</v-icon>
         No tasks found for this project.
       </p>
     </div>
 
     <!-- Dialog -->
-    <v-dialog
-      v-model="EditTask_dialog"
-      max-width="1000px"
-      class="custom-dialog"
-    >
+    <v-dialog v-model="EditTask_dialog" max-width="70%" class="custom-dialog">
       <v-card>
         <v-card-title> </v-card-title>
         <v-card-subtitle>
@@ -121,6 +113,7 @@
 <script>
 import "./css/task_project_table.css";
 import update_task from "./update_task.vue";
+import { EventBus } from "@/plugins/event-bus";
 export default {
   middleware: "auth",
   layout: "admin",
@@ -165,6 +158,10 @@ export default {
 
   mounted() {
     this.fetchTasks(); // เรียกใช้ method เมื่อ component ถูก mounted
+    EventBus.$on("refresh-data", this.fetchTasks);
+  },
+  beforeDestroy() {
+    EventBus.$off("refresh-data", this.fetchTasks);
   },
 
   methods: {
@@ -228,7 +225,8 @@ export default {
           return (
             task.task_member_id === this.user.id && // ตรวจสอบ task_member_id
             startDate <= endOfToday &&
-            endDate >= startOfToday
+            endDate >= startOfToday &&
+            task.is_archived === 0
           );
         });
 
@@ -251,15 +249,10 @@ export default {
       }
     },
 
-    handleRowClick(item) {
-      this.$router.push(`/Project/Systems/screens/${item.screen_id}`);
-    },
-
     // ฟังก์ชันที่เรียกใช้เมื่อคลิกไอคอน Edit
     editTask(task) {
       this.selectedTask = task; // เก็บ task ที่ถูกเลือก
       this.EditTask_dialog = true; // เปิด dialog
-      console.log("Editing task:", task.task_name);
     },
 
     // ฟังก์ชันที่เรียกใช้เมื่อคลิกไอคอน Delete

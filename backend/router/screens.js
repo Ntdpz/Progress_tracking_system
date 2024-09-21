@@ -1,7 +1,7 @@
 // Importing required modules
 const express = require("express"); // Import Express module
 const router = express.Router(); // Create router
-const moment = require('moment'); // Import Moment module for date manipulation
+const moment = require("moment"); // Import Moment module for date manipulation
 
 // Import database connection
 const connection = require("../db");
@@ -50,76 +50,165 @@ function generateId() {
   return id;
 }
 
+// ฟังก์ชันสำหรับอัปเดตข้อมูล screen ในฐานข้อมูล
+async function updateScreen(screen) {
+  try {
+    // กำหนดค่า default ให้กับ screen_progress หากเป็น null หรือ undefined
+    if (
+      screen.screen_progress === null ||
+      screen.screen_progress === undefined
+    ) {
+      screen.screen_progress = 0; // ค่า default, สามารถเปลี่ยนแปลงได้ตามต้องการ
+    }
+
+    const updateQuery = `
+      UPDATE screens
+      SET 
+        screen_progress = ?, 
+        screen_progress_status_design = ?, 
+        screen_progress_status_dev = ?, 
+        screen_plan_start = ?, 
+        screen_plan_end = ?, 
+        task_count = ?
+      WHERE id = ?
+    `;
+
+    // ค่า parameter ที่ต้องการส่งให้กับ query
+    const params = [
+      screen.screen_progress,
+      screen.screen_progress_status_design || 0, // กำหนดค่า default เป็น 0 หากเป็น undefined หรือ null
+      screen.screen_progress_status_dev || 0, // กำหนดค่า default เป็น 0 หากเป็น undefined หรือ null
+      screen.screen_plan_start,
+      screen.screen_plan_end,
+      screen.task_count || 0, // กำหนดค่า default เป็น 0 หากเป็น undefined หรือ null
+      screen.id,
+    ];
+
+    // ทำการอัปเดต screen ในฐานข้อมูล
+    await new Promise((resolve, reject) => {
+      connection.query(updateQuery, params, (err, results) => {
+        if (err) {
+          console.error(err);
+          return reject(err);
+        }
+        resolve(results);
+      });
+    });
+  } catch (error) {
+    console.error("Error updating screen:", error);
+    throw error;
+  }
+}
+
+
 router.get("/getAll", async (req, res) => {
   try {
     const systemIDFilter = req.query.system_id;
-    const screenIDFilter = req.query.screen_id;
+    const screenIDFilter = req.query.screen_code;
     const projectIDFilter = req.query.project_id;
 
     let query = `
       SELECT
-          Screens.*,
-          AVG(tasks.task_progress) AS screen_progress,
+          screens.*,
+          CAST(
+              (COALESCE(AVG(CASE WHEN tasks.task_type = 'Design' THEN tasks.task_progress ELSE NULL END), 0) + COALESCE(AVG(CASE WHEN tasks.task_type = 'Develop' THEN tasks.task_progress ELSE NULL END), 0))
+              / 2 AS DECIMAL(10,0)
+          ) AS screen_progress,
+          CAST(COALESCE(AVG(CASE WHEN tasks.task_type = 'Design' THEN tasks.task_progress ELSE NULL END), 0) AS DECIMAL(10,0)) AS screen_progress_status_design,
+          CAST(COALESCE(AVG(CASE WHEN tasks.task_type = 'Develop' THEN tasks.task_progress ELSE NULL END), 0) AS DECIMAL(10,0)) AS screen_progress_status_dev,
           COUNT(tasks.id) AS task_count,
           MIN(tasks.task_plan_start) AS min_task_plan_start,
           MAX(tasks.task_plan_end) AS max_task_plan_end
       FROM
-          Screens
-      LEFT JOIN tasks ON Screens.id = tasks.screen_id
+          screens
+      LEFT JOIN tasks ON screens.id = tasks.screen_id
       WHERE
-          Screens.is_deleted = 0
+          screens.is_deleted = 0
     `;
 
     const queryParams = [];
 
+    // Add filters to the query based on request parameters
     if (systemIDFilter) {
-      query += " AND Screens.system_id = ?";
+      query += " AND screens.system_id = ?";
       queryParams.push(systemIDFilter);
-    } else if (screenIDFilter) {
-      query += " AND Screens.screen_id = ?";
+    }
+    if (screenIDFilter) {
+      query += " AND screens.screen_code = ?";
       queryParams.push(screenIDFilter);
-    } else if (projectIDFilter) {
-      query += " AND Screens.project_id = ?";
+    }
+    if (projectIDFilter) {
+      query += " AND screens.project_id = ?";
       queryParams.push(projectIDFilter);
     }
 
-    query += " GROUP BY Screens.id";
+    query += " GROUP BY screens.id";
 
+    // Execute the query
     connection.query(query, queryParams, async (err, results, fields) => {
       if (err) {
         console.log(err);
         return res.status(400).send();
       }
 
-      results.forEach(async screen => {
-        // Format dates
+      // Process results to format dates and update screens
+      for (const screen of results) {
+        // Format date fields
         if (screen.min_task_plan_start && screen.max_task_plan_end) {
-          screen.screen_plan_start = new Date(screen.min_task_plan_start).toISOString().split('T')[0];
-          screen.screen_plan_end = new Date(screen.max_task_plan_end).toISOString().split('T')[0];
-          const startDate = new Date(screen.screen_plan_start);
-          const endDate = new Date(screen.screen_plan_end);
-          startDate.setDate(startDate.getDate());
-          endDate.setDate(endDate.getDate());
-          screen.screen_plan_start = startDate.toISOString().split('T')[0];
-          screen.screen_plan_end = endDate.toISOString().split('T')[0];
+          screen.screen_plan_start = new Date(screen.min_task_plan_start)
+            .toISOString()
+            .split("T")[0];
+          screen.screen_plan_end = new Date(screen.max_task_plan_end)
+            .toISOString()
+            .split("T")[0];
         }
 
         // Update screen data in the database
+        const updateQuery = `
+          UPDATE screens
+          SET screen_progress = ?, 
+              screen_progress_status_design = ?, 
+              screen_progress_status_dev = ?, 
+              screen_plan_start = ?, 
+              screen_plan_end = ?
+          WHERE id = ?
+        `;
+
+        const updateParams = [
+          screen.screen_progress,
+          screen.screen_progress_status_design,
+          screen.screen_progress_status_dev,
+          screen.screen_plan_start,
+          screen.screen_plan_end,
+          screen.id
+        ];
+
         try {
-          await updateScreen(screen);
+          await new Promise((resolve, reject) => {
+            connection.query(updateQuery, updateParams, (updateErr, updateResults) => {
+              if (updateErr) {
+                console.error(updateErr);
+                reject(updateErr);
+              } else {
+                resolve(updateResults);
+              }
+            });
+          });
         } catch (updateErr) {
           console.error(updateErr);
         }
-      });
+      }
 
+      // Send the response with the results
       res.status(200).json(results);
     });
-
   } catch (err) {
     console.log(err);
     return res.status(500).send();
   }
 });
+
+
 
 router.get("/getOne/:id", async (req, res) => {
   try {
@@ -127,19 +216,25 @@ router.get("/getOne/:id", async (req, res) => {
 
     let query = `
       SELECT
-        Screens.*,
-        AVG(tasks.task_progress) AS screen_progress,
-        COUNT(tasks.id) AS task_count,
-        MIN(tasks.task_plan_start) AS min_task_plan_start,
-        MAX(tasks.task_plan_end) AS max_task_plan_end
+        screens.*,
+        CAST(
+              (COALESCE(AVG(CASE WHEN tasks.task_type = 'Design' THEN tasks.task_progress ELSE NULL END), 0) + COALESCE(AVG(CASE WHEN tasks.task_type = 'Develop' THEN tasks.task_progress ELSE NULL END), 0))
+              / 2 AS DECIMAL(10,0)
+          ) AS screen_progress,
+          CAST(COALESCE(AVG(CASE WHEN tasks.task_type = 'Design' THEN tasks.task_progress ELSE NULL END), 0) AS DECIMAL(10,0)) AS screen_progress_status_design,
+          CAST(COALESCE(AVG(CASE WHEN tasks.task_type = 'Develop' THEN tasks.task_progress ELSE NULL END), 0) AS DECIMAL(10,0)) AS screen_progress_status_dev,
+          COUNT(tasks.id) AS task_count,
+          MIN(tasks.task_plan_start) AS min_task_plan_start,
+          MAX(tasks.task_plan_end) AS max_task_plan_end,
+          DATEDIFF(MAX(tasks.task_plan_end), MIN(tasks.task_plan_start)) AS screen_manday
       FROM
-        Screens
-      LEFT JOIN tasks ON Screens.id = tasks.screen_id
+        screens
+      LEFT JOIN tasks ON screens.id = tasks.screen_id
     `;
 
-    query += ` WHERE Screens.id = ? AND Screens.is_deleted = 0`;
+    query += ` WHERE screens.id = ? AND screens.is_deleted = 0`;
 
-    query += " GROUP BY Screens.id";
+    query += " GROUP BY screens.id";
 
     connection.query(query, [id], async (err, results, fields) => {
       if (err) {
@@ -151,13 +246,30 @@ router.get("/getOne/:id", async (req, res) => {
         return res.status(404).json({ message: "No screen with that ID!" });
       }
 
-      results.forEach(async screen => {
+      results.forEach(async (screen) => {
         if (screen.min_task_plan_start && screen.max_task_plan_end) {
-          screen.screen_plan_start = new Date(screen.min_task_plan_start).toISOString().split('T')[0];
-          screen.screen_plan_end = new Date(screen.max_task_plan_end).toISOString().split('T')[0];
+          screen.screen_plan_start = new Date(screen.min_task_plan_start)
+            .toISOString()
+            .split("T")[0];
+          screen.screen_plan_end = new Date(screen.max_task_plan_end)
+            .toISOString()
+            .split("T")[0];
         }
 
-        // Update screen data in the database
+        // Update screen_manday in the database
+        const updateQuery = `
+          UPDATE screens
+          SET screen_manday = ?
+          WHERE id = ?
+        `;
+
+        connection.query(updateQuery, [screen.screen_manday, screen.id], (updateErr, updateResults) => {
+          if (updateErr) {
+            console.error(updateErr);
+          }
+        });
+
+        // Update other screen data in the database (if needed)
         try {
           await updateScreen(screen);
         } catch (updateErr) {
@@ -173,51 +285,17 @@ router.get("/getOne/:id", async (req, res) => {
   }
 });
 
-// Function to update screen data
-async function updateScreen(screen) {
-  try {
-    // Ensure screen_progress is not null
-    if (screen.screen_progress === null || screen.screen_progress === undefined) {
-      // Provide a default value or handle the case appropriately
-      screen.screen_progress = 0; // Default value, change it as needed
-    }
 
-    const updateQuery = `
-      UPDATE screens 
-      SET 
-        screen_progress = ?,
-        screen_plan_start = ?, 
-        screen_plan_end = ?,
-        task_count = ?
-      WHERE id = ?
-    `;
 
-    const queryParams = [
-      screen.screen_progress,
-      screen.screen_plan_start,
-      screen.screen_plan_end,
-      screen.task_count,
-      screen.id
-    ];
-
-    await new Promise((resolve, reject) => {
-      connection.query(updateQuery, queryParams, (err, result) => {
-        if (err) reject(err);
-        resolve(result);
-      });
-    });
-  } catch (error) {
-    throw error;
-  }
-}
 
 // Route to get all historical screens
 router.get("/getAllHistoryScreens", async (req, res) => {
   try {
     const query = `
       SELECT *
-      FROM Screens
+      FROM screens
       WHERE is_deleted = 1
+       DATEDIFF(MAX(tasks.task_plan_end), MIN(tasks.task_plan_start)) AS screen_manday
     `;
 
     connection.query(query, async (err, results, fields) => {
@@ -225,6 +303,16 @@ router.get("/getAllHistoryScreens", async (req, res) => {
         console.log(err);
         return res.status(400).send();
       }
+      await Promise.all(
+        results.map(async (screen) => {
+          try {
+            await updateScreen(screen);
+          } catch (updateErr) {
+            console.error(updateErr);
+          }
+        })
+      );
+
       res.status(200).json(results);
     });
   } catch (err) {
@@ -240,16 +328,18 @@ router.get("/searchByProjectId/:project_id", async (req, res) => {
 
     let query = `
       SELECT
-        Screens.*,
+        screens.*,
         AVG(tasks.task_progress) AS screen_progress,
-        DATE(MIN(Screens.screen_plan_start)) AS screen_plan_start,
-        DATE(MAX(Screens.screen_plan_end)) AS screen_plan_end,
+        AVG(CASE WHEN tasks.task_type = 'Design' THEN tasks.task_progress ELSE NULL END) AS screen_progress_status_design,
+        AVG(CASE WHEN tasks.task_type = 'Develop' THEN tasks.task_progress ELSE NULL END) AS screen_progress_status_dev,
+        DATE(MIN(tasks.task_plan_start)) AS min_task_plan_start,
+        DATE(MAX(tasks.task_plan_end)) AS max_task_plan_end,
         DATEDIFF(MAX(tasks.task_plan_end), MIN(tasks.task_plan_start)) AS screen_manday
       FROM
-        Screens
-      LEFT JOIN tasks ON Screens.id = tasks.screen_id
-      WHERE Screens.project_id = ? AND Screens.is_deleted = 0
-      GROUP BY Screens.id
+        screens
+      LEFT JOIN tasks ON screens.id = tasks.screen_id
+      WHERE screens.project_id = ? AND screens.is_deleted = 0
+      GROUP BY screens.id
     `;
 
     connection.query(query, [project_id], async (err, results, fields) => {
@@ -257,16 +347,37 @@ router.get("/searchByProjectId/:project_id", async (req, res) => {
         console.log(err);
         return res.status(400).send();
       }
+      // Update screen_manday in the database
+      const updateQuery = `
+          UPDATE screens
+          SET screen_manday = ?
+          WHERE id = ?
+        `;
 
+      connection.query(updateQuery, [screen.screen_manday, screen.id], (updateErr, updateResults) => {
+        if (updateErr) {
+          console.error(updateErr);
+        }
+      });
+      // Update each screen after fetching results
       await Promise.all(
         results.map(async (screen) => {
-          await updateScreen(screen);
-          if (screen.screen_plan_start) {
-            screen.screen_plan_start = new Date(screen.screen_plan_start).toISOString().split("T")[0];
+          if (screen.min_task_plan_start && screen.max_task_plan_end) {
+            screen.screen_plan_start = new Date(screen.min_task_plan_start)
+              .toISOString()
+              .split("T")[0];
+            screen.screen_plan_end = new Date(screen.max_task_plan_end)
+              .toISOString()
+              .split("T")[0];
           }
-          if (screen.screen_plan_end) {
-            screen.screen_plan_end = new Date(screen.screen_plan_end).toISOString().split("T")[0];
+
+          // Call the updateScreen function
+          try {
+            await updateScreen(screen);
+          } catch (updateErr) {
+            console.error("Failed to update screen:", updateErr);
           }
+
           return screen;
         })
       );
@@ -279,6 +390,7 @@ router.get("/searchByProjectId/:project_id", async (req, res) => {
   }
 });
 
+
 // Route to get deleted screens by project ID
 router.get("/searchByProjectId_delete/:project_id", async (req, res) => {
   try {
@@ -286,16 +398,19 @@ router.get("/searchByProjectId_delete/:project_id", async (req, res) => {
 
     let query = `
       SELECT
-        Screens.*,
+        screens.*,
         AVG(tasks.task_progress) AS screen_progress,
-        DATE(MIN(Screens.screen_plan_start)) AS screen_plan_start,
-        DATE(MAX(Screens.screen_plan_end)) AS screen_plan_end,
+        AVG(CASE WHEN tasks.task_type = 'Design' THEN tasks.task_progress ELSE NULL END) AS screen_progress_status_design,
+        AVG(CASE WHEN tasks.task_type = 'Develop' THEN tasks.task_progress ELSE NULL END) AS screen_progress_status_dev,
+        DATE(MIN(screens.screen_plan_start)) AS screen_plan_start,
+        DATE(MAX(screens.screen_plan_end)) AS screen_plan_end,
         DATEDIFF(MAX(tasks.task_plan_end), MIN(tasks.task_plan_start)) AS screen_manday
+
       FROM
-        Screens
-      LEFT JOIN tasks ON Screens.id = tasks.screen_id
-      WHERE Screens.project_id = ? AND Screens.is_deleted = 1
-      GROUP BY Screens.id
+        screens
+      LEFT JOIN tasks ON screens.id = tasks.screen_id
+      WHERE screens.project_id = ? AND screens.is_deleted = 1
+      GROUP BY screens.id
     `;
 
     connection.query(query, [project_id], async (err, results, fields) => {
@@ -304,9 +419,13 @@ router.get("/searchByProjectId_delete/:project_id", async (req, res) => {
         return res.status(400).send();
       }
 
-      await Promise.all(results.map(async (screen) => {
-        await updateScreen(screen);
-      }));
+
+      await Promise.all(
+        results.map(async (screen) => {
+
+          await updateScreen(screen);
+        })
+      );
 
       res.status(200).json(results);
     });
@@ -323,16 +442,18 @@ router.get("/searchBySystemId/:system_id", async (req, res) => {
 
     let query = `
       SELECT
-        Screens.*,
+        screens.*,
         AVG(tasks.task_progress) AS screen_progress,
-        DATE(MIN(Screens.screen_plan_start)) AS screen_plan_start,
-        DATE(MAX(Screens.screen_plan_end)) AS screen_plan_end,
+        AVG(CASE WHEN tasks.task_type = 'Design' THEN tasks.task_progress ELSE NULL END) AS screen_progress_status_design,
+        AVG(CASE WHEN tasks.task_type = 'Develop' THEN tasks.task_progress ELSE NULL END) AS screen_progress_status_dev,
+        DATE(MIN(screens.screen_plan_start)) AS screen_plan_start,
+        DATE(MAX(screens.screen_plan_end)) AS screen_plan_end,
         DATEDIFF(MAX(tasks.task_plan_end), MIN(tasks.task_plan_start)) AS screen_manday
       FROM
-        Screens
-      LEFT JOIN tasks ON Screens.id = tasks.screen_id
-      WHERE Screens.system_id = ? AND Screens.is_deleted = 0
-      GROUP BY Screens.id
+        screens
+      LEFT JOIN tasks ON screens.id = tasks.screen_id
+      WHERE screens.system_id = ? AND screens.is_deleted = 0
+      GROUP BY screens.id
     `;
 
     connection.query(query, [system_id], async (err, results, fields) => {
@@ -341,20 +462,49 @@ router.get("/searchBySystemId/:system_id", async (req, res) => {
         return res.status(400).send();
       }
 
-      await Promise.all(
-        results.map(async (screen) => {
-          await updateScreen(screen);
-          if (screen.screen_plan_start) {
-            screen.screen_plan_start = new Date(screen.screen_plan_start).toISOString().split("T")[0];
-          }
-          if (screen.screen_plan_end) {
-            screen.screen_plan_end = new Date(screen.screen_plan_end).toISOString().split("T")[0];
-          }
-          return screen;
-        })
-      );
+      try {
+        // อัปเดต screen_manday ในฐานข้อมูล
+        const updateQueries = results.map(screen => {
+          return new Promise((resolve, reject) => {
+            const updateQuery = `
+              UPDATE screens
+              SET screen_manday = ?
+              WHERE id = ?
+            `;
+            connection.query(updateQuery, [screen.screen_manday, screen.id], (updateErr, updateResults) => {
+              if (updateErr) {
+                return reject(updateErr);
+              }
+              resolve(updateResults);
+            });
+          });
+        });
 
-      res.status(200).json(results);
+        await Promise.all(updateQueries);
+
+        // อัปเดตข้อมูลอื่นๆ
+        const updatedResults = await Promise.all(
+          results.map(async (screen) => {
+            await updateScreen(screen);
+            if (screen.screen_plan_start) {
+              screen.screen_plan_start = new Date(screen.screen_plan_start)
+                .toISOString()
+                .split("T")[0];
+            }
+            if (screen.screen_plan_end) {
+              screen.screen_plan_end = new Date(screen.screen_plan_end)
+                .toISOString()
+                .split("T")[0];
+            }
+            return screen;
+          })
+        );
+
+        res.status(200).json(updatedResults);
+      } catch (updateErr) {
+        console.error(updateErr);
+        res.status(500).send();
+      }
     });
   } catch (err) {
     console.log(err);
@@ -369,16 +519,18 @@ router.get("/searchBySystemId_delete/:system_id", async (req, res) => {
 
     let query = `
       SELECT
-        Screens.*,
+        screens.*,
         AVG(tasks.task_progress) AS screen_progress,
-        DATE(MIN(Screens.screen_plan_start)) AS screen_plan_start,
-        DATE(MAX(Screens.screen_plan_end)) AS screen_plan_end,
+        AVG(CASE WHEN tasks.task_type = 'Design' THEN tasks.task_progress ELSE NULL END) AS screen_progress_status_design,
+        AVG(CASE WHEN tasks.task_type = 'Develop' THEN tasks.task_progress ELSE NULL END) AS screen_progress_status_dev,
+        DATE(MIN(screens.screen_plan_start)) AS screen_plan_start,
+        DATE(MAX(screens.screen_plan_end)) AS screen_plan_end,
         DATEDIFF(MAX(tasks.task_plan_end), MIN(tasks.task_plan_start)) AS screen_manday
       FROM
-        Screens
-      LEFT JOIN tasks ON Screens.id = tasks.screen_id
-      WHERE Screens.system_id = ? AND Screens.is_deleted = 1
-      GROUP BY Screens.id
+        screens
+      LEFT JOIN tasks ON screens.id = tasks.screen_id
+      WHERE screens.system_id = ? AND screens.is_deleted = 1
+      GROUP BY screens.id
     `;
 
     connection.query(query, [system_id], async (err, results, fields) => {
@@ -387,11 +539,35 @@ router.get("/searchBySystemId_delete/:system_id", async (req, res) => {
         return res.status(400).send();
       }
 
-      await Promise.all(results.map(async (screen) => {
-        await updateScreen(screen);
-      }));
+      try {
+        // Perform updates in sequence
+        for (const screen of results) {
+          // Update screen_manday in the database
+          const updateQuery = `
+            UPDATE screens
+            SET screen_manday = ?
+            WHERE id = ?
+          `;
 
-      res.status(200).json(results);
+          // Perform the update
+          await new Promise((resolve, reject) => {
+            connection.query(updateQuery, [screen.screen_manday, screen.id], (updateErr, updateResults) => {
+              if (updateErr) {
+                return reject(updateErr);
+              }
+              resolve(updateResults);
+            });
+          });
+
+          // Call updateScreen function
+          await updateScreen(screen);
+        }
+
+        res.status(200).json(results);
+      } catch (updateErr) {
+        console.error(updateErr);
+        res.status(500).send();
+      }
     });
   } catch (err) {
     console.log(err);
@@ -399,9 +575,10 @@ router.get("/searchBySystemId_delete/:system_id", async (req, res) => {
   }
 });
 
+
 router.post("/createScreen", async (req, res) => {
   const {
-    screen_id,
+    screen_code,
     screen_name,
     screen_status,
     screen_level,
@@ -410,23 +587,23 @@ router.post("/createScreen", async (req, res) => {
     screen_plan_start,
     screen_plan_end,
     project_id,
-    assignedUsers
+    assignedUsers,
   } = req.body;
 
   try {
-    // Generate random screen_id
+    // Generate random screen_code
     const id = generateId(); // Assume this function generates a unique screen ID
 
     // Insert screen data into screens table
     const insertScreenQuery =
-      'INSERT INTO screens (id, screen_id, screen_name, screen_status, screen_level, system_id, screen_progress, screen_plan_start, screen_plan_end, project_id, screen_pic) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+      "INSERT INTO screens (id, screen_code, screen_name, screen_status, screen_level, system_id, screen_progress, screen_plan_start, screen_plan_end, project_id, screen_pic) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     await new Promise((resolve, reject) => {
       connection.query(
         insertScreenQuery,
         [
           id,
-          screen_id,
+          screen_code,
           screen_name,
           screen_status,
           screen_level,
@@ -435,24 +612,24 @@ router.post("/createScreen", async (req, res) => {
           screen_plan_start,
           screen_plan_end,
           project_id,
-          req.body.screen_pic // Insert Base64 image directly
+          req.body.screen_pic,
         ],
         async (err, result) => {
           if (err) {
-            console.error('Error inserting screen data:', err);
+            console.error("Error inserting screen data:", err);
             return reject(err);
           }
           try {
             // Insert assigned users into user_screens table
             if (assignedUsers && assignedUsers.length > 0) {
               const insertUserScreenQuery =
-                'INSERT INTO user_screens (user_id, screen_id, system_id, project_id) VALUES ?';
+                "INSERT INTO user_screens (user_id, screen_id, system_id, project_id) VALUES ?";
 
-              const userScreenValues = assignedUsers.map(userId => [
+              const userScreenValues = assignedUsers.map((userId) => [
                 userId,
-                id, // Use the screen_id of the newly created screen
+                id,
                 system_id,
-                project_id
+                project_id,
               ]);
 
               await new Promise((resolve, reject) => {
@@ -461,7 +638,7 @@ router.post("/createScreen", async (req, res) => {
                   [userScreenValues],
                   (err, result) => {
                     if (err) {
-                      console.error('Error assigning users to screen:', err);
+                      console.error("Error assigning users to screen:", err);
                       return reject(err);
                     }
                     resolve(result);
@@ -480,7 +657,7 @@ router.post("/createScreen", async (req, res) => {
 
     res.sendStatus(200);
   } catch (error) {
-    console.error('Error creating screen:', error);
+    console.error("Error creating screen:", error);
     res.sendStatus(500);
   }
 });
@@ -488,23 +665,23 @@ router.post("/createScreen", async (req, res) => {
 router.put("/updateScreen/:id", (req, res) => {
   const id = req.params.id;
   const {
-    screen_id,
+    screen_code,
     screen_name,
     screen_status,
     screen_level,
     screen_pic,
     project_id,
-    is_deleted
+    is_deleted,
   } = req.body;
 
   const updatedScreen = {
-    screen_id,
+    screen_code,
     screen_name,
     screen_status,
     screen_level,
     screen_pic,
     project_id,
-    is_deleted
+    is_deleted,
   };
 
   try {
@@ -523,13 +700,14 @@ router.put("/updateScreen/:id", (req, res) => {
 
         const existingScreen = results[0];
         const finalScreen = {
-          screen_id: screen_id || existingScreen.screen_id,
+          screen_code: screen_code || existingScreen.screen_code,
           screen_name: screen_name || existingScreen.screen_name,
           screen_status: screen_status || existingScreen.screen_status,
           screen_level: screen_level || existingScreen.screen_level,
           screen_pic: screen_pic || existingScreen.screen_pic,
           project_id: project_id || existingScreen.project_id,
-          is_deleted: is_deleted !== undefined ? is_deleted : existingScreen.is_deleted // ใช้ค่า is_deleted ใหม่หรือค่าเดิมขึ้นอยู่กับการรับค่า is_deleted ใน req.body
+          is_deleted:
+            is_deleted !== undefined ? is_deleted : existingScreen.is_deleted, // ใช้ค่า is_deleted ใหม่หรือค่าเดิมขึ้นอยู่กับการรับค่า is_deleted ใน req.body
         };
 
         connection.query(
@@ -578,20 +756,25 @@ router.delete("/deleteHistoryScreen/:id", async (req, res) => {
   const id = req.params.id;
 
   try {
-    connection.query("DELETE FROM screens WHERE id = ?", [id], async (err, results, fields) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).send();
-      }
+    connection.query(
+      "DELETE FROM screens WHERE id = ?",
+      [id],
+      async (err, results, fields) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).send();
+        }
 
-      return res.status(200).json({ message: "Screen deleted successfully!" });
-    });
+        return res
+          .status(200)
+          .json({ message: "Screen deleted successfully!" });
+      }
+    );
   } catch (err) {
     console.error(err);
     return res.status(500).send();
   }
 });
-
 
 // Route to add multiple screens to a user
 router.post("/addUserScreen", async (req, res) => {

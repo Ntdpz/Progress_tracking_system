@@ -1,21 +1,26 @@
 import colors from "vuetify/es5/util/colors";
+const path = require("path");
 
 export default {
-
+  router: {
+    middleware: ["loader"],
+  },
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: "%s - frontend",
-    title: "frontend",
+    titleTemplate: '%s - Progress-Tracking',
+    title: "Progress-Tracking",
     htmlAttrs: {
       lang: "en",
     },
-    meta: [
-      { charset: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { hid: "description", name: "description", content: "" },
-      { name: "format-detection", content: "telephone=no" },
+    link: [
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },
+      { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' }
     ],
-    link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
+    meta: [
+      { charset: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' }
+    ]
   },
   target: "static",
   buildModules: ["@nuxt/image"],
@@ -37,7 +42,7 @@ export default {
   css: ["@fortawesome/fontawesome-free/css/all.css"],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: ['@/plugins/chart.js'],
+  plugins: ["@/plugins/chart.js"],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -112,5 +117,13 @@ export default {
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {},
+  build: {
+    extend(config, { isDev, isClient }) {
+      config.resolve.alias["@components"] = path.resolve(
+        __dirname,
+        "components"
+      );
+      
+    },
+  },
 };

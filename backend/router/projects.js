@@ -13,25 +13,22 @@ function generateId() {
 //* GET All FROM projects
 router.get("/getAll", async (req, res) => {
   try {
-    const projectIdFilter = req.query.project_id;
+
     let query = `
       SELECT 
         projects.*,
-        COUNT(DISTINCT CASE WHEN Systems.is_deleted = 0 THEN Systems.id ELSE NULL END) AS system_count,
-        AVG(CASE WHEN Systems.is_deleted = 0 THEN Systems.system_progress ELSE NULL END) AS project_progress,
-        DATE_FORMAT(MIN(CASE WHEN Systems.is_deleted = 0 THEN Systems.system_plan_start END), '%Y-%m-%d') AS project_plan_start,
-        DATE_FORMAT(MAX(CASE WHEN Systems.is_deleted = 0 THEN Systems.system_plan_end END), '%Y-%m-%d') AS project_plan_end,
-        DATEDIFF(MAX(CASE WHEN Systems.is_deleted = 0 THEN Systems.system_plan_end END), MIN(CASE WHEN Systems.is_deleted = 0 THEN Systems.system_plan_start END)) AS project_manday
+        COUNT(DISTINCT CASE WHEN systems.is_deleted = 0 THEN systems.id ELSE NULL END) AS system_count,
+        AVG(CASE WHEN systems.is_deleted = 0 THEN systems.system_progress ELSE NULL END) AS project_progress,
+        DATE_FORMAT(MIN(CASE WHEN systems.is_deleted = 0 THEN systems.system_plan_start END), '%Y-%m-%d') AS project_plan_start,
+        DATE_FORMAT(MAX(CASE WHEN systems.is_deleted = 0 THEN systems.system_plan_end END), '%Y-%m-%d') AS project_plan_end,
+        DATEDIFF(MAX(CASE WHEN systems.is_deleted = 0 THEN systems.system_plan_end END), MIN(CASE WHEN systems.is_deleted = 0 THEN systems.system_plan_start END)) AS project_manday
       FROM 
         projects 
-      LEFT JOIN Systems ON projects.id = Systems.project_id`;
+      LEFT JOIN systems ON projects.id = systems.project_id`;
 
     const queryParams = [];
 
-    if (projectIdFilter) {
-      query += " WHERE projects.id = ?";
-      queryParams.push(projectIdFilter);
-    }
+
 
     query += " GROUP BY projects.id";
 
@@ -66,14 +63,14 @@ router.get("/getOne/:id", async (req, res) => {
       `
       SELECT 
         projects.*,
-        COUNT(DISTINCT CASE WHEN Systems.is_deleted = 0 THEN Systems.id ELSE NULL END) AS system_count,
-        AVG(CASE WHEN Systems.is_deleted = 0 THEN Systems.system_progress ELSE NULL END) AS project_progress,
-        DATE_FORMAT(MIN(CASE WHEN Systems.is_deleted = 0 THEN Systems.system_plan_start END), '%Y-%m-%d') AS project_plan_start,
-        DATE_FORMAT(MAX(CASE WHEN Systems.is_deleted = 0 THEN Systems.system_plan_end END), '%Y-%m-%d') AS project_plan_end,
-        DATEDIFF(MAX(CASE WHEN Systems.is_deleted = 0 THEN Systems.system_plan_end END), MIN(CASE WHEN Systems.is_deleted = 0 THEN Systems.system_plan_start END)) AS project_manday
+        COUNT(DISTINCT CASE WHEN systems.is_deleted = 0 THEN systems.id ELSE NULL END) AS system_count,
+        AVG(CASE WHEN systems.is_deleted = 0 THEN systems.system_progress ELSE NULL END) AS project_progress,
+        DATE_FORMAT(MIN(CASE WHEN systems.is_deleted = 0 THEN systems.system_plan_start END), '%Y-%m-%d') AS project_plan_start,
+        DATE_FORMAT(MAX(CASE WHEN systems.is_deleted = 0 THEN systems.system_plan_end END), '%Y-%m-%d') AS project_plan_end,
+        DATEDIFF(MAX(CASE WHEN systems.is_deleted = 0 THEN systems.system_plan_end END), MIN(CASE WHEN systems.is_deleted = 0 THEN systems.system_plan_start END)) AS project_manday
       FROM 
         projects 
-      LEFT JOIN Systems ON projects.id = Systems.project_id
+      LEFT JOIN systems ON projects.id = systems.project_id
       WHERE projects.id = ?
       GROUP BY projects.id
       `,
@@ -103,7 +100,7 @@ router.get("/getOne/:id", async (req, res) => {
 // Function to update project data
 async function updateProject(project) {
   try {
-    const { project_progress, system_count, project_plan_start, project_plan_end, project_manday } = project;
+    const {project_progress, system_count, project_plan_start, project_plan_end, project_manday } = project;
 
     // Check and set default values for null columns
     const updatedProjectProgress = project_progress !== null ? project_progress : 0;
@@ -171,14 +168,14 @@ router.get('/getHistoryProject', async (req, res) => {
 
 
 router.post("/createProject", async (req, res) => {
-  const { project_id, project_name_TH, project_name_ENG, selectedSA, selectedDEV, selectedIMP } = req.body;
+  const { project_name_TH, project_name_ENG, selectedSA, selectedDEV, selectedIMP } = req.body;
 
   const id = generateId(); // Generate ID using generateId() function
 
   try {
     connection.query(
-      "INSERT INTO projects (id, project_id, project_name_TH, project_name_ENG, project_progress, project_manday, system_count, project_plan_start, project_plan_end, is_deleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-      [id, project_id, project_name_TH, project_name_ENG, 0, 0, 0, null, null, false],
+      "INSERT INTO projects (id,  project_name_TH, project_name_ENG, project_progress, project_manday, system_count, project_plan_start, project_plan_end, is_deleted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [id, project_name_TH, project_name_ENG, 0, 0, 0, null, null, false],
       (err, results, fields) => {
         if (err) {
           console.error("Error while inserting a project into the database", err);
@@ -217,7 +214,7 @@ router.post("/createProject", async (req, res) => {
 // Route to update project
 router.put("/updateProject/:id", async (req, res) => {
   const id = req.params.id;
-  const { project_id, project_name_TH, project_name_ENG, is_deleted } = req.body;
+  const { project_name_TH, project_name_ENG, is_deleted } = req.body;
 
   try {
     const previousProjectData = await new Promise((resolve, reject) => {
@@ -231,14 +228,13 @@ router.put("/updateProject/:id", async (req, res) => {
       );
     });
 
-    if (!project_id && !project_name_TH && !project_name_ENG && is_deleted === undefined) {
+    if (!project_name_TH && !project_name_ENG && is_deleted === undefined) {
       return res.status(200).json(previousProjectData);
     }
 
     connection.query(
-      "UPDATE projects SET project_id = ?, project_name_TH = ?, project_name_ENG = ?, is_deleted = ? WHERE id = ?",
+      "UPDATE projects SET  project_name_TH = ?, project_name_ENG = ?, is_deleted = ? WHERE id = ?",
       [
-        project_id || req.body.project_id || previousProjectData.project_id,
         project_name_TH || req.body.project_name_TH || previousProjectData.project_name_TH,
         project_name_ENG || req.body.project_name_ENG || previousProjectData.project_name_ENG,
         is_deleted !== undefined ? is_deleted : previousProjectData.is_deleted,

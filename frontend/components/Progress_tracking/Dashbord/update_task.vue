@@ -2,27 +2,23 @@
   <div class="update-task-dialog">
     <h1 class="dialog-title">Update Task</h1>
     <p class="dialog-subtitle">task name : {{ task.task_name }}</p>
+    <p class="dialog-subtitle">
+      Last Update : {{ formatDateTime(task.task_date_update) }}
+    </p>
 
     <v-form>
       <v-row>
-        <!-- Title Row -->
-        <v-col cols="12">
-          <h3 class="task-progress-title">Task Progress</h3>
-        </v-col>
-
         <!-- Input and Slider Rows -->
         <v-col cols="12" class="d-flex">
           <v-row class="flex-grow-1">
             <v-col cols="12" sm="4" class="task-progress-col">
               <v-text-field
                 v-model="formattedTaskProgress"
-                min="0"
-                max="100"
                 required
-                outlined
                 @input="updateProgress"
                 class="task-text-field"
-                placeholder="Enter progress here"
+                label="Task Progress"
+                outlined
               ></v-text-field>
             </v-col>
 
@@ -34,27 +30,25 @@
                 step="1"
                 thumb-label="always"
                 required
+                @input="updateProgress"
               ></v-slider>
             </v-col>
           </v-row>
         </v-col>
       </v-row>
 
-      <v-row>
+      <v-row class="row-Remark">
         <v-col cols="12">
-          <!-- Title Row -->
-          <h3 class="task-Remark-title">Remark</h3>
           <v-textarea
             v-model="taskData.task_detail"
-            solo
+            outlined
             clearable
-            placeholder="Enter Remark"
-            class="textarea-Remark"
+            label="Remark"
           ></v-textarea>
         </v-col>
       </v-row>
 
-      <v-row>
+      <v-row class="row-Plan">
         <!-- Task Plan Start -->
         <v-col cols="12" sm="6" md="4">
           <v-menu
@@ -121,7 +115,7 @@
         </v-col>
       </v-row>
 
-      <v-row>
+      <v-row class="row-Actual">
         <!-- Task Actual Start -->
         <v-col cols="12" sm="4">
           <v-menu
@@ -188,7 +182,11 @@
       </v-row>
     </v-form>
 
-    <history_task_table ref="historyTaskTable" :taskId="task.id" />
+    <history_task_table
+      ref="historyTaskTable"
+      :taskId="task.id"
+      class="history_task_table-table"
+    />
 
     <v-row class="button-row">
       <v-btn class="save-btn" @click="updateTask">Save</v-btn>
@@ -201,6 +199,7 @@
 import Swal from "sweetalert2";
 import history_task_table from "./history_task_table.vue";
 import "./css/update_task.css";
+import { EventBus } from "@/plugins/event-bus";
 
 export default {
   middleware: "auth",
@@ -241,9 +240,9 @@ export default {
   computed: {
     formattedTaskProgress: {
       get() {
-        return this.taskData.task_progress
+        return this.taskData.task_progress !== undefined
           ? `${this.taskData.task_progress}%`
-          : "";
+          : "0%"; // Default to "0%" if task_progress is undefined
       },
       set(value) {
         this.taskData.task_progress = value.replace("%", "").trim();
@@ -305,7 +304,24 @@ export default {
   },
 
   methods: {
+    formatDateTime(dateTime) {
+      if (!dateTime) return "No dateTime";
+
+      const date = new Date(dateTime);
+
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0"); // เดือนใน JavaScript เริ่มจาก 0
+      const year = date.getFullYear();
+
+      const hours = String(date.getHours()).padStart(2, "0");
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+      const seconds = String(date.getSeconds()).padStart(2, "0");
+
+      return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+    },
     updateProgress() {
+      this.taskData.task_progress =
+        parseInt(this.taskData.task_progress, 10) || 0;
       this.calculateTaskStatus();
     },
     countBusinessDays(startDate, endDate) {
@@ -376,10 +392,16 @@ export default {
       try {
         const formatDateValue = (value) => (value === "" ? null : value);
 
+        // แปลงค่า task_progress
+        const taskProgressValue =
+          parseInt(this.taskData.task_progress, 10) || 0;
+        
+
+        // เรียก API เพื่ออัปเดตข้อมูลพื้นฐานของ task
         await this.$axios.put(`/tasks/save_history_tasks/${this.task.id}`, {
           task_name: this.task.task_name,
           task_detail: this.taskData.task_detail,
-          task_progress: this.taskData.task_progress,
+          task_progress: taskProgressValue,
           task_plan_start: formatDateValue(this.taskData.task_plan_start),
           task_plan_end: formatDateValue(this.taskData.task_plan_end),
           task_actual_start: formatDateValue(this.taskData.task_actual_start),
@@ -389,19 +411,91 @@ export default {
           task_status: this.taskData.task_status,
         });
 
-        Swal.fire({
-          title: "Success",
-          text: "Task updated successfully",
-          icon: "success",
-          confirmButtonText: "OK",
-          confirmButtonColor: "#629859",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            this.$emit("task-updated");
-            this.$emit("close-dialog");
-            this.$refs.historyTaskTable.refreshTable();
-          }
-        });
+        // เช็คเงื่อนไข task_progress = 100 และ task_status = 'Completed'
+        if (
+          taskProgressValue === 100 &&
+          this.taskData.task_status === "Completed"
+        ) {
+          Swal.fire({
+            title: "Task Completed",
+            text: "Would you like to close this task?",
+            icon: "success",
+            confirmButtonText: "OK",
+            confirmButtonColor: "#629859",
+            showCancelButton: true,
+            cancelButtonText: "Cancel",
+            html: `<input type="checkbox" id="archiveTask" checked /> 
+               <label for="archiveTask">Close Task</label>`, // Checkbox
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+              const archiveTaskChecked =
+                document.getElementById("archiveTask").checked;
+              let is_archived = archiveTaskChecked ? true : false;
+
+              // เรียก API เพื่ออัปเดตค่า is_archived
+              await this.$axios.put(
+                `/tasks/updateTasks/${this.task.id}`,
+                {
+                  task_name: this.task.task_name,
+                  task_detail: this.taskData.task_detail,
+                  task_progress: taskProgressValue,
+                  task_plan_start: formatDateValue(
+                    this.taskData.task_plan_start
+                  ),
+                  task_plan_end: formatDateValue(this.taskData.task_plan_end),
+                  task_actual_start: formatDateValue(
+                    this.taskData.task_actual_start
+                  ),
+                  task_actual_end: formatDateValue(
+                    this.taskData.task_actual_end
+                  ),
+                  user_update: this.user.id,
+                  task_manday: this.taskData.Actual_manday,
+                  task_status: this.taskData.task_status,
+                  is_archived: is_archived, // ส่งค่า is_archived
+                }
+              );
+
+              EventBus.$emit("refresh-data");
+              // ปิด dialog และรีเฟรชตาราง
+              this.$emit("task-updated");
+              this.$emit("close-dialog");
+              this.$refs.historyTaskTable.refreshTable();
+            }
+          });
+        } else {
+          // กรณี task_progress ไม่ครบ 100 หรือ status ไม่เป็น Completed
+          // เรียก API เพื่ออัปเดตข้อมูลพื้นฐานของ task พร้อมตั้งค่า is_archived เป็น false
+          await this.$axios.put(`/tasks/save_history_tasks/${this.task.id}`, {
+            task_name: this.task.task_name,
+            task_detail: this.taskData.task_detail,
+            task_progress: taskProgressValue,
+            task_plan_start: formatDateValue(this.taskData.task_plan_start),
+            task_plan_end: formatDateValue(this.taskData.task_plan_end),
+            task_actual_start: formatDateValue(this.taskData.task_actual_start),
+            task_actual_end: formatDateValue(this.taskData.task_actual_end),
+            user_update: this.user.id,
+            task_manday: this.taskData.Actual_manday,
+            task_status: this.taskData.task_status,
+            is_archived: false, // ตั้งค่า is_archived เป็น false
+          });
+
+          // ปิด dialog และรีเฟรชตาราง
+          Swal.fire({
+            title: "Success",
+            text: "Task updated successfully",
+            icon: "success",
+            confirmButtonText: "OK",
+            confirmButtonColor: "#629859",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              EventBus.$emit("refresh-data");
+              this.$emit("task-updated");
+              this.$emit("close-dialog");
+              this.$refs.historyTaskTable.refreshTable();
+            }
+          });
+        }
       } catch (error) {
         console.error("Error updating task:", error);
         Swal.fire({

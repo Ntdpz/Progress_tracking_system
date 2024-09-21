@@ -18,35 +18,35 @@ router.get('/getAll', async (req, res) => {
     const systemIdFilter = req.query.system_id;
     const projectFilter = req.query.project_id;
     let query = `
-      SELECT Systems.id, 
-             Systems.project_id,
-             Systems.system_id,
-             Systems.system_nameTH,
-             Systems.system_nameEN,
-             Systems.system_shortname,
-             Systems.is_deleted,
-             COUNT(CASE WHEN Screens.is_deleted = 0 THEN Screens.screen_id ELSE NULL END) AS screen_count, 
-             IFNULL(SUM(CASE WHEN Screens.is_deleted = 0 THEN IFNULL(screens.screen_progress, 0) ELSE 0 END) / NULLIF(COUNT(CASE WHEN Screens.is_deleted = 0 THEN screens.screen_progress END), 0), 0) AS system_progress,
-             DATE_FORMAT(MIN(CASE WHEN Screens.is_deleted = 0 THEN Screens.screen_plan_start END), '%Y-%m-%d') AS system_plan_start,
-             DATE_FORMAT(MAX(CASE WHEN Screens.is_deleted = 0 THEN Screens.screen_plan_end END), '%Y-%m-%d') AS system_plan_end,
-             DATEDIFF(MAX(CASE WHEN Screens.is_deleted = 0 THEN Screens.screen_plan_end END), MIN(CASE WHEN Screens.is_deleted = 0 THEN Screens.screen_plan_start END)) AS system_manday,
-             Systems.is_deleted
-      FROM Systems 
-      LEFT JOIN Screens ON Systems.id = Screens.system_id 
+      SELECT systems.id, 
+             systems.project_id,
+           
+             systems.system_nameTH,
+             systems.system_nameEN,
+             systems.system_shortname,
+             systems.is_deleted,
+             COUNT(CASE WHEN screens.is_deleted = 0 THEN screens.screen_code ELSE NULL END) AS screen_count,
+             IFNULL(SUM(CASE WHEN screens.is_deleted = 0 THEN IFNULL(screens.screen_progress, 0) ELSE 0 END) / NULLIF(COUNT(CASE WHEN screens.is_deleted = 0 THEN screens.screen_progress END), 0), 0) AS system_progress,
+             DATE_FORMAT(MIN(CASE WHEN screens.is_deleted = 0 THEN screens.screen_plan_start END), '%Y-%m-%d') AS system_plan_start,
+             DATE_FORMAT(MAX(CASE WHEN screens.is_deleted = 0 THEN screens.screen_plan_end END), '%Y-%m-%d') AS system_plan_end,
+             DATEDIFF(MAX(CASE WHEN screens.is_deleted = 0 THEN screens.screen_plan_end END), MIN(CASE WHEN screens.is_deleted = 0 THEN screens.screen_plan_start END)) AS system_manday,
+             systems.is_deleted
+      FROM systems
+      LEFT JOIN screens ON systems.id = screens.system_id
     `;
     const queryParams = [];
 
     if (projectFilter) {
-      query += ' WHERE Systems.project_id = ? AND Systems.is_deleted = false';
+      query += ' WHERE systems.project_id = ? AND systems.is_deleted = false';
       queryParams.push(projectFilter);
     } else if (systemIdFilter) {
-      query += ' WHERE Systems.id = ? AND Systems.is_deleted = false';
+      query += ' WHERE systems.id = ? AND systems.is_deleted = false';
       queryParams.push(systemIdFilter);
     } else {
-      query += ' WHERE Systems.is_deleted = false';
+      query += ' WHERE systems.is_deleted = false';
     }
 
-    query += ' GROUP BY Systems.id';
+    query += ' GROUP BY systems.id';
 
     // Execute the query
     connection.query(query, queryParams, async (err, results, fields) => {
@@ -72,17 +72,17 @@ router.get('/getOne/:id', async (req, res) => {
   try {
     connection.query(
       `SELECT 
-          Systems.*, 
-          COUNT(CASE WHEN Screens.is_deleted = 0 THEN Screens.screen_id ELSE NULL END) AS screen_count, 
-          IFNULL(SUM(CASE WHEN Screens.is_deleted = 0 THEN IFNULL(Screens.screen_progress, 0) ELSE 0 END) / NULLIF(COUNT(CASE WHEN Screens.is_deleted = 0 THEN Screens.screen_progress END), 0), 0) AS system_progress,
-          DATE_FORMAT(MIN(CASE WHEN Screens.is_deleted = 0 THEN Screens.screen_plan_start END), '%Y-%m-%d') AS system_plan_start,
-          DATE_FORMAT(MAX(CASE WHEN Screens.is_deleted = 0 THEN Screens.screen_plan_end END), '%Y-%m-%d') AS system_plan_end,
-          DATEDIFF(MAX(CASE WHEN Screens.is_deleted = 0 THEN Screens.screen_plan_end END), MIN(CASE WHEN Screens.is_deleted = 0 THEN Screens.screen_plan_start END)) AS system_manday,
-          Systems.is_deleted
-      FROM Systems 
-      LEFT JOIN Screens ON Systems.id = Screens.system_id
-      WHERE Systems.id = ?
-      GROUP BY Systems.id`,
+          systems.*,
+          COUNT(CASE WHEN screens.is_deleted = 0 THEN screens.screen_code ELSE NULL END) AS screen_count,
+          IFNULL(SUM(CASE WHEN screens.is_deleted = 0 THEN IFNULL(screens.screen_progress, 0) ELSE 0 END) / NULLIF(COUNT(CASE WHEN screens.is_deleted = 0 THEN screens.screen_progress END), 0), 0) AS system_progress,
+          DATE_FORMAT(MIN(CASE WHEN screens.is_deleted = 0 THEN screens.screen_plan_start END), '%Y-%m-%d') AS system_plan_start,
+          DATE_FORMAT(MAX(CASE WHEN screens.is_deleted = 0 THEN screens.screen_plan_end END), '%Y-%m-%d') AS system_plan_end,
+          DATEDIFF(MAX(CASE WHEN screens.is_deleted = 0 THEN screens.screen_plan_end END), MIN(CASE WHEN screens.is_deleted = 0 THEN screens.screen_plan_start END)) AS system_manday,
+          systems.is_deleted
+      FROM systems
+      LEFT JOIN screens ON systems.id = screens.system_id
+      WHERE systems.id = ?
+      GROUP BY systems.id`,
       [id],
       (err, results, fields) => {
         if (err) {
@@ -111,22 +111,22 @@ router.get('/searchByProjectId/:project_id', async (req, res) => {
     const { project_id } = req.params;
 
     let query = `
-      SELECT Systems.id, 
-             Systems.project_id,
-             Systems.system_id,
-             Systems.system_nameTH,
-             Systems.system_nameEN,
-             Systems.system_shortname,
-             Systems.is_deleted,
-             COUNT(CASE WHEN Screens.is_deleted = 0 THEN Screens.screen_id ELSE NULL END) AS screen_count, 
-             IFNULL(SUM(CASE WHEN Screens.is_deleted = 0 THEN IFNULL(screens.screen_progress, 0) ELSE 0 END) / NULLIF(COUNT(CASE WHEN Screens.is_deleted = 0 THEN screens.screen_progress END), 0), 0) AS system_progress,
-             DATE_FORMAT(MIN(CASE WHEN Screens.is_deleted = 0 THEN Screens.screen_plan_start END), '%Y-%m-%d') AS system_plan_start,
-             DATE_FORMAT(MAX(CASE WHEN Screens.is_deleted = 0 THEN Screens.screen_plan_end END), '%Y-%m-%d') AS system_plan_end,
-             DATEDIFF(MAX(CASE WHEN Screens.is_deleted = 0 THEN Screens.screen_plan_end END), MIN(CASE WHEN Screens.is_deleted = 0 THEN Screens.screen_plan_start END)) AS system_manday
-      FROM Systems 
-      LEFT JOIN Screens ON Systems.id = Screens.system_id 
-      WHERE Systems.project_id = ? AND Systems.is_deleted = false
-      GROUP BY Systems.id
+      SELECT systems.id,
+             systems.project_id,
+          
+             systems.system_nameTH,
+             systems.system_nameEN,
+             systems.system_shortname,
+             systems.is_deleted,
+             COUNT(CASE WHEN screens.is_deleted = 0 THEN screens.screen_code ELSE NULL END) AS screen_count,
+             IFNULL(SUM(CASE WHEN screens.is_deleted = 0 THEN IFNULL(screens.screen_progress, 0) ELSE 0 END) / NULLIF(COUNT(CASE WHEN screens.is_deleted = 0 THEN screens.screen_progress END), 0), 0) AS system_progress,
+             DATE_FORMAT(MIN(CASE WHEN screens.is_deleted = 0 THEN screens.screen_plan_start END), '%Y-%m-%d') AS system_plan_start,
+             DATE_FORMAT(MAX(CASE WHEN screens.is_deleted = 0 THEN screens.screen_plan_end END), '%Y-%m-%d') AS system_plan_end,
+             DATEDIFF(MAX(CASE WHEN screens.is_deleted = 0 THEN screens.screen_plan_end END), MIN(CASE WHEN screens.is_deleted = 0 THEN screens.screen_plan_start END)) AS system_manday
+      FROM systems
+      LEFT JOIN screens ON systems.id = screens.system_id
+      WHERE systems.project_id = ? AND systems.is_deleted = false
+      GROUP BY systems.id
     `;
 
     // Execute the query
@@ -198,22 +198,22 @@ router.get('/getAll/:project_id', async (req, res) => {
   const projectId = req.params.project_id;
   try {
     const query = `
-      SELECT Systems.id, 
-             Systems.project_id,
-             Systems.system_id,
-             Systems.system_nameTH,
-             Systems.system_nameEN,
-             Systems.system_shortname,
-             Systems.is_deleted,
-             COUNT(Screens.screen_id) AS screen_count, 
+      SELECT systems.id,
+             systems.project_id,
+            
+             systems.system_nameTH,
+             systems.system_nameEN,
+             systems.system_shortname,
+             systems.is_deleted,
+             COUNT(screens.screen_code) AS screen_count,
              AVG(screens.screen_progress) AS system_progress,
-             DATE_FORMAT(MIN(Screens.screen_plan_start), '%Y-%m-%d') AS system_plan_start,
-             DATE_FORMAT(MAX(Screens.screen_plan_end), '%Y-%m-%d') AS system_plan_end,
-             DATEDIFF(MAX(Screens.screen_plan_end), MIN(Screens.screen_plan_start)) AS system_manday
-      FROM Systems 
-      LEFT JOIN Screens ON Systems.id = Screens.system_id 
-      WHERE Systems.project_id = ? AND Systems.is_deleted = false
-      GROUP BY Systems.id
+             DATE_FORMAT(MIN(screens.screen_plan_start), '%Y-%m-%d') AS system_plan_start,
+             DATE_FORMAT(MAX(screens.screen_plan_end), '%Y-%m-%d') AS system_plan_end,
+             DATEDIFF(MAX(screens.screen_plan_end), MIN(screens.screen_plan_start)) AS system_manday
+      FROM systems
+      LEFT JOIN screens ON systems.id = screens.system_id
+      WHERE systems.project_id = ? AND systems.is_deleted = false
+      GROUP BY systems.id
     `;
 
     connection.query(query, [projectId], async (err, results, fields) => {
@@ -238,23 +238,23 @@ router.get('/getAll/:project_id', async (req, res) => {
 router.get('/getAllHistorySystem', async (req, res) => {
   try {
     let query = `
-      SELECT Systems.id, 
-             Systems.project_id,
-             Systems.system_id,
-             Systems.system_nameTH,
-             Systems.system_nameEN,
-             Systems.system_shortname,
-             Systems.is_deleted,
-             COUNT(Screens.screen_id) AS screen_count, 
+      SELECT systems.id,
+             systems.project_id,
+            
+             systems.system_nameTH,
+             systems.system_nameEN,
+             systems.system_shortname,
+             systems.is_deleted,
+             COUNT(screens.screen_code) AS screen_count,
              AVG(screens.screen_progress) AS system_progress,
-             DATE_FORMAT(MIN(Screens.screen_plan_start), '%Y-%m-%d') AS system_plan_start,
-             DATE_FORMAT(MAX(Screens.screen_plan_end), '%Y-%m-%d') AS system_plan_end,
-             DATEDIFF(MAX(Screens.screen_plan_end), MIN(Screens.screen_plan_start)) AS system_manday,
-             Systems.is_deleted /* Include the 'is_deleted' field in the SELECT clause */
-      FROM Systems 
-      LEFT JOIN Screens ON Systems.id = Screens.system_id 
-      WHERE Systems.is_deleted = 1 /* Filter only deleted systems */
-      GROUP BY Systems.id
+             DATE_FORMAT(MIN(screens.screen_plan_start), '%Y-%m-%d') AS system_plan_start,
+             DATE_FORMAT(MAX(screens.screen_plan_end), '%Y-%m-%d') AS system_plan_end,
+             DATEDIFF(MAX(screens.screen_plan_end), MIN(screens.screen_plan_start)) AS system_manday,
+             systems.is_deleted /* Include the 'is_deleted' field in the SELECT clause */
+      FROM systems
+      LEFT JOIN screens ON systems.id = screens.system_id
+      WHERE systems.is_deleted = 1 /* Filter only deleted systems */
+      GROUP BY systems.id
     `;
 
     // Execute the query
@@ -282,22 +282,21 @@ router.get('/searchByProjectId_delete/:project_id', async (req, res) => {
     const { project_id } = req.params;
 
     let query = `
-      SELECT Systems.id, 
-             Systems.project_id,
-             Systems.system_id,
-             Systems.system_nameTH,
-             Systems.system_nameEN,
-             Systems.system_shortname,
-             Systems.is_deleted,
-             COUNT(Screens.screen_id) AS screen_count, 
+      SELECT systems.id,
+             systems.project_id,
+             systems.system_nameTH,
+             systems.system_nameEN,
+             systems.system_shortname,
+             systems.is_deleted,
+             COUNT(screens.screen_code) AS screen_count,
              AVG(screens.screen_progress) AS system_progress,
-             DATE_FORMAT(MIN(Screens.screen_plan_start), '%Y-%m-%d') AS system_plan_start,
-             DATE_FORMAT(MAX(Screens.screen_plan_end), '%Y-%m-%d') AS system_plan_end,
-             DATEDIFF(MAX(Screens.screen_plan_end), MIN(Screens.screen_plan_start)) AS system_manday
-      FROM Systems 
-      LEFT JOIN Screens ON Systems.id = Screens.system_id 
-      WHERE Systems.project_id = ? AND Systems.is_deleted = 1
-      GROUP BY Systems.id
+             DATE_FORMAT(MIN(screens.screen_plan_start), '%Y-%m-%d') AS system_plan_start,
+             DATE_FORMAT(MAX(screens.screen_plan_end), '%Y-%m-%d') AS system_plan_end,
+             DATEDIFF(MAX(screens.screen_plan_end), MIN(screens.screen_plan_start)) AS system_manday
+      FROM systems
+      LEFT JOIN screens ON systems.id = screens.system_id
+      WHERE systems.project_id = ? AND systems.is_deleted = 1
+      GROUP BY systems.id
     `;
 
     // Execute the query
@@ -323,31 +322,26 @@ router.get('/searchByProjectId_delete/:project_id', async (req, res) => {
 router.post("/createSystem", async (req, res) => {
   const {
     project_id,
-    system_id,
     system_nameTH,
     system_nameEN,
     system_shortname,
-    selectedUser,
-    screen_progress // เพิ่มการรับค่า screen_progress จากข้อมูลที่ส่งมา
+    selectedUser, // ตรวจสอบว่า selectedUser มีค่าเป็น array หรือไม่
   } = req.body;
 
   const id = generateId(); // Generate a valid ID using generateId() function
 
   try {
     connection.query(
-      "INSERT INTO systems (id, project_id, system_id, system_nameTH, system_nameEN, system_shortname) VALUES (?, ?, ?, ?, ?, ?)",
-      [id, project_id, system_id, system_nameTH, system_nameEN, system_shortname], // Use the generated ID
+      "INSERT INTO systems (id, project_id, system_nameTH, system_nameEN, system_shortname) VALUES (?, ?, ?, ?, ?)",
+      [id, project_id, system_nameTH, system_nameEN, system_shortname], // Use the generated ID
       (err, results, fields) => {
         if (err) {
-          console.error(
-            "Error while inserting a system into the database",
-            err
-          );
+          console.error("Error while inserting a system into the database", err);
           return res.status(400).send();
         }
 
         // Create user_system relations if selectedUsers are provided
-        if (selectedUser) {
+        if (Array.isArray(selectedUser) && selectedUser.length > 0) {
           const userSystemValues = selectedUser.map((user_id) => [
             user_id,
             id, // Use the provided system_id
@@ -359,10 +353,7 @@ router.post("/createSystem", async (req, res) => {
             [userSystemValues],
             (error, results, fields) => {
               if (error) {
-                console.error(
-                  "Error while inserting users into the system",
-                  error
-                );
+                console.error("Error while inserting users into the system", error);
                 return res.status(400).send();
               }
               return res
@@ -382,6 +373,7 @@ router.post("/createSystem", async (req, res) => {
     return res.status(500).send();
   }
 });
+
 
 
 // Route to update system details

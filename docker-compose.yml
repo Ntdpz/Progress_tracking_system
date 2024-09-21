@@ -47,8 +47,7 @@ services:
     environment:
       PMA_HOST: db # ระบุ host ที่จะให้ phpmyadmin ไปจัดการ ซึ่งสามารถใส่เป็นชื่อ container name (db) ได้เลย
       PMA_PORT: 3306 # ระบุ port ของ Database
-      PMA_USER: root # ระบุ user ของ Database
-      PMA_PASSWORD: root # ระบุ password ของ Database
+      PMA_ARBITRARY: 1 # เปิดใช้งาน arbitrary login
     ports:
       - "8080:80"
     depends_on:
