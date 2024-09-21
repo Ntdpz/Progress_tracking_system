@@ -301,7 +301,7 @@
       </v-card>
     </v-dialog>
 
-     <!-- Create task dialog Dev-->
+    <!-- Create task dialog Dev-->
     <v-dialog v-model="DevdialogAddTaskForm" max-width="600px">
       <v-card>
         <v-card-title>
@@ -399,7 +399,7 @@
       </v-card>
     </v-dialog>
 
-     <!-- Create task dialog Imp-->
+    <!-- Create task dialog Imp-->
     <v-dialog v-model="ImpdialogAddTaskForm" max-width="600px">
       <v-card>
         <v-card-title>
@@ -499,7 +499,7 @@
 
     <v-data-table :headers="taskHeaders" :items="filteredTasks" item-key="task_id" class="elevation-1">
       <template v-slot:item="{ item }">
-        <tr >
+        <tr>
           <!-- ข้อมูลต่าง ๆ ของ task -->
           <td>{{ item.task_id }}</td>
           <td>{{ item.task_name }}</td>
@@ -516,6 +516,9 @@
                 {{ getUserName(item.task_member_id) }}
               </v-card-title>
             </v-tooltip>
+          </td>
+          <td>
+            {{ getUserFirstName(item.task_member_id) }}
           </td>
           <td class="progress-cell">
             <v-progress-linear :color="getProgressColor(parseInt(item.task_progress))" height="20"
@@ -628,6 +631,7 @@ export default {
         { text: "Task ID", value: "task_id" },
         { text: "Task Name", value: "task_name" },
         { text: "Task User", value: "user_id" },
+        { text: "Position", value: "task_member_id" },
         { text: "Progress", value: "task_progress" },
         { text: "Plan Start", value: "task_plan_start" },
         { text: "Plan End", value: "task_plan_end" },
@@ -982,6 +986,10 @@ sortByPosition(userProjects) {
       // หา user object โดยใช้ userId และคืนค่าชื่อผู้ใช้
       const user = this.userList.find((user) => user.user_id === userId);
       return user ? user.user_name : "Unknown";
+    },
+    getUserFirstName(userId) {
+      const user = this.userList.find(u => u.user_id === userId);
+      return user ? user.user_name.split(' : ')[0] : 'Unknown';
     },
 
     calculateMandays() {
