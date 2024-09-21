@@ -34,8 +34,8 @@
             {{ Math.round(designProgress || 0) }}%
           </span>
           {{
-          truncateName(getUserNamesByPosition("System Analyst")) ||
-          "No assignee"
+            truncateName(getUserNamesByPosition("System Analyst")) ||
+            "No assignee"
           }}
           <span>&nbsp;</span>
           <br />
@@ -44,13 +44,13 @@
             {{ Math.round(devProgress || 0) }}%
           </span>
           {{
-          truncateName(getUserNamesByPosition("Developer")) || "No assignee"
+            truncateName(getUserNamesByPosition("Developer")) || "No assignee"
           }}
           <span>&nbsp;</span>
           <br />
           <strong>Implementer:</strong>
           {{
-          truncateName(getUserNamesByPosition("Implementer")) || "No assignee"
+            truncateName(getUserNamesByPosition("Implementer")) || "No assignee"
           }}
         </v-card-subtitle>
         <v-card-actions>
@@ -118,13 +118,18 @@
 
             <!-- User Position in the "User Position" column -->
             <template v-slot:item.user_position="{ item }">
-              <v-chip :style="{
+              <div :style="{
                 width: '120px',
-                display: 'flex',
-                justifyContent: 'center',
-              }" :color="getColor(item.user_position)" dark>
+                backgroundColor: getColor(item.user_position),
+                color: 'white',
+                paddingTop: '5px',
+                paddingBottom: '5px',
+                borderRadius: '20px',
+                textAlign: 'center',
+                display: 'inline-block',
+              }">
                 {{ item.user_position }}
-              </v-chip>
+              </div>
             </template>
 
             <!-- Action buttons in the "Action" column -->
@@ -250,7 +255,6 @@
             <template v-slot:item="{ item }">
               <v-list-item>
                 <v-checkbox v-model="selectedImplementers" :value="item.id" />
-
                 <v-list-item-avatar>
                   <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
                 </v-list-item-avatar>

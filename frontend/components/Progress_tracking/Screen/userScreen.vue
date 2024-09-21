@@ -1,13 +1,7 @@
 <template>
   <div>
-    <v-data-table
-      :headers="headers"
-      :items="userProjects"
-      item-key="id"
-      class="styled-table"
-      :items-per-page="5"
-      align="center"
-    >
+    <v-data-table :headers="headers" :items="userProjects" item-key="id" class="styled-table" :items-per-page="5"
+      align="center">
       <template v-slot:top>
         <v-toolbar flat class="toolbar">
           <v-toolbar-title class="toolbar-title">
@@ -25,9 +19,18 @@
 
       <!-- position -->
       <template v-slot:item.user_position="{ item }">
-        <v-chip :color="getColor(item.user_position)" dark>
+        <div :style="{
+          width: '120px',
+          backgroundColor: getColor(item.user_position),
+          color: 'white',
+          borderRadius: '20px',
+          textAlign: 'center',
+          display: 'inline-block',
+          paddingTop: '5px',
+          paddingBottom: '5px',
+        }">
           {{ item.user_position }}
-        </v-chip>
+        </div>
       </template>
     </v-data-table>
   </div>

@@ -157,11 +157,12 @@ export default {
       );
     },
     paginatedScreens() {
-      console.log("Page:", this.page); // Debugging the current page
-      console.log("Total Pages:", this.totalPages); // Debugging total pages
+      const sortedScreens = this.filteredScreens.sort((a, b) => {
+        return a.screen_progress - b.screen_progress;
+      });
       const start = (this.page - 1) * this.itemsPerPage;
       const end = start + this.itemsPerPage;
-      return this.filteredScreens.slice(start, end); // Paginate based on filtered or all screens
+      return sortedScreens.slice(start, end); // Paginate based on filtered or all screens
     },
     isRestrictedPosition() {
       return this.user && (this.user.user_position === "Developer" || this.user.user_position === "Implementer");

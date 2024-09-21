@@ -1,11 +1,6 @@
 <template>
   <div>
-    <v-data-table
-      :headers="headers"
-      :items="user_systems"
-      item-key="id"
-      :items-per-page="5"
-    >
+    <v-data-table :headers="headers" :items="user_systems" item-key="id" :items-per-page="5">
       <!-- image -->
       <template v-slot:item.user_pic="{ item }">
         <v-avatar size="36">
@@ -21,9 +16,18 @@
       </template>
 
       <template v-slot:item.user_position="{ item }">
-        <v-chip :color="getColor(item.user_position)" dark>
+        <div :style="{
+          width: '120px',
+          backgroundColor: getColor(item.user_position),
+          color: 'white',
+          borderRadius: '20px',
+          textAlign: 'center',
+          display: 'inline-block',
+          paddingTop: '5px',
+          paddingBottom: '5px',
+        }">
           {{ item.user_position }}
-        </v-chip>
+        </div>
       </template>
     </v-data-table>
   </div>
@@ -92,5 +96,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
