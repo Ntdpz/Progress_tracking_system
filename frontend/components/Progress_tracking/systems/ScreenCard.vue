@@ -255,7 +255,6 @@
             <template v-slot:item="{ item }">
               <v-list-item>
                 <v-checkbox v-model="selectedImplementers" :value="item.id" />
-
                 <v-list-item-avatar>
                   <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
                 </v-list-item-avatar>
