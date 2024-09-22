@@ -277,6 +277,7 @@ router.put("/updateTasks/:id", async (req, res) => {
       task_detail,
       task_status,
       task_manday,
+      task_actual_manday, // เพิ่ม task_actual_manday
       task_progress,
       task_plan_start,
       task_plan_end,
@@ -307,6 +308,11 @@ router.put("/updateTasks/:id", async (req, res) => {
     // Check and add task_manday if provided
     if (task_manday !== undefined) {
       updatedTaskFields.task_manday = task_manday;
+    }
+
+    // Check and add task_actual_manday if provided
+    if (task_actual_manday !== undefined) {
+      updatedTaskFields.task_actual_manday = task_actual_manday; // เพิ่มการตรวจสอบ
     }
 
     // Check and add task_progress if provided
@@ -359,6 +365,7 @@ router.put("/updateTasks/:id", async (req, res) => {
   }
 });
 
+
 // Route for deleting a task and related data
 router.delete("/deleteHistoryTasks/:id", async (req, res) => {
   try {
@@ -400,6 +407,7 @@ router.put("/save_history_tasks/:id", async (req, res) => {
       task_detail,
       task_status,
       task_manday,
+      task_actual_manday,
       screen_id,
       project_id,
       task_type,
@@ -431,10 +439,16 @@ router.put("/save_history_tasks/:id", async (req, res) => {
     // Get the current date and time for task_date_update
     const currentDateTime = new Date();
 
+    // Set task_actual_end to null if task_progress is less than 100
+    const updatedTaskActualEnd = (task_progress < 100) ? null : (task_actual_end || currentTask[0].task_actual_end);
+
+    // ตั้งค่า task_actual_manday เป็น 0 หาก task_actual_end เป็น null
+    const updatedTaskActualManday = (updatedTaskActualEnd === null && task_progress < 100) ? 0 : task_actual_manday || currentTask[0].task_actual_manday;
+
     // Update the task in the database, including is_archived field
     await connection.promise().query(
       `UPDATE tasks 
-       SET task_name=?, task_detail=?, task_status=?, task_manday=?, screen_id=?, project_id=?, 
+       SET task_name=?, task_detail=?, task_status=?, task_manday=?, task_actual_manday=?, screen_id=?, project_id=?,
            task_type=?, system_id=?, task_progress=?, task_plan_start=?, task_plan_end=?, 
            task_actual_start=?, task_actual_end=?, user_update=?, task_member_id=?, task_date_update=?, is_archived=?
        WHERE id=?`,
@@ -443,6 +457,7 @@ router.put("/save_history_tasks/:id", async (req, res) => {
         task_detail || currentTask[0].task_detail,
         task_status || currentTask[0].task_status,
         task_manday || currentTask[0].task_manday,
+        updatedTaskActualManday,
         updatedScreenId,
         updatedProjectId,
         updatedTaskType,
@@ -453,7 +468,7 @@ router.put("/save_history_tasks/:id", async (req, res) => {
         task_plan_start || currentTask[0].task_plan_start,
         task_plan_end || currentTask[0].task_plan_end,
         task_actual_start || currentTask[0].task_actual_start,
-        task_actual_end || currentTask[0].task_actual_end,
+        updatedTaskActualEnd, // Use the new value that was checked
         user_update || currentTask[0].user_update,
         updatedTaskMemberId,
         currentDateTime, // Set the current date and time for task_date_update
@@ -498,6 +513,7 @@ router.put("/save_history_tasks/:id", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
 
 // Route for getting history tasks by task_id
 router.get("/history_tasks/:task_id", async (req, res) => {
