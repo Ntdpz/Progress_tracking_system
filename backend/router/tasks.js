@@ -270,6 +270,7 @@ function formatDates(tasks) {
 }
 
 // Route for updating task data
+// Route for updating task data
 router.put("/updateTasks/:id", async (req, res) => {
   try {
     const {
@@ -277,7 +278,6 @@ router.put("/updateTasks/:id", async (req, res) => {
       task_detail,
       task_status,
       task_manday,
-      task_actual_manday, // เพิ่ม task_actual_manday
       task_progress,
       task_plan_start,
       task_plan_end,
@@ -310,11 +310,6 @@ router.put("/updateTasks/:id", async (req, res) => {
       updatedTaskFields.task_manday = task_manday;
     }
 
-    // Check and add task_actual_manday if provided
-    if (task_actual_manday !== undefined) {
-      updatedTaskFields.task_actual_manday = task_actual_manday; // เพิ่มการตรวจสอบ
-    }
-
     // Check and add task_progress if provided
     if (task_progress !== undefined) {
       updatedTaskFields.task_progress = task_progress;
@@ -345,6 +340,15 @@ router.put("/updateTasks/:id", async (req, res) => {
       updatedTaskFields.task_member_id = task_member_id;
     }
 
+    // คำนวณค่า task_actual_manday
+    if (task_actual_end === undefined || task_progress < 100) {
+      updatedTaskFields.task_actual_manday = 0; // กำหนดค่าเป็น 0
+    } else {
+      const taskActualStart = new Date(task_actual_start);
+      const taskActualEnd = new Date(task_actual_end);
+      updatedTaskFields.task_actual_manday = countBusinessDays(taskActualStart, taskActualEnd);
+    }
+
     if (Object.keys(updatedTaskFields).length === 0) {
       return res.status(400).json({ error: "No fields to update" });
     }
@@ -364,6 +368,23 @@ router.put("/updateTasks/:id", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
+// ฟังก์ชันสำหรับนับวันทำงาน
+function countBusinessDays(startDate, endDate) {
+  let count = 0;
+  let currentDate = new Date(startDate);
+
+  while (currentDate <= endDate) {
+    const dayOfWeek = currentDate.getDay();
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      count++;
+    }
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  return count;
+}
+
 
 
 // Route for deleting a task and related data
@@ -537,6 +558,20 @@ router.get("/history_tasks/:task_id", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+function countBusinessDays(startDate, endDate) {
+  let count = 0;
+  let currentDate = new Date(startDate);
+
+  while (currentDate <= endDate) {
+    const dayOfWeek = currentDate.getDay();
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      count++;
+    }
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  return count;
+}
 
 // Exporting the router
 module.exports = router;
