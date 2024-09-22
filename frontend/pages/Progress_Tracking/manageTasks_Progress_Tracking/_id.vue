@@ -615,6 +615,7 @@ export default {
         screen_progress: null,
         screen_progress_status_design: null,
         screen_progress_status_dev: null,
+        screen_progress_status_testing: null,
         task_count: null,
         screen_plan_start: null,
         screen_plan_end: null,
@@ -639,7 +640,7 @@ export default {
         { text: "Task Type", value: "task_type" },
         { text: "Actions", value: "actions", sortable: false },
       ],
-      taskTypeOrder: ["Design", "Develop", "Test", "Maintenance"], // กำหนดลำดับของ task types
+      taskTypeOrder: ["Design", "Develop", "Testing", "Maintenance"], // กำหนดลำดับของ task types
       userProjects: [], 
       historyTaskData: {
         task_name: "",
@@ -711,7 +712,7 @@ export default {
       perPage: 12,
       statusOptions: ["Design", "Develop"],
       statusOptionsDev: ["Develop","Maintenance",],
-      statusOptionsImp: ["Document","Test",],
+      statusOptionsImp: ["Document","Testing",],
       showImageDialog: false,
       showHistoryDialog: false,
       screen_plan_start: "",
@@ -719,6 +720,7 @@ export default {
       screen_progress: "",
       screen_progress_status_design: 0,
       screen_progress_status_dev: 0,
+      screen_progress_status_testing: 0,
       screen_manday: "",
       screen_level: "",
       screen_pic: "",
@@ -1552,6 +1554,7 @@ sortByPosition(userProjects) {
           screen_progress: screen.screen_progress,
           screen_progress_status_design: screen.screen_progress_status_design,
           screen_progress_status_dev: screen.screen_progress_status_dev,
+          screen_progress_status_testing: screen.screen_progress_status_testing,
           task_count: screen.task_count,
           screen_plan_start: screen.screen_plan_start,
           screen_plan_end: screen.screen_plan_end,

@@ -22,27 +22,55 @@ router.use(async (req, res, next) => {
   }
 });
 
-router.put("/tasks/:id", async (req, res) => {
+// Route for creating tasks
+router.post("/createTasks", async (req, res) => {
   try {
-    const { id } = req.params;
-    const { task_type } = req.body;
+    const {
+      task_id,
+      task_name,
+      task_detail,
+      task_type,
+      screen_id,
+      project_id,
+      system_id,
+      task_plan_start,
+      task_plan_end,
+      task_member_id,
+      task_manday, // เพิ่มฟิลด์ task_manday เข้ามา
+    } = req.body;
 
-    // ตรวจสอบว่า task_type ถูกส่งมาใน request body หรือไม่
-    if (!task_type) {
-      return res.status(400).json({ error: "Task type is required" });
-    }
+    const id = generateId(); // ใช้ generateId() function เพื่อสร้าง ID
 
-    const query = "UPDATE tasks SET task_type = ? WHERE id = ?";
-    const [result] = await connection.promise().query(query, [task_type, id]);
+    const query =
+      "INSERT INTO tasks (id, task_id, task_name, task_detail, task_type, screen_id, project_id, system_id, task_plan_start, task_plan_end, task_member_id, task_manday) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"; // เพิ่มฟิลด์ task_manday เข้าไปในคำสั่ง SQL
 
-    // ตรวจสอบว่ามีการอัปเดตแถวใดๆ หรือไม่
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ error: "Task not found" });
-    }
+    await new Promise((resolve, reject) => {
+      connection.query(
+        query,
+        [
+          id,
+          task_id,
+          task_name,
+          task_detail,
+          task_type,
+          screen_id,
+          project_id,
+          system_id,
+          task_plan_start,
+          task_plan_end,
+          task_member_id,
+          task_manday, // เพิ่ม task_manday เข้าไปใน array ของ parameters
+        ],
+        (err, result) => {
+          if (err) reject(err);
+          resolve(result);
+        }
+      );
+    });
 
-    res.send("Task type updated successfully");
+    res.send("Task created successfully");
   } catch (error) {
-    console.error("Error updating task type:", error);
+    console.error("Error creating task:", error);
     res.status(500).send("Internal Server Error");
   }
 });
@@ -130,28 +158,29 @@ router.get("/searchByProjectId/:project_id", async (req, res) => {
   try {
     const { project_id } = req.params;
 
-    // สร้าง query SQL โดยทำการ JOIN ระหว่างตาราง Tasks, Projects, Systems, และ Screens
+    // สร้าง query SQL โดยทำการ JOIN ระหว่างตาราง Tasks, Projects, Systems, และ Screens พร้อมเพิ่มการดึงคอลัมน์ is_archived
     let query = `
             SELECT 
-                tasks.task_id, 
-                tasks.task_name, 
-                tasks.task_detail, 
-                tasks.task_status, 
-                tasks.task_manday, 
-                tasks.task_type,
-                tasks.task_progress, 
-                tasks.task_plan_start, 
-                tasks.task_plan_end, 
-                Projects.project_name_ENG, 
-                Systems.system_nameEN, 
-                Screens.screen_name,
+                tasks.task_id,
+                tasks.task_name,
+                tasks.task_detail,
+                tasks.task_status,
+                tasks.task_manday,
+                tasks.task_progress,
+                tasks.task_plan_start,
+                tasks.task_plan_end,
+                projects.project_name_ENG, 
+                systems.system_nameEN, 
+                screens.screen_name,
                 tasks.project_id,
                 tasks.system_id,
                 tasks.screen_id,
                 tasks.id,
-                task_actual_start,
-                task_actual_end,
-                task_member_id
+                tasks.task_actual_start,
+                tasks.task_actual_end,
+                tasks.task_member_id,
+                tasks.task_date_update,
+                tasks.is_archived
 
             FROM tasks
             JOIN projects ON tasks.project_id = projects.id
@@ -174,7 +203,7 @@ router.get("/searchByProjectId/:project_id", async (req, res) => {
           .json({ message: "No tasks found for this project ID" });
       }
 
-      // ส่งข้อมูล tasks กลับในรูปแบบ JSON
+      // ส่งข้อมูล tasks กลับในรูปแบบ JSON โดยรวมค่า is_archived ด้วย
       res.status(200).json(results);
     });
   } catch (error) {
@@ -188,7 +217,7 @@ router.get("/searchBySystemId/:system_id", async (req, res) => {
     const { system_id } = req.params;
 
     // สร้าง query SQL เพื่อดึงข้อมูล Tasks ตาม ID ระบบที่ระบุ พร้อมกรองข้อมูล Tasks ที่ถูกลบ
-    const query = "SELECT * FROM tasks  WHERE system_id = ?";
+    const query = "SELECT * FROM tasks WHERE system_id = ?";
 
     const tasks = await new Promise((resolve, reject) => {
       connection.query(query, [system_id], async (err, results) => {
@@ -247,19 +276,13 @@ router.put("/updateTasks/:id", async (req, res) => {
       task_name,
       task_detail,
       task_status,
-      task_manday, // เพิ่มฟิลด์ task_manday เข้ามา
-      screen_id,
-      project_id,
-      task_type,
-      system_id,
+      task_manday,
+      task_progress,
       task_plan_start,
       task_plan_end,
       task_actual_start,
       task_actual_end,
       task_member_id,
-      task_date_update,
-      user_update,
-      task_progress, // Define task_progress here
     } = req.body;
 
     const { id } = req.params;
@@ -284,11 +307,6 @@ router.put("/updateTasks/:id", async (req, res) => {
     // Check and add task_manday if provided
     if (task_manday !== undefined) {
       updatedTaskFields.task_manday = task_manday;
-    }
-
-    // Check and add task_type if provided
-    if (task_type !== undefined) {
-      updatedTaskFields.task_type = task_type;
     }
 
     // Check and add task_progress if provided
@@ -392,65 +410,87 @@ router.put("/save_history_tasks/:id", async (req, res) => {
       task_actual_start,
       task_actual_end,
       task_member_id,
-      task_date_update,
       user_update,
+      is_archived, // New field for archiving
     } = req.body;
 
-    // Check if task_member_id is provided, if not, use the current task_member_id value
+    // Use existing values if not provided
+    const updatedTaskType =
+      task_type !== undefined ? task_type : currentTask[0].task_type;
+    const updatedScreenId =
+      screen_id !== undefined ? screen_id : currentTask[0].screen_id;
+    const updatedProjectId =
+      project_id !== undefined ? project_id : currentTask[0].project_id;
+    const updatedSystemId =
+      system_id !== undefined ? system_id : currentTask[0].system_id;
     const updatedTaskMemberId =
       task_member_id !== undefined
         ? task_member_id
         : currentTask[0].task_member_id;
 
-    await connection
-      .promise()
-      .query(
-        "UPDATE tasks SET task_name=?, task_detail=?, task_status=?, task_manday=?, screen_id=?, project_id=?, task_type=?, system_id=?, task_progress=?, task_plan_start=?, task_plan_end=?, task_actual_start=?, task_actual_end=?, user_update=?, task_date_update=?, task_member_id=? WHERE id=?",
-        [
-          task_name,
-          task_detail,
-          task_status,
-          task_manday,
-          screen_id,
-          project_id,
-          task_type,
-          system_id,
-          task_progress,
-          task_plan_start,
-          task_plan_end,
-          task_actual_start,
-          task_actual_end,
-          user_update,
-          new Date(), // Update task_date_update with current date
-          updatedTaskMemberId, // Use updatedTaskMemberId here
-          taskId,
-        ]
-      );
+    // Get the current date and time for task_date_update
+    const currentDateTime = new Date();
 
-    await connection
-      .promise()
-      .query(
-        "INSERT INTO history_tasks (task_id, task_name, task_detail, task_status, task_progress, task_Code, screen_id, project_id, system_id, task_plan_start, task_plan_end, task_actual_start, task_actual_end, task_manday, update_date, user_update, task_member_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        [
-          currentTask[0].id,
-          currentTask[0].task_name,
-          currentTask[0].task_detail,
-          currentTask[0].task_status,
-          currentTask[0].task_progress,
-          currentTask[0].task_id,
-          currentTask[0].screen_id,
-          currentTask[0].project_id,
-          currentTask[0].system_id,
-          currentTask[0].task_plan_start,
-          currentTask[0].task_plan_end,
-          currentTask[0].task_actual_start,
-          currentTask[0].task_actual_end,
-          currentTask[0].task_manday,
-          currentTask[0].task_date_update,
-          currentTask[0].user_update,
-          updatedTaskMemberId, // Use updatedTaskMemberId here as well
-        ]
-      );
+    // Update the task in the database, including is_archived field
+    await connection.promise().query(
+      `UPDATE tasks 
+       SET task_name=?, task_detail=?, task_status=?, task_manday=?, screen_id=?, project_id=?, 
+           task_type=?, system_id=?, task_progress=?, task_plan_start=?, task_plan_end=?, 
+           task_actual_start=?, task_actual_end=?, user_update=?, task_member_id=?, task_date_update=?, is_archived=?
+       WHERE id=?`,
+      [
+        task_name || currentTask[0].task_name,
+        task_detail || currentTask[0].task_detail,
+        task_status || currentTask[0].task_status,
+        task_manday || currentTask[0].task_manday,
+        updatedScreenId,
+        updatedProjectId,
+        updatedTaskType,
+        updatedSystemId,
+        task_progress !== undefined
+          ? task_progress
+          : currentTask[0].task_progress,
+        task_plan_start || currentTask[0].task_plan_start,
+        task_plan_end || currentTask[0].task_plan_end,
+        task_actual_start || currentTask[0].task_actual_start,
+        task_actual_end || currentTask[0].task_actual_end,
+        user_update || currentTask[0].user_update,
+        updatedTaskMemberId,
+        currentDateTime, // Set the current date and time for task_date_update
+        is_archived !== undefined ? is_archived : currentTask[0].is_archived, // Set is_archived
+        taskId,
+      ]
+    );
+
+    // Insert into history_tasks table without is_archived field
+    await connection.promise().query(
+      `INSERT INTO history_tasks 
+       (task_id, task_name, task_detail, task_status, task_progress, task_Code, screen_id, project_id, 
+        system_id, task_plan_start, task_plan_end, task_actual_start, task_actual_end, task_manday, 
+        update_date, user_update, task_member_id, task_type, is_deleted) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        currentTask[0].id,
+        currentTask[0].task_name,
+        currentTask[0].task_detail,
+        currentTask[0].task_status,
+        currentTask[0].task_progress,
+        currentTask[0].task_id,
+        currentTask[0].screen_id,
+        currentTask[0].project_id,
+        currentTask[0].system_id,
+        currentTask[0].task_plan_start,
+        currentTask[0].task_plan_end,
+        currentTask[0].task_actual_start,
+        currentTask[0].task_actual_end,
+        currentTask[0].task_manday,
+        currentTask[0].task_date_update, // Use the old task_date_update for update_date
+        user_update || currentTask[0].user_update,
+        updatedTaskMemberId,
+        updatedTaskType,
+        0, // Set is_deleted to 0
+      ]
+    );
 
     res.send("History task saved and task updated successfully");
   } catch (error) {
@@ -479,55 +519,6 @@ router.get("/history_tasks/:task_id", async (req, res) => {
   } catch (error) {
     console.error("Error fetching history tasks:", error);
     res.status(500).send("Internal Server Error");
-  }
-});
-
-// Route for creating tasks
-router.post("/createTasks", async (req, res) => {
-  try {
-    const {
-      task_id,
-      task_name,
-      task_detail,
-      task_type,
-      screen_id,
-      project_id,
-      system_id,
-      task_plan_start,
-      task_plan_end,
-      task_member_id,
-      task_manday, // เพิ่มฟิลด์ task_manday เข้ามา
-    } = req.body;
-    const id = generateId(); // ใช้ generateId() function เพื่อสร้าง ID
-    const query =
-      "INSERT INTO tasks (id, task_id, task_name, task_detail, task_type, screen_id, project_id, system_id, task_plan_start, task_plan_end, task_member_id, task_manday) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"; // เพิ่มฟิลด์ task_manday เข้าไปในคำสั่ง SQL
-    await new Promise((resolve, reject) => {
-      connection.query(
-        query,
-        [
-          id,
-          task_id,
-          task_name,
-          task_detail,
-          task_type,
-          screen_id,
-          project_id,
-          system_id,
-          task_plan_start,
-          task_plan_end,
-          task_member_id,
-          task_manday, // เพิ่ม task_manday เข้าไปใน array ของ parameters
-        ],
-        (err, result) => {
-          if (err) reject(err);
-          resolve(result);
-        }
-      );
-    });
-    res.send("Task created successfully");
-  } catch (error) {
-    console.error("Error creating task:", error);
-    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 
