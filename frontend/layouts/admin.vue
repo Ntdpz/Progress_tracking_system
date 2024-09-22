@@ -238,7 +238,16 @@
               <v-list-item-title>ProgressTrack</v-list-item-title>
             </v-list-item-content>
           </template>
-
+          <v-list-item
+            @click="navigateTo('/Progress_Tracking/Dashbord_Progress_Tracking')"
+          >
+            <v-list-item-content>
+              <v-list-item-title>
+                <v-icon color="primary" class="mr-2">mdi-table-edit</v-icon>
+                Dashbord
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
           <v-list-item
             @click="
               navigateTo('/Progress_Tracking/manageProject_Progress_Tracking')
