@@ -67,6 +67,7 @@ async function updateScreen(screen) {
         screen_progress = ?, 
         screen_progress_status_design = ?, 
         screen_progress_status_dev = ?, 
+        screen_progress_status_testing = ?, 
         screen_plan_start = ?, 
         screen_plan_end = ?, 
         task_count = ?
@@ -78,6 +79,7 @@ async function updateScreen(screen) {
       screen.screen_progress,
       screen.screen_progress_status_design || 0, // กำหนดค่า default เป็น 0 หากเป็น undefined หรือ null
       screen.screen_progress_status_dev || 0, // กำหนดค่า default เป็น 0 หากเป็น undefined หรือ null
+      screen.screen_progress_status_testing || 0, // กำหนดค่า default เป็น 0 หากเป็น undefined หรือ null
       screen.screen_plan_start,
       screen.screen_plan_end,
       screen.task_count || 0, // กำหนดค่า default เป็น 0 หากเป็น undefined หรือ null
@@ -110,12 +112,14 @@ router.get("/getAll", async (req, res) => {
     let query = `
       SELECT
           screens.*,
-          CAST(
-              (COALESCE(AVG(CASE WHEN tasks.task_type = 'Design' THEN tasks.task_progress ELSE NULL END), 0) + COALESCE(AVG(CASE WHEN tasks.task_type = 'Develop' THEN tasks.task_progress ELSE NULL END), 0))
-              / 2 AS DECIMAL(10,0)
-          ) AS screen_progress,
+          CAST((
+    COALESCE(AVG(CASE WHEN tasks.task_type = 'Design' THEN tasks.task_progress ELSE NULL END), 0) +
+    COALESCE(AVG(CASE WHEN tasks.task_type = 'Develop' THEN tasks.task_progress ELSE NULL END), 0) +
+    COALESCE(AVG(CASE WHEN tasks.task_type = 'Testing' THEN tasks.task_progress ELSE NULL END), 0)
+  ) / 3 AS DECIMAL(10,0)) AS screen_progress, 
           CAST(COALESCE(AVG(CASE WHEN tasks.task_type = 'Design' THEN tasks.task_progress ELSE NULL END), 0) AS DECIMAL(10,0)) AS screen_progress_status_design,
           CAST(COALESCE(AVG(CASE WHEN tasks.task_type = 'Develop' THEN tasks.task_progress ELSE NULL END), 0) AS DECIMAL(10,0)) AS screen_progress_status_dev,
+          CAST(COALESCE(AVG(CASE WHEN tasks.task_type = 'Testing' THEN tasks.task_progress ELSE NULL END), 0) AS DECIMAL(10,0)) AS screen_progress_status_testing,
           COUNT(tasks.id) AS task_count,
           MIN(tasks.task_plan_start) AS min_task_plan_start,
           MAX(tasks.task_plan_end) AS max_task_plan_end
@@ -169,6 +173,7 @@ router.get("/getAll", async (req, res) => {
           SET screen_progress = ?, 
               screen_progress_status_design = ?, 
               screen_progress_status_dev = ?, 
+              screen_progress_status_testing = ?, 
               screen_plan_start = ?, 
               screen_plan_end = ?
           WHERE id = ?
@@ -178,9 +183,10 @@ router.get("/getAll", async (req, res) => {
           screen.screen_progress,
           screen.screen_progress_status_design,
           screen.screen_progress_status_dev,
+          screen.screen_progress_status_tesing,
           screen.screen_plan_start,
           screen.screen_plan_end,
-          screen.id
+          screen.id,
         ];
 
         try {
@@ -217,12 +223,14 @@ router.get("/getOne/:id", async (req, res) => {
     let query = `
       SELECT
         screens.*,
-        CAST(
-              (COALESCE(AVG(CASE WHEN tasks.task_type = 'Design' THEN tasks.task_progress ELSE NULL END), 0) + COALESCE(AVG(CASE WHEN tasks.task_type = 'Develop' THEN tasks.task_progress ELSE NULL END), 0))
-              / 2 AS DECIMAL(10,0)
-          ) AS screen_progress,
+          CAST((
+    COALESCE(AVG(CASE WHEN tasks.task_type = 'Design' THEN tasks.task_progress ELSE NULL END), 0) +
+    COALESCE(AVG(CASE WHEN tasks.task_type = 'Develop' THEN tasks.task_progress ELSE NULL END), 0) +
+    COALESCE(AVG(CASE WHEN tasks.task_type = 'Testing' THEN tasks.task_progress ELSE NULL END), 0)
+  ) / 3 AS DECIMAL(10,0)) AS screen_progress, 
           CAST(COALESCE(AVG(CASE WHEN tasks.task_type = 'Design' THEN tasks.task_progress ELSE NULL END), 0) AS DECIMAL(10,0)) AS screen_progress_status_design,
           CAST(COALESCE(AVG(CASE WHEN tasks.task_type = 'Develop' THEN tasks.task_progress ELSE NULL END), 0) AS DECIMAL(10,0)) AS screen_progress_status_dev,
+          CAST(COALESCE(AVG(CASE WHEN tasks.task_type = 'Testing' THEN tasks.task_progress ELSE NULL END), 0) AS DECIMAL(10,0)) AS screen_progress_status_testing,
           COUNT(tasks.id) AS task_count,
           MIN(tasks.task_plan_start) AS min_task_plan_start,
           MAX(tasks.task_plan_end) AS max_task_plan_end,
@@ -332,6 +340,7 @@ router.get("/searchByProjectId/:project_id", async (req, res) => {
         AVG(tasks.task_progress) AS screen_progress,
         AVG(CASE WHEN tasks.task_type = 'Design' THEN tasks.task_progress ELSE NULL END) AS screen_progress_status_design,
         AVG(CASE WHEN tasks.task_type = 'Develop' THEN tasks.task_progress ELSE NULL END) AS screen_progress_status_dev,
+        AVG(CASE WHEN tasks.task_type = 'Testing' THEN tasks.task_progress ELSE NULL END) AS screen_progress_status_testing,
         DATE(MIN(tasks.task_plan_start)) AS min_task_plan_start,
         DATE(MAX(tasks.task_plan_end)) AS max_task_plan_end,
         DATEDIFF(MAX(tasks.task_plan_end), MIN(tasks.task_plan_start)) AS screen_manday
@@ -402,6 +411,7 @@ router.get("/searchByProjectId_delete/:project_id", async (req, res) => {
         AVG(tasks.task_progress) AS screen_progress,
         AVG(CASE WHEN tasks.task_type = 'Design' THEN tasks.task_progress ELSE NULL END) AS screen_progress_status_design,
         AVG(CASE WHEN tasks.task_type = 'Develop' THEN tasks.task_progress ELSE NULL END) AS screen_progress_status_dev,
+        AVG(CASE WHEN tasks.task_type = 'Testing' THEN tasks.task_progress ELSE NULL END) AS screen_progress_status_testing,
         DATE(MIN(screens.screen_plan_start)) AS screen_plan_start,
         DATE(MAX(screens.screen_plan_end)) AS screen_plan_end,
         DATEDIFF(MAX(tasks.task_plan_end), MIN(tasks.task_plan_start)) AS screen_manday
@@ -446,6 +456,7 @@ router.get("/searchBySystemId/:system_id", async (req, res) => {
         AVG(tasks.task_progress) AS screen_progress,
         AVG(CASE WHEN tasks.task_type = 'Design' THEN tasks.task_progress ELSE NULL END) AS screen_progress_status_design,
         AVG(CASE WHEN tasks.task_type = 'Develop' THEN tasks.task_progress ELSE NULL END) AS screen_progress_status_dev,
+        AVG(CASE WHEN tasks.task_type = 'Testing' THEN tasks.task_progress ELSE NULL END) AS screen_progress_status_testing,
         DATE(MIN(screens.screen_plan_start)) AS screen_plan_start,
         DATE(MAX(screens.screen_plan_end)) AS screen_plan_end,
         DATEDIFF(MAX(tasks.task_plan_end), MIN(tasks.task_plan_start)) AS screen_manday
@@ -523,6 +534,7 @@ router.get("/searchBySystemId_delete/:system_id", async (req, res) => {
         AVG(tasks.task_progress) AS screen_progress,
         AVG(CASE WHEN tasks.task_type = 'Design' THEN tasks.task_progress ELSE NULL END) AS screen_progress_status_design,
         AVG(CASE WHEN tasks.task_type = 'Develop' THEN tasks.task_progress ELSE NULL END) AS screen_progress_status_dev,
+        AVG(CASE WHEN tasks.task_type = 'Testing' THEN tasks.task_progress ELSE NULL END) AS screen_progress_status_testing,
         DATE(MIN(screens.screen_plan_start)) AS screen_plan_start,
         DATE(MAX(screens.screen_plan_end)) AS screen_plan_end,
         DATEDIFF(MAX(tasks.task_plan_end), MIN(tasks.task_plan_start)) AS screen_manday
