@@ -67,7 +67,7 @@ async function updateScreen(screen) {
         screen_progress = ?, 
         screen_progress_status_design = ?, 
         screen_progress_status_dev = ?, 
-        screen_progress_status_testing = ?, 
+        screen_progress_status_testing	 = ?, 
         screen_plan_start = ?, 
         screen_plan_end = ?, 
         task_count = ?

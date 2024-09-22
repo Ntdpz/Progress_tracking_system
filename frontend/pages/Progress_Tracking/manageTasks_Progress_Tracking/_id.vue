@@ -640,7 +640,7 @@ export default {
         { text: "Task Type", value: "task_type" },
         { text: "Actions", value: "actions", sortable: false },
       ],
-      taskTypeOrder: ["Design", "Develop", "Test", "Maintenance"], // กำหนดลำดับของ task types
+      taskTypeOrder: ["Design", "Develop", "Testing", "Maintenance"], // กำหนดลำดับของ task types
       userProjects: [], 
       historyTaskData: {
         task_name: "",
@@ -712,7 +712,7 @@ export default {
       perPage: 12,
       statusOptions: ["Design", "Develop"],
       statusOptionsDev: ["Develop","Maintenance",],
-      statusOptionsImp: ["Document","Test",],
+      statusOptionsImp: ["Document","Testing",],
       showImageDialog: false,
       showHistoryDialog: false,
       screen_plan_start: "",
