@@ -392,7 +392,16 @@ router.delete("/deleteHistoryTasks/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Delete tasks related to the task
+    // Delete from history_tasks where task_id matches the task being deleted
+    const deleteHistoryTasksQuery = "DELETE FROM history_tasks WHERE task_id = ?";
+    await new Promise((resolve, reject) => {
+      connection.query(deleteHistoryTasksQuery, [id], (err, result) => {
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+
+    // Delete the task
     const deleteTasksQuery = "DELETE FROM tasks WHERE id = ?";
     await new Promise((resolve, reject) => {
       connection.query(deleteTasksQuery, [id], (err, result) => {

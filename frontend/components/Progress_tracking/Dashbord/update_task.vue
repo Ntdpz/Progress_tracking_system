@@ -478,7 +478,7 @@ export default {
           });
         } else {
           // กรณี task_progress ไม่ครบ 100 หรือ status ไม่เป็น Completed
-          await this.$axios.put(`/tasks/save_history_tasks/${this.task.id}`, {
+          await this.$axios.put(`/tasks/updateTasks/${this.task.id}`, {
             task_name: this.task.task_name,
             task_detail: this.taskData.task_detail,
             task_progress: taskProgressValue,
