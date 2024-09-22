@@ -149,7 +149,7 @@
         >
           <template v-slot:activator>
             <v-list-item-content>
-              <v-list-item-title>รายงานปัญหาเก่า</v-list-item-title>
+              <v-list-item-title>Report project list</v-list-item-title>
             </v-list-item-content>
           </template>
 
@@ -226,6 +226,32 @@
         dense
         rounded
       >
+        <!-- ติดตามงาน Menu -->
+        <v-list-group
+          v-model="reportActiveworktracking"
+          :prepend-icon="'mdi-pencil'"
+          no-action
+          class="pl-2"
+        >
+          <template v-slot:activator>
+            <v-list-item-content>
+              <v-list-item-title>ProgressTrack</v-list-item-title>
+            </v-list-item-content>
+          </template>
+
+          <v-list-item
+            @click="
+              navigateTo('/Progress_Tracking/manageProject_Progress_Tracking')
+            "
+          >
+            <v-list-item-content>
+              <v-list-item-title>
+                <v-icon color="primary" class="mr-2">mdi-puzzle</v-icon>
+                Project
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-group>
         <!-- รายงานปัญหา Menu -->
         <v-list-group
           v-model="reportIssueGroupActive"
@@ -292,7 +318,7 @@
         >
           <template v-slot:activator>
             <v-list-item-content>
-              <v-list-item-title>รายงานปัญหาเก่า</v-list-item-title>
+              <v-list-item-title>Report project list</v-list-item-title>
             </v-list-item-content>
           </template>
 
