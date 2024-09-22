@@ -973,7 +973,7 @@ export default {
         { text: "Task Type", value: "task_type" },
         { text: "Actions", value: "actions", sortable: false },
       ],
-      taskTypeOrder: ["Design", "Develop", "Testing", "Maintenance"], // กำหนดลำดับของ task types
+      taskTypeOrder: ["Document","Design", "Develop", "Testing", "Maintenance"], // กำหนดลำดับของ task types
       userProjects: [],
       historyTaskData: {
         task_name: "",
@@ -1043,7 +1043,7 @@ export default {
       tasks: [],
       currentPage: 1,
       perPage: 12,
-      statusOptions: ["Design", "Develop"],
+      statusOptions: ["Document","Design", "Develop","Testing","Maintenance"],
       statusOptionsDev: ["Develop", "Maintenance"],
       statusOptionsImp: ["Document", "Testing"],
       showImageDialog: false,
@@ -1209,27 +1209,25 @@ export default {
 
         // เรียงลำดับข้อมูลที่กรองแล้วตามเงื่อนไขที่กำหนด
         filtered.sort((a, b) => {
-          // จัดเรียงตาม task_type โดยใช้ลำดับที่กำหนดไว้ใน taskTypeOrder
-          const typeOrderA = this.taskTypeOrder.indexOf(a.task_type);
-          const typeOrderB = this.taskTypeOrder.indexOf(b.task_type);
+          
+// เรียกใช้ฟังก์ชัน sortByPosition ก่อน เพื่อตรวจสอบตำแหน่งงาน
+      const positionOrder = this.sortByPosition(a.task_member_position, b.task_member_position);
+      if (positionOrder !== 0) {
+        return positionOrder;
+      }
 
-          if (typeOrderA !== typeOrderB) {
-            return typeOrderA - typeOrderB;
-          }
+  // ถ้าหาก task_type เหมือนกัน ให้จัดเรียงตาม task_progress จากมากไปน้อย
+      const progressA = parseInt(a.task_progress);
+      const progressB = parseInt(b.task_progress);
+      if (progressA !== progressB) {
+         return progressB - progressA;
+      }
 
-          // ถ้าหาก task_type เหมือนกัน ให้จัดเรียงตาม task_progress จากน้อยไปมาก
-          const progressA = parseInt(a.task_progress);
-          const progressB = parseInt(b.task_progress);
-          if (progressA !== progressB) {
-            return progressA - progressB;
-          }
-
-          // เรียกใช้ฟังก์ชัน sortByPosition เพื่อตรวจสอบตำแหน่งงาน
-          return this.sortByPosition([
-            { user_position: a.task_member_position },
-            { user_position: b.task_member_position },
-          ]);
-        });
+ // ถ้าหาก task_progress เหมือนกัน ให้จัดเรียงตาม task_type โดยใช้ลำดับที่กำหนดไว้ใน taskTypeOrder
+      const typeOrderA = this.taskTypeOrder.indexOf(a.task_type);
+      const typeOrderB = this.taskTypeOrder.indexOf(b.task_type);
+      return typeOrderA - typeOrderB;
+    });
 
         return filtered;
       } else {
@@ -1245,7 +1243,7 @@ export default {
       .then(() => this.fetchScreenDetail())
       .then(() => this.fetchUserList())
       .then(() => this.fetchTasks())
-
+      
       .catch((error) => {
         console.error("Error:", error);
         // Handle error here
@@ -1283,6 +1281,7 @@ export default {
     filteredTasks: {
       handler() {
         // เรียกใช้ฟังก์ชันเมื่อมีการเปลี่ยนแปลงใน Task ของคุณ
+        
         this.getTasksToday();
       },
       deep: true,
@@ -1300,15 +1299,10 @@ export default {
       }
     },
 
-    sortByPosition(userProjects) {
-      const positionOrder = ["System Analyst", "Developer", "Implementer"];
-      return userProjects.sort((a, b) => {
-        return (
-          positionOrder.indexOf(a.user_position) -
-          positionOrder.indexOf(b.user_position)
-        );
-      });
-    },
+    sortByPosition(positionA, positionB) {
+  const positionOrder = ["System Analyst", "Developer", "Implementer"];
+  return positionOrder.indexOf(positionA) - positionOrder.indexOf(positionB);
+},
 
     refreshTable() {
       // Logic to refresh the table, e.g., re-fetch data
