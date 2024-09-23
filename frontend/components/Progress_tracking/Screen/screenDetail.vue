@@ -31,50 +31,40 @@
           </v-card-subtitle>
         </v-col>
         <v-col class="progress-container">
-          <div>
-            <v-row>
-              <div class="custom-progress">
-                <v-col cols="auto" class="progress-item">
-                  <v-progress-circular class="my-progress" :rotate="360" :size="100" :width="15" :value="parseInt(screenDetails.screen_progress_status_design) || 0
-                    " color="purple">
-                    {{ parseInt(screenDetails.screen_progress_status_design) || 0 }}%
-                  </v-progress-circular>
-                  <v-card-subtitle class="subtitle">Design</v-card-subtitle>
-                </v-col>
-              </div>
+          <v-row>
+            <v-col cols="3" class="progress-item">
+              <v-progress-circular :rotate="360" :size="80" :width="10"
+                :value="parseInt(screenDetails.screen_progress_status_design) || 0" color="purple">
+                {{ parseInt(screenDetails.screen_progress_status_design) || 0 }}%
+              </v-progress-circular>
+              <v-card-subtitle class="subtitle">Design</v-card-subtitle>
+            </v-col>
 
-              <div class="custom-progress">
-                <v-col cols="auto" class="progress-item">
-                  <v-progress-circular class="my-progress" :rotate="-90" :size="100" :width="15" :value="parseInt(screenDetails.screen_progress_status_dev) || 0
-                    " color="blue">
-                    {{ parseInt(screenDetails.screen_progress_status_dev) || 0 }}%
-                  </v-progress-circular>
-                  <v-card-subtitle class="subtitle">Develop</v-card-subtitle>
-                </v-col>
-              </div>
+            <v-col cols="3" class="progress-item">
+              <v-progress-circular :rotate="-90" :size="80" :width="10"
+                :value="parseInt(screenDetails.screen_progress_status_dev) || 0" color="blue">
+                {{ parseInt(screenDetails.screen_progress_status_dev) || 0 }}%
+              </v-progress-circular>
+              <v-card-subtitle class="subtitle">Develop</v-card-subtitle>
+            </v-col>
 
-              <div class="custom-progress">
-                <v-col cols="auto" class="progress-item">
-                  <v-progress-circular class="my-progress" :rotate="-90" :size="100" :width="15" :value="parseInt(screenDetails.screen_progress_status_testing) || 0
-                    " color="orange">
-                    {{ parseInt(screenDetails.screen_progress_status_testing) || 0 }}%
-                  </v-progress-circular>
-                  <v-card-subtitle class="subtitle">Test</v-card-subtitle>
-                </v-col>
-              </div>
+            <v-col cols="3" class="progress-item">
+              <v-progress-circular :rotate="-90" :size="80" :width="10"
+                :value="parseInt(screenDetails.screen_progress_status_testing) || 0" color="orange">
+                {{ parseInt(screenDetails.screen_progress_status_testing) || 0 }}%
+              </v-progress-circular>
+              <v-card-subtitle class="subtitle">Test</v-card-subtitle>
+            </v-col>
 
-              <div class="custom-progress">
-                <v-col cols="auto" class="progress-item">
-                  <v-progress-circular class="my-progress" :rotate="90" :size="100" :width="15"
-                    :value="parseInt(screenDetails.screen_progress) || 0" :color="getProgressColor(parseInt(screenDetails.screen_progress) || 0)
-                      ">
-                    {{ parseInt(screenDetails.screen_progress) || 0 }}%
-                  </v-progress-circular>
-                  <v-card-subtitle class="subtitle">Total</v-card-subtitle>
-                </v-col>
-              </div>
-            </v-row>
-          </div>
+            <v-col cols="3" class="progress-item">
+              <v-progress-circular :rotate="90" :size="80" :width="10"
+                :value="parseInt(screenDetails.screen_progress) || 0"
+                :color="getProgressColor(parseInt(screenDetails.screen_progress) || 0)">
+                {{ parseInt(screenDetails.screen_progress) || 0 }}%
+              </v-progress-circular>
+              <v-card-subtitle class="subtitle">Total</v-card-subtitle>
+            </v-col>
+          </v-row>
         </v-col>
 
       </v-row>
