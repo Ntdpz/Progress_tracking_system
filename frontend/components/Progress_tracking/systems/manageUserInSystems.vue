@@ -29,6 +29,8 @@
               borderRadius: '20px',
               textAlign: 'center',
               display: 'inline-block',
+              paddingTop: '5px',
+              paddingBottom: '5px',
             }">
               {{ item.user_position }}
             </div>

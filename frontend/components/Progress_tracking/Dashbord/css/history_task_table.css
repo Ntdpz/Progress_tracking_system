@@ -83,7 +83,9 @@
 .custom-table th:nth-child(7),
 .custom-table td:nth-child(7) {
     width: 45% !important;
-
+    word-wrap: break-word !important;
+    word-break: break-all !important;
+    white-space: normal !important;
 }
 
 .custom-table th:nth-child(7) {

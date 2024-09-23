@@ -270,6 +270,7 @@ function formatDates(tasks) {
 }
 
 // Route for updating task data
+// Route for updating task data
 router.put("/updateTasks/:id", async (req, res) => {
   try {
     const {
@@ -339,6 +340,15 @@ router.put("/updateTasks/:id", async (req, res) => {
       updatedTaskFields.task_member_id = task_member_id;
     }
 
+    // คำนวณค่า task_actual_manday
+    if (task_actual_end === undefined || task_progress < 100) {
+      updatedTaskFields.task_actual_manday = 0; // กำหนดค่าเป็น 0
+    } else {
+      const taskActualStart = new Date(task_actual_start);
+      const taskActualEnd = new Date(task_actual_end);
+      updatedTaskFields.task_actual_manday = countBusinessDays(taskActualStart, taskActualEnd);
+    }
+
     if (Object.keys(updatedTaskFields).length === 0) {
       return res.status(400).json({ error: "No fields to update" });
     }
@@ -359,12 +369,39 @@ router.put("/updateTasks/:id", async (req, res) => {
   }
 });
 
+// ฟังก์ชันสำหรับนับวันทำงาน
+function countBusinessDays(startDate, endDate) {
+  let count = 0;
+  let currentDate = new Date(startDate);
+
+  while (currentDate <= endDate) {
+    const dayOfWeek = currentDate.getDay();
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      count++;
+    }
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  return count;
+}
+
+
+
 // Route for deleting a task and related data
 router.delete("/deleteHistoryTasks/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Delete tasks related to the task
+    // Delete from history_tasks where task_id matches the task being deleted
+    const deleteHistoryTasksQuery = "DELETE FROM history_tasks WHERE task_id = ?";
+    await new Promise((resolve, reject) => {
+      connection.query(deleteHistoryTasksQuery, [id], (err, result) => {
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+
+    // Delete the task
     const deleteTasksQuery = "DELETE FROM tasks WHERE id = ?";
     await new Promise((resolve, reject) => {
       connection.query(deleteTasksQuery, [id], (err, result) => {
@@ -400,6 +437,7 @@ router.put("/save_history_tasks/:id", async (req, res) => {
       task_detail,
       task_status,
       task_manday,
+      task_actual_manday,
       screen_id,
       project_id,
       task_type,
@@ -431,10 +469,16 @@ router.put("/save_history_tasks/:id", async (req, res) => {
     // Get the current date and time for task_date_update
     const currentDateTime = new Date();
 
+    // Set task_actual_end to null if task_progress is less than 100
+    const updatedTaskActualEnd = (task_progress < 100) ? null : (task_actual_end || currentTask[0].task_actual_end);
+
+    // ตั้งค่า task_actual_manday เป็น 0 หาก task_actual_end เป็น null
+    const updatedTaskActualManday = (updatedTaskActualEnd === null && task_progress < 100) ? 0 : task_actual_manday || currentTask[0].task_actual_manday;
+
     // Update the task in the database, including is_archived field
     await connection.promise().query(
       `UPDATE tasks 
-       SET task_name=?, task_detail=?, task_status=?, task_manday=?, screen_id=?, project_id=?, 
+       SET task_name=?, task_detail=?, task_status=?, task_manday=?, task_actual_manday=?, screen_id=?, project_id=?,
            task_type=?, system_id=?, task_progress=?, task_plan_start=?, task_plan_end=?, 
            task_actual_start=?, task_actual_end=?, user_update=?, task_member_id=?, task_date_update=?, is_archived=?
        WHERE id=?`,
@@ -443,6 +487,7 @@ router.put("/save_history_tasks/:id", async (req, res) => {
         task_detail || currentTask[0].task_detail,
         task_status || currentTask[0].task_status,
         task_manday || currentTask[0].task_manday,
+        updatedTaskActualManday,
         updatedScreenId,
         updatedProjectId,
         updatedTaskType,
@@ -453,7 +498,7 @@ router.put("/save_history_tasks/:id", async (req, res) => {
         task_plan_start || currentTask[0].task_plan_start,
         task_plan_end || currentTask[0].task_plan_end,
         task_actual_start || currentTask[0].task_actual_start,
-        task_actual_end || currentTask[0].task_actual_end,
+        updatedTaskActualEnd, // Use the new value that was checked
         user_update || currentTask[0].user_update,
         updatedTaskMemberId,
         currentDateTime, // Set the current date and time for task_date_update
@@ -499,6 +544,7 @@ router.put("/save_history_tasks/:id", async (req, res) => {
   }
 });
 
+
 // Route for getting history tasks by task_id
 router.get("/history_tasks/:task_id", async (req, res) => {
   try {
@@ -521,6 +567,20 @@ router.get("/history_tasks/:task_id", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+function countBusinessDays(startDate, endDate) {
+  let count = 0;
+  let currentDate = new Date(startDate);
+
+  while (currentDate <= endDate) {
+    const dayOfWeek = currentDate.getDay();
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      count++;
+    }
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  return count;
+}
 
 // Exporting the router
 module.exports = router;

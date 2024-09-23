@@ -105,7 +105,7 @@
         <!-- Plan Manday -->
         <v-col cols="12" sm="6" md="4">
           <v-text-field
-            v-model="taskData.plan_manday"
+            v-model="taskData.task_manday"
             label="Plan Manday"
             type="number"
             min="0"
@@ -132,6 +132,7 @@
                 v-on="on"
                 prepend-icon="mdi-calendar"
                 outlined
+                disabled
               />
             </template>
             <v-date-picker
@@ -158,6 +159,7 @@
                 v-on="on"
                 prepend-icon="mdi-calendar"
                 outlined
+                disabled
               />
             </template>
             <v-date-picker
@@ -171,7 +173,7 @@
         <!-- Actual Manday -->
         <v-col cols="12" sm="4">
           <v-text-field
-            v-model="taskData.Actual_manday"
+            v-model="taskData.task_actual_manday"
             label="Actual Manday"
             type="number"
             min="0"
@@ -215,8 +217,8 @@ export default {
   data() {
     return {
       user: this.$auth.user,
-      Plan_manday: 0,
-      Actual_manday: 0,
+      task_manday: 0,
+      task_actual_manday: 0,
       menu: {
         task_plan_start: false,
         task_plan_end: false,
@@ -229,10 +231,10 @@ export default {
         task_detail: "",
         task_plan_start: "",
         task_plan_end: "",
-        plan_manday: 0,
+        task_manday: 0,
         task_actual_start: "",
         task_actual_end: "",
-        task_manday: 0,
+        task_actual_manday: 0,
       },
     };
   },
@@ -284,14 +286,14 @@ export default {
           task_plan_end: newTask.task_plan_end
             ? this.formatDate(newTask.task_plan_end)
             : "",
-          plan_manday: this.Plan_manday,
+          task_manday: this.task_manday,
           task_actual_start: newTask.task_actual_start
             ? this.formatDate(newTask.task_actual_start)
             : "",
           task_actual_end: newTask.task_actual_end
             ? this.formatDate(newTask.task_actual_end)
             : "",
-          Actual_manday: this.Actual_manday,
+          task_actual_manday: this.task_actual_manday,
         };
         // เรียกใช้ฟังก์ชันเมื่อค่า task เปลี่ยนแปลง
         this.updatePlanDates("start");
@@ -350,7 +352,7 @@ export default {
 
       if (this.taskData.task_actual_start && this.taskData.task_actual_end) {
         const businessDays = this.countBusinessDays(startDate, endDate);
-        this.taskData.Actual_manday = Math.max(1, businessDays);
+        this.taskData.task_actual_manday = Math.max(1, businessDays);
       }
     },
 
@@ -366,7 +368,7 @@ export default {
 
       if (this.taskData.task_plan_start && this.taskData.task_plan_end) {
         const businessDays = this.countBusinessDays(startDate, endDate);
-        this.taskData.plan_manday = Math.max(1, businessDays);
+        this.taskData.task_manday = Math.max(1, businessDays);
       }
     },
     calculateTaskStatus() {
@@ -395,7 +397,24 @@ export default {
         // แปลงค่า task_progress
         const taskProgressValue =
           parseInt(this.taskData.task_progress, 10) || 0;
-        
+
+        // ตรวจสอบค่า task_actual_start หากเป็น null และ task_progress มากกว่า 0 ให้บันทึกเป็นวันปัจจุบัน
+        let taskActualStartValue = this.taskData.task_actual_start;
+        if (!taskActualStartValue && taskProgressValue > 0) {
+          taskActualStartValue = new Date().toISOString().substr(0, 10); // บันทึกเป็นวันที่ปัจจุบัน
+        }
+
+        // หาก task_progress เท่ากับ 100 ให้ตั้งค่า task_actual_end เป็นวันปัจจุบัน
+        let taskActualEndValue = this.taskData.task_actual_end;
+        if (taskProgressValue === 100) {
+          taskActualEndValue = new Date().toISOString().substr(0, 10); // บันทึกเป็นวันที่ปัจจุบัน
+        } else if (
+          this.taskData.task_progress !== taskProgressValue ||
+          taskActualEndValue
+        ) {
+          // หาก task_progress น้อยกว่า 100 ให้ตั้งค่า task_actual_end เป็น null
+          taskActualEndValue = null;
+        }
 
         // เรียก API เพื่ออัปเดตข้อมูลพื้นฐานของ task
         await this.$axios.put(`/tasks/save_history_tasks/${this.task.id}`, {
@@ -404,13 +423,16 @@ export default {
           task_progress: taskProgressValue,
           task_plan_start: formatDateValue(this.taskData.task_plan_start),
           task_plan_end: formatDateValue(this.taskData.task_plan_end),
-          task_actual_start: formatDateValue(this.taskData.task_actual_start),
-          task_actual_end: formatDateValue(this.taskData.task_actual_end),
+          task_actual_start: formatDateValue(taskActualStartValue), // ใช้ค่า taskActualStartValue
+          task_actual_end: formatDateValue(taskActualEndValue), // ใช้ค่า taskActualEndValue
           user_update: this.user.id,
-          task_manday: this.taskData.Actual_manday,
+          task_manday: this.taskData.task_manday,
+          task_actual_manday:
+            taskActualEndValue === null && taskProgressValue < 100
+              ? 0
+              : parseFloat(this.taskData.task_actual_manday),
           task_status: this.taskData.task_status,
         });
-
         // เช็คเงื่อนไข task_progress = 100 และ task_status = 'Completed'
         if (
           taskProgressValue === 100 &&
@@ -425,7 +447,7 @@ export default {
             showCancelButton: true,
             cancelButtonText: "Cancel",
             html: `<input type="checkbox" id="archiveTask" checked /> 
-               <label for="archiveTask">Close Task</label>`, // Checkbox
+           <label for="archiveTask">Close Task</label>`, // Checkbox
           }).then(async (result) => {
             if (result.isConfirmed) {
               const archiveTaskChecked =
@@ -433,31 +455,22 @@ export default {
               let is_archived = archiveTaskChecked ? true : false;
 
               // เรียก API เพื่ออัปเดตค่า is_archived
-              await this.$axios.put(
-                `/tasks/updateTasks/${this.task.id}`,
-                {
-                  task_name: this.task.task_name,
-                  task_detail: this.taskData.task_detail,
-                  task_progress: taskProgressValue,
-                  task_plan_start: formatDateValue(
-                    this.taskData.task_plan_start
-                  ),
-                  task_plan_end: formatDateValue(this.taskData.task_plan_end),
-                  task_actual_start: formatDateValue(
-                    this.taskData.task_actual_start
-                  ),
-                  task_actual_end: formatDateValue(
-                    this.taskData.task_actual_end
-                  ),
-                  user_update: this.user.id,
-                  task_manday: this.taskData.Actual_manday,
-                  task_status: this.taskData.task_status,
-                  is_archived: is_archived, // ส่งค่า is_archived
-                }
-              );
+              await this.$axios.put(`/tasks/updateTasks/${this.task.id}`, {
+                task_name: this.task.task_name,
+                task_detail: this.taskData.task_detail,
+                task_progress: taskProgressValue,
+                task_plan_start: formatDateValue(this.taskData.task_plan_start),
+                task_plan_end: formatDateValue(this.taskData.task_plan_end),
+                task_actual_start: formatDateValue(taskActualStartValue), // ใช้ค่า taskActualStartValue
+                task_actual_end: formatDateValue(taskActualEndValue), // ใช้ค่า taskActualEndValue
+                user_update: this.user.id,
+                task_manday: this.taskData.task_manday,
+                task_actual_manday: this.taskData.task_actual_manday,
+                task_status: this.taskData.task_status,
+                is_archived: is_archived, // ส่งค่า is_archived
+              });
 
               EventBus.$emit("refresh-data");
-              // ปิด dialog และรีเฟรชตาราง
               this.$emit("task-updated");
               this.$emit("close-dialog");
               this.$refs.historyTaskTable.refreshTable();
@@ -465,22 +478,21 @@ export default {
           });
         } else {
           // กรณี task_progress ไม่ครบ 100 หรือ status ไม่เป็น Completed
-          // เรียก API เพื่ออัปเดตข้อมูลพื้นฐานของ task พร้อมตั้งค่า is_archived เป็น false
-          await this.$axios.put(`/tasks/save_history_tasks/${this.task.id}`, {
+          await this.$axios.put(`/tasks/updateTasks/${this.task.id}`, {
             task_name: this.task.task_name,
             task_detail: this.taskData.task_detail,
             task_progress: taskProgressValue,
             task_plan_start: formatDateValue(this.taskData.task_plan_start),
             task_plan_end: formatDateValue(this.taskData.task_plan_end),
-            task_actual_start: formatDateValue(this.taskData.task_actual_start),
-            task_actual_end: formatDateValue(this.taskData.task_actual_end),
+            task_actual_start: formatDateValue(taskActualStartValue), // ใช้ค่า taskActualStartValue
+            task_actual_end: formatDateValue(taskActualEndValue), // ใช้ค่า taskActualEndValue
             user_update: this.user.id,
-            task_manday: this.taskData.Actual_manday,
+            task_manday: this.taskData.task_manday,
+            task_actual_manday: this.taskData.task_actual_manday,
             task_status: this.taskData.task_status,
-            is_archived: false, // ตั้งค่า is_archived เป็น false
+            is_archived: false,
           });
 
-          // ปิด dialog และรีเฟรชตาราง
           Swal.fire({
             title: "Success",
             text: "Task updated successfully",

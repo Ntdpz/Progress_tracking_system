@@ -69,7 +69,7 @@ router.get("/api/me", (req, res) => {
   try {
     const decoded = jwt.verify(token, "secret_key");
     db.query(
-      "SELECT id, user_firstname, user_position, user_role FROM users WHERE id = ?",
+      "SELECT id, user_firstname,user_lastname user_position, user_role FROM users WHERE id = ?",
       [decoded.id],
       (error, results) => {
         if (error) {
