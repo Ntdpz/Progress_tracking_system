@@ -1216,11 +1216,11 @@ export default {
         return positionOrder;
       }
 
-  // ถ้าหาก task_type เหมือนกัน ให้จัดเรียงตาม task_progress จากน้อยไปมาก
+   // ถ้าหาก task_type เหมือนกัน ให้จัดเรียงตาม task_progress จากน้อยไปมาก
       const progressA = parseInt(a.task_progress);
       const progressB = parseInt(b.task_progress);
       if (progressA !== progressB) {
-         return typeOrderA - typeOrderB;
+        return progressA - progressB;
       }
 
  // ถ้าหาก task_progress เหมือนกัน ให้จัดเรียงตาม task_type โดยใช้ลำดับที่กำหนดไว้ใน taskTypeOrder
