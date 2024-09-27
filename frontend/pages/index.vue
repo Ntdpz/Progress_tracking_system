@@ -45,6 +45,8 @@ export default {
       this.$router.push("/Progress_Tracking/Dashbord_Progress_Tracking");
     } else if (this.user.user_position === "Implementer") {
       this.$router.push("/Note_Management/dashboard");
+    } else{
+      this.$router.push("/Login");
     }
   },
   methods: {},

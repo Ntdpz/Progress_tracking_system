@@ -249,7 +249,7 @@ export default {
     },
     navigateToScreen(screenId) {
       const encodedScreenId = encodeURIComponent(encodeId(screenId));
-      this.$router.push(`/Progress_Tracking/manageTasks_Progress_Tracking/${encodedScreenId}`);
+      this.$router.push(`/Progress_Tracking/ManageTasks_Progress_Tracking/${encodedScreenId}`);
     },
     handleUpdate() {
       console.log("update");

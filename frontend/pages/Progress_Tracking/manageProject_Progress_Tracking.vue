@@ -762,7 +762,7 @@ export default {
     viewProjectDetails(project) {
       const encodedId = encodeURIComponent(encodeId(project.id));
       this.$router.push({
-        path: `/Progress_Tracking/manageSystems_Progress_Tracking/${encodedId}`,
+        path: `/Progress_Tracking/ManageSystems_Progress_Tracking/${encodedId}`,
         params: { selectedProject: project },
       });
     },

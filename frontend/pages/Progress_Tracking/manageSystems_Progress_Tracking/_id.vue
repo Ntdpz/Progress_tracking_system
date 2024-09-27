@@ -830,7 +830,7 @@ export default {
 
       // นำทางไปยังหน้า Systems/_id.vue ด้วย encodedId
       await this.$router.push({
-        path: `/Progress_Tracking/manageScreens_Progress_Tracking/${encodedId}`,
+        path: `/Progress_Tracking/ManageScreens_Progress_Tracking/${encodedId}`,
       });
     },
     async fetchProjectNameENG() {

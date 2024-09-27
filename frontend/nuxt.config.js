@@ -1,7 +1,6 @@
 import colors from "vuetify/es5/util/colors";
 const path = require("path");
-require('dotenv').config();
-
+require("dotenv").config();
 
 export default {
   router: {
@@ -9,27 +8,35 @@ export default {
   },
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - Progress-Tracking',
+    titleTemplate: "%s - Progress-Tracking",
     title: "Progress-Tracking",
     htmlAttrs: {
       lang: "en",
     },
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' },
-      { rel: 'apple-touch-icon', sizes: '180x180', href: '/apple-touch-icon.png' }
+      { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+      {
+        rel: "icon",
+        type: "image/png",
+        sizes: "32x32",
+        href: "/favicon-32x32.png",
+      },
+      {
+        rel: "apple-touch-icon",
+        sizes: "180x180",
+        href: "/apple-touch-icon.png",
+      },
     ],
     meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' }
-    ]
+      { charset: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
+    ],
   },
-  target: "server",
+  target: "static",
   buildModules: ["@nuxt/image"],
   image: {
     // Options
   },
-
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: ["@fortawesome/fontawesome-free/css/all.css"],
@@ -71,7 +78,7 @@ export default {
   },
 
   env: {
-    baseUrl: process.env.API_URL || 'http://localhost:3000',
+    baseUrl: process.env.API_URL || "http://localhost:7777",
   },
 
   auth: {
@@ -87,9 +94,12 @@ export default {
           logout: false,
         },
       },
-      redirect: {
-        login: "/login", // Redirect to the login page when not authenticated
-      },
+    },
+    redirect: {
+      login: "/Login",
+      logout: "/",
+      callback: "/Login",
+      home: "/",
     },
   },
 
@@ -122,7 +132,6 @@ export default {
         __dirname,
         "components"
       );
-
     },
   },
 };

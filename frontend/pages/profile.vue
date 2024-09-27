@@ -4,7 +4,7 @@
       <v-toolbar color="primary" dark>
         <v-app-bar-nav-icon><v-icon>mdi-account</v-icon></v-app-bar-nav-icon>
 
-        <v-toolbar-title>My profile</v-toolbar-title>
+        <v-toolbar-title>My Profile</v-toolbar-title>
       </v-toolbar>
       <v-row class="mb-6" no-gutters>
         <v-col class="col-12" col="12" xs="12" sm="12" md="3">

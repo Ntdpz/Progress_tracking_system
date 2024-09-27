@@ -61,7 +61,7 @@
 
           <v-list-item
             @click="
-              navigateTo('/Progress_Tracking/manageProject_Progress_Tracking')
+              navigateTo('/Progress_Tracking/ManageProject_Progress_Tracking')
             "
           >
             <v-list-item-content>
@@ -106,7 +106,7 @@
           </v-list-item> -->
 
           <v-list-item
-            @click="navigateTo('/Note_Management/dashboard_Note_Management')"
+            @click="navigateTo('/Note_Management/Dashboard_Note_Management')"
           >
             <v-list-item-content>
               <v-list-item-title>
@@ -117,7 +117,7 @@
           </v-list-item>
 
           <v-list-item
-            @click="navigateTo('/Note_Management/schedule_Note_Management')"
+            @click="navigateTo('/Note_Management/Schedule_Note_Management')"
           >
             <v-list-item-content>
               <v-list-item-title>
@@ -171,7 +171,7 @@
 
         <!-- ManageUsers button -->
         <v-list class="pt-0" dense rounded>
-          <v-list-item v-if="isAdmin()" @click="navigateTo('/manageUser')">
+          <v-list-item v-if="isAdmin()" @click="navigateTo('/ManageUser')">
             <v-list-item-action>
               <v-icon color="black">mdi-account</v-icon>
               <!-- ใส่ไอคอนที่ต้องการ -->
@@ -206,7 +206,7 @@
 
           <v-list-item
             @click="
-              navigateTo('/Progress_Tracking/manageProject_Progress_Tracking')
+              navigateTo('/Progress_Tracking/ManageProject_Progress_Tracking')
             "
           >
             <v-list-item-content>
@@ -250,7 +250,7 @@
           </v-list-item>
           <v-list-item
             @click="
-              navigateTo('/Progress_Tracking/manageProject_Progress_Tracking')
+              navigateTo('/Progress_Tracking/ManageProject_Progress_Tracking')
             "
           >
             <v-list-item-content>
@@ -295,7 +295,7 @@
           </v-list-item> -->
 
           <v-list-item
-            @click="navigateTo('/Note_Management/schedule_Note_Management')"
+            @click="navigateTo('/Note_Management/Schedule_Note_Management')"
           >
             <v-list-item-content>
               <v-list-item-title>
@@ -388,8 +388,8 @@
                 </v-col>
               </v-col>
               <v-col cols="2" class="pa-0">
-                <!-- Edit profile button -->
-                <v-btn icon to="/profile"
+                <!-- Edit Profile button -->
+                <v-btn icon to="/Profile"
                   ><v-icon small color="primary">mdi-pencil</v-icon></v-btn
                 >
               </v-col>
@@ -546,7 +546,7 @@ export default {
     },
     async handleLogout() {
       await this.$auth.logout();
-      this.$router.push("/login");
+      this.$router.push("/Login");
     },
   },
 };
