@@ -33,6 +33,23 @@
         </v-list-item>
       </v-list>
 
+      <!-- Project button -->
+      <v-list class="pt-0" dense rounded>
+        <v-list-item
+          v-if="user_role !== 'Admin'"
+          @click="
+            navigateTo('/Progress_Tracking/ManageProject_Progress_Tracking')
+          "
+        >
+          <v-list-item-action>
+            <v-icon color="black">mdi-puzzle</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Project</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+
       <!-- Admin menu items -->
       <v-list class="pa-0" v-show="user_role == 'Admin'" dense rounded>
         <!-- ติดตามงาน Menu -->
@@ -171,7 +188,7 @@
 
         <!-- ManageUsers button -->
         <v-list class="pt-0" dense rounded>
-          <v-list-item v-if="isAdmin()" @click="navigateTo('/ManageUser')">
+          <v-list-item @click="navigateTo('/ManageUser')">
             <v-list-item-action>
               <v-icon color="black">mdi-account</v-icon>
               <!-- ใส่ไอคอนที่ต้องการ -->
@@ -182,170 +199,6 @@
             </v-list-item-content>
           </v-list-item>
         </v-list>
-      </v-list>
-
-      <!-- UserDev menu items -->
-      <v-list
-        class="pa-0"
-        v-show="user_position == 'Developer' && user_role !== 'Admin'"
-        dense
-        rounded
-      >
-        <!-- ติดตามงาน Menu -->
-        <v-list-group
-          v-model="reportActiveworktracking"
-          :prepend-icon="'mdi-pencil'"
-          no-action
-          class="pl-2"
-        >
-          <template v-slot:activator>
-            <v-list-item-content>
-              <v-list-item-title>ProgressTrack</v-list-item-title>
-            </v-list-item-content>
-          </template>
-
-          <v-list-item
-            @click="
-              navigateTo('/Progress_Tracking/ManageProject_Progress_Tracking')
-            "
-          >
-            <v-list-item-content>
-              <v-list-item-title>
-                <v-icon color="primary" class="mr-2">mdi-puzzle</v-icon>
-                Project
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-group>
-      </v-list>
-
-      <!-- UserImp menu items -->
-      <v-list
-        class="pa-0"
-        v-show="user_position == 'Implementer' && user_role !== 'Admin'"
-        dense
-        rounded
-      >
-        <!-- ติดตามงาน Menu -->
-        <v-list-group
-          v-model="reportActiveworktracking"
-          :prepend-icon="'mdi-pencil'"
-          no-action
-          class="pl-2"
-        >
-          <template v-slot:activator>
-            <v-list-item-content>
-              <v-list-item-title>ProgressTrack</v-list-item-title>
-            </v-list-item-content>
-          </template>
-          <v-list-item
-            @click="navigateTo('/Progress_Tracking/Dashbord_Progress_Tracking')"
-          >
-            <v-list-item-content>
-              <v-list-item-title>
-                <v-icon color="primary" class="mr-2">mdi-table-edit</v-icon>
-                Dashbord
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item
-            @click="
-              navigateTo('/Progress_Tracking/ManageProject_Progress_Tracking')
-            "
-          >
-            <v-list-item-content>
-              <v-list-item-title>
-                <v-icon color="primary" class="mr-2">mdi-puzzle</v-icon>
-                Project
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-group>
-        <!-- รายงานปัญหา Menu -->
-        <v-list-group
-          v-model="reportIssueGroupActive"
-          :prepend-icon="'mdi-alert-circle'"
-          no-action
-          class="pl-2"
-        >
-          <template v-slot:activator>
-            <v-list-item-content>
-              <v-list-item-title>ReportIssue</v-list-item-title>
-            </v-list-item-content>
-          </template>
-
-          <!-- <v-list-item @click="navigateTo('/custom/reportList')">
-            <v-list-item-content>
-              <v-list-item-title>
-                <v-icon color="primary" class="mr-2"
-                  >mdi-format-list-bulleted</v-icon
-                >
-                แสดงรายงานปัญหา
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item> -->
-
-          <!-- <v-list-item @click="navigateTo('/custom/reportCreate')">
-            <v-list-item-content>
-              <v-list-item-title>
-                <v-icon color="primary" class="mr-2">mdi-pencil</v-icon>
-                แจ้งรายงานปัญหา
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item> -->
-
-          <v-list-item
-            @click="navigateTo('/Note_Management/Schedule_Note_Management')"
-          >
-            <v-list-item-content>
-              <v-list-item-title>
-                <v-icon color="primary" class="mr-2">mdi-calendar-month</v-icon>
-                ตารางงาน
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-
-          <!-- <v-list-item
-            @click="navigateTo('/Note_Management/dashboard_Note_Management')"
-          >
-            <v-list-item-content>
-              <v-list-item-title>
-                <v-icon color="primary" class="mr-2">mdi-view-dashboard</v-icon>
-                แดชบอร์ดรายงานปัญหา
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item> -->
-        </v-list-group>
-
-        <!-- รายงานปัญหาเก่า -->
-        <v-list-group
-          v-for="(project, index) in project_issues"
-          :key="index"
-          :prepend-icon="project.action"
-          no-action
-          class="pl-2"
-        >
-          <template v-slot:activator>
-            <v-list-item-content>
-              <v-list-item-title>Report project list</v-list-item-title>
-            </v-list-item-content>
-          </template>
-
-          <v-list-item
-            v-for="child in project.projectList"
-            :key="child.id"
-            :to="`/Note_Management/issueList/${child?.id}`"
-          >
-            <v-list-item-content>
-              <v-list-item-title>
-                <v-icon color="primary" class="mr-2"
-                  >mdi-format-list-bulleted</v-icon
-                >
-                {{ child.project_name_ENG }}
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-group>
       </v-list>
 
       <!-- Logout button -->
@@ -500,9 +353,6 @@ export default {
   },
   computed: {},
   methods: {
-    isAdmin() {
-      return this.user && this.user.user_position === "Admin";
-    },
     goBack() {
       this.$router.back();
     },
