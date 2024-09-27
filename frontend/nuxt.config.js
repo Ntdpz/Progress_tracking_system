@@ -1,5 +1,7 @@
 import colors from "vuetify/es5/util/colors";
 const path = require("path");
+require('dotenv').config();
+
 
 export default {
   router: {
@@ -22,21 +24,12 @@ export default {
       { name: 'viewport', content: 'width=device-width, initial-scale=1' }
     ]
   },
-  target: "static",
+  target: "server",
   buildModules: ["@nuxt/image"],
   image: {
     // Options
   },
-  // ssr: false,
-  // target: "static",
-  // server: {
-  //   //port:80, //in server
-  //   port: 3000,
-  //   host: "0.0.0.0",
-  // },
-  // router: {
-  //   base: "/notemanagement/",
-  // },
+
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: ["@fortawesome/fontawesome-free/css/all.css"],
@@ -71,8 +64,14 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: `http://localhost:7777`,
+    baseURL: `https://backend.prog.desigram-studio.com`,
+    // baseURL: `http://localhost:7777`,
+    // baseURL: process.env.API_URL || 'http://localhost:7777',
     // proxy: true,
+  },
+
+  env: {
+    baseUrl: process.env.API_URL || 'http://localhost:3000',
   },
 
   auth: {
@@ -123,7 +122,7 @@ export default {
         __dirname,
         "components"
       );
-      
+
     },
   },
 };

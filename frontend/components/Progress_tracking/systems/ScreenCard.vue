@@ -2,7 +2,12 @@
   <div class="card-wrapper">
     <!-- click -->
     <v-card class="customer-card" @click="$emit('click')" height="">
-      <v-img class="white--text" :src="getBase64Image(ImageSrc)" height="200px" width="400px">
+      <v-img
+        class="white--text"
+        :src="getBase64Image(ImageSrc)"
+        height="200px"
+        width="400px"
+      >
         <v-row class="align-center justify-space-between">
           <!-- Left Side: ID Chip -->
           <v-col cols="auto">
@@ -14,8 +19,13 @@
           <!-- Right Side: Status and Progress Chips -->
           <v-col cols="auto">
             <!-- Replaced chip with circular progress -->
-            <v-progress-circular class="circular-progress" :value="screenProgress || 0"
-              :color="getColorClass(screenProgress)" size="60" width="4">
+            <v-progress-circular
+              class="circular-progress"
+              :value="screenProgress || 0"
+              :color="getColorClass(screenProgress)"
+              size="60"
+              width="4"
+            >
               <strong> {{ Math.round(screenProgress || 0) }}% </strong>
             </v-progress-circular>
           </v-col>
@@ -54,10 +64,20 @@
           }}
         </v-card-subtitle>
         <v-card-actions>
-          <v-btn v-if="!isRestrictedPosition" color="primary" icon @click.stop="openEditDialog">
+          <v-btn
+            v-if="!isRestrictedPosition"
+            color="primary"
+            icon
+            @click.stop="openEditDialog"
+          >
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
-          <v-btn v-if="!isRestrictedPosition" color="primary" icon @click.stop="editScreenUserDialog = true">
+          <v-btn
+            v-if="!isRestrictedPosition"
+            color="primary"
+            icon
+            @click.stop="editScreenUserDialog = true"
+          >
             <v-icon>mdi-account-edit</v-icon>
           </v-btn>
         </v-card-actions>
@@ -72,24 +92,45 @@
           <v-form ref="editForm" v-model="isValid" lazy-validation>
             <v-row>
               <v-col cols="6">
-                <v-text-field v-model="screenCode" label="Screen Code" :disabled="true" outlined />
+                <v-text-field
+                  v-model="screenCode"
+                  label="Screen Code"
+                  :disabled="true"
+                  outlined
+                />
               </v-col>
               <v-col cols="6">
-                <v-text-field v-model="screenName" label="Screen Name" outlined />
+                <v-text-field
+                  v-model="screenName"
+                  label="Screen Name"
+                  outlined
+                />
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="6">
-                <v-select v-model="screenLevel" :items="[1, 2, 3, 4, 5]" :label="`Level ${screenLevel}`" outlined />
+                <v-select
+                  v-model="screenLevel"
+                  :items="[1, 2, 3, 4, 5]"
+                  :label="`Level ${screenLevel}`"
+                  outlined
+                />
               </v-col>
               <v-col cols=" 6">
-                <v-file-input v-model="imageFile" label="Upload Image" outlined accept=".png, .jpeg" />
+                <v-file-input
+                  v-model="imageFile"
+                  label="Upload Image"
+                  outlined
+                  accept=".png, .jpeg"
+                />
               </v-col>
             </v-row>
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-btn @click="confirmDeleteScreen" color="red" outlined>Delete</v-btn>
+          <v-btn @click="confirmDeleteScreen" color="red" outlined
+            >Delete</v-btn
+          >
           <v-spacer></v-spacer>
           <v-btn color="primary" @click="submitEdit">Submit</v-btn>
           <v-btn color="secondary" @click="closeEditDialog">Cancel</v-btn>
@@ -100,10 +141,16 @@
     <v-dialog v-model="editScreenUserDialog" max-width="1200px">
       <v-card>
         <!-- Current User Title -->
-        <v-card-title color="black"> Manage users in Screen : {{ screenName }}</v-card-title>
+        <v-card-title color="black">
+          Manage users in Screen : {{ screenName }}</v-card-title
+        >
         <v-card-text>
           <!-- Current User Table -->
-          <v-data-table :headers="headers" :items="users" class="elevation-1 mt-4 mb-3">
+          <v-data-table
+            :headers="headers"
+            :items="users"
+            class="elevation-1 mt-4 mb-3"
+          >
             <!-- User Avatar in the "Image" column -->
             <template v-slot:item.user_pic="{ item }">
               <v-avatar>
@@ -118,16 +165,18 @@
 
             <!-- User Position in the "User Position" column -->
             <template v-slot:item.user_position="{ item }">
-              <div :style="{
-                width: '120px',
-                backgroundColor: getColor(item.user_position),
-                color: 'white',
-                paddingTop: '5px',
-                paddingBottom: '5px',
-                borderRadius: '20px',
-                textAlign: 'center',
-                display: 'inline-block',
-              }">
+              <div
+                :style="{
+                  width: '120px',
+                  backgroundColor: getColor(item.user_position),
+                  color: 'white',
+                  paddingTop: '5px',
+                  paddingBottom: '5px',
+                  borderRadius: '20px',
+                  textAlign: 'center',
+                  display: 'inline-block',
+                }"
+              >
                 {{ item.user_position }}
               </div>
             </template>
@@ -143,8 +192,12 @@
         <!-- action -->
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" @click="openAssignUserDialog">Assign User</v-btn>
-          <v-btn color="secondary" @click="editScreenUserDialog = false">Close</v-btn>
+          <v-btn color="primary" @click="openAssignUserDialog"
+            >Assign User</v-btn
+          >
+          <v-btn color="secondary" @click="editScreenUserDialog = false"
+            >Close</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -154,10 +207,18 @@
         <v-card-title color="black">Assign User</v-card-title>
         <v-card-text>
           <!-- Select System Analyst -->
-          <v-select v-model="selectedSystemAnalysts" :items="usersNotInScreen.filter(
-            (user) => user.user_position === 'System Analyst'
-          )
-            " label="Select System Analyst" item-text="user_firstname" item-value="id" multiple>
+          <v-select
+            v-model="selectedSystemAnalysts"
+            :items="
+              usersNotInScreen.filter(
+                (user) => user.user_position === 'System Analyst'
+              )
+            "
+            label="Select System Analyst"
+            item-text="user_firstname"
+            item-value="id"
+            multiple
+          >
             <!-- Select All Option -->
             <template v-slot:prepend-item>
               <v-list-item @click="selectAllSystemAnalystAF">
@@ -167,8 +228,13 @@
 
             <!-- Selected User Chips -->
             <template v-slot:selection="{ item, index }">
-              <v-chip v-if="item" :key="index" class="d-flex align-center" close
-                @click:close="removeSystemAnalyst(item)">
+              <v-chip
+                v-if="item"
+                :key="index"
+                class="d-flex align-center"
+                close
+                @click:close="removeSystemAnalyst(item)"
+              >
                 <v-avatar left>
                   <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
                 </v-avatar>
@@ -184,18 +250,28 @@
                   <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
                 </v-list-item-avatar>
                 <v-list-item-content>
-                  <v-list-item-title>{{ item.user_firstname }}
-                    {{ item.user_lastname }}</v-list-item-title>
+                  <v-list-item-title
+                    >{{ item.user_firstname }}
+                    {{ item.user_lastname }}</v-list-item-title
+                  >
                 </v-list-item-content>
               </v-list-item>
             </template>
           </v-select>
 
           <!-- Select Developer -->
-          <v-select v-model="selectedDevelopers" :items="usersNotInScreen.filter(
-            (user) => user.user_position === 'Developer'
-          )
-            " label="Select Developer" item-text="user_firstname" item-value="id" multiple>
+          <v-select
+            v-model="selectedDevelopers"
+            :items="
+              usersNotInScreen.filter(
+                (user) => user.user_position === 'Developer'
+              )
+            "
+            label="Select Developer"
+            item-text="user_firstname"
+            item-value="id"
+            multiple
+          >
             <!-- Select All Option -->
             <template v-slot:prepend-item>
               <v-list-item @click="selectAllDevelopersAF">
@@ -205,7 +281,13 @@
 
             <!-- Selected User Chips -->
             <template v-slot:selection="{ item, index }">
-              <v-chip v-if="item" :key="index" class="d-flex align-center" close @click:close="removeDeveloper(item)">
+              <v-chip
+                v-if="item"
+                :key="index"
+                class="d-flex align-center"
+                close
+                @click:close="removeDeveloper(item)"
+              >
                 <v-avatar left>
                   <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
                 </v-avatar>
@@ -222,18 +304,28 @@
                   <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
                 </v-list-item-avatar>
                 <v-list-item-content>
-                  <v-list-item-title>{{ item.user_firstname }}
-                    {{ item.user_lastname }}</v-list-item-title>
+                  <v-list-item-title
+                    >{{ item.user_firstname }}
+                    {{ item.user_lastname }}</v-list-item-title
+                  >
                 </v-list-item-content>
               </v-list-item>
             </template>
           </v-select>
 
           <!-- Select Implementer -->
-          <v-select v-model="selectedImplementers" :items="usersNotInScreen.filter(
-            (user) => user.user_position === 'Implementer'
-          )
-            " label="Select Implementer" item-text="user_firstname" item-value="id" multiple>
+          <v-select
+            v-model="selectedImplementers"
+            :items="
+              usersNotInScreen.filter(
+                (user) => user.user_position === 'Implementer'
+              )
+            "
+            label="Select Implementer"
+            item-text="user_firstname"
+            item-value="id"
+            multiple
+          >
             <!-- Select All Option -->
             <template v-slot:prepend-item>
               <v-list-item @click="selectAllImplementersAF">
@@ -243,7 +335,13 @@
 
             <!-- Selected User Chips -->
             <template v-slot:selection="{ item, index }">
-              <v-chip v-if="item" :key="index" class="d-flex align-center" close @click:close="removeImplementer(item)">
+              <v-chip
+                v-if="item"
+                :key="index"
+                class="d-flex align-center"
+                close
+                @click:close="removeImplementer(item)"
+              >
                 <v-avatar left>
                   <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
                 </v-avatar>
@@ -259,8 +357,10 @@
                   <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
                 </v-list-item-avatar>
                 <v-list-item-content>
-                  <v-list-item-title>{{ item.user_firstname }}
-                    {{ item.user_lastname }}</v-list-item-title>
+                  <v-list-item-title
+                    >{{ item.user_firstname }}
+                    {{ item.user_lastname }}</v-list-item-title
+                  >
                 </v-list-item-content>
               </v-list-item>
             </template>
@@ -269,7 +369,9 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="primary" @click="assignUser">Assign</v-btn>
-          <v-btn color="secondary" @click="assignUserDialog = false">Close</v-btn>
+          <v-btn color="secondary" @click="assignUserDialog = false"
+            >Close</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -376,8 +478,8 @@ export default {
     // Fetch the currently assigned users for the screen
     async fetchScreenUsers() {
       try {
-        const response = await axios.get(
-          `http://localhost:7777/user_screens/getOneScreenID/${this.screenId}`
+        const response = await this.$axios.get(
+          `/user_screens/getOneScreenID/${this.screenId}`
         );
         this.users = response.data;
         console.log("Fetched users:", this.users); // Debugging log
@@ -385,6 +487,7 @@ export default {
         console.error("Error fetching users:", error);
       }
     },
+
     // Convert Base64 image string to a usable image URL
     getBase64Image(base64String) {
       if (!base64String) {
@@ -409,8 +512,8 @@ export default {
         ];
 
         // Send POST request to assign users
-        const response = await axios.post(
-          "http://localhost:7777/user_screens/createUser_screen",
+        const response = await this.$axios.post(
+          "/user_screens/createUser_screen",
           {
             user_id: selectedUsers,
             screen_id: this.screenId,
@@ -422,7 +525,8 @@ export default {
 
         // Close the dialog and show success message
         this.assignUserDialog = false;
-        // reset selected users
+
+        // Reset selected users
         this.selectedSystemAnalysts = [];
         this.selectedDevelopers = [];
         this.selectedImplementers = [];
@@ -446,11 +550,12 @@ export default {
         });
       }
     },
-    //fetch user not in screen
+
+    // Fetch users not in screen
     async fetchUsersNotInScreen() {
       try {
-        const response = await axios.get(
-          `http://localhost:7777/user_screens/checkUsersNOTINScreen/${this.screenProjectId}/${this.screenSystemId}/${this.screenId}`
+        const response = await this.$axios.get(
+          `/user_screens/checkUsersNOTINScreen/${this.screenProjectId}/${this.screenSystemId}/${this.screenId}`
         );
         this.usersNotInScreen = response.data;
       } catch (error) {
@@ -463,13 +568,14 @@ export default {
         });
       }
     },
+
     // Delete a user from the screen
     async deleteUser(user) {
       try {
         // Ensure user_id is correctly accessed
         console.log("Deleting user:", user); // Log the user object to verify it
-        const response = await axios.delete(
-          `http://localhost:7777/user_screens/deleteUserScreen/${this.screenSystemId}/${this.screenProjectId}/${this.screenId}/${user.id}` // Ensure the correct property name here
+        const response = await this.$axios.delete(
+          `/user_screens/deleteUserScreen/${this.screenSystemId}/${this.screenProjectId}/${this.screenId}/${user.id}` // Ensure the correct property name here
         );
         console.log(response.data.message);
 
@@ -492,6 +598,7 @@ export default {
         });
       }
     },
+
     // Dialog handling methods
     openAssignUserDialog() {
       this.assignUserDialog = true;
