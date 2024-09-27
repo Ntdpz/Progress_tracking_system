@@ -22,9 +22,9 @@
           </v-card-title>
           <v-card-subtitle>
             Manday: {{
-              systemData.system_manday !== null && !isNaN(systemData.system_manday)
-                ? Math.round(systemData.system_manday)
-                : 0
+            systemData.system_manday !== null && !isNaN(systemData.system_manday)
+            ? Math.round(systemData.system_manday)
+            : 0
             }} days<br />
             Total Screen: {{ systemData.screen_count || 0 }} screens<br />
             Plan: {{ formatDate(systemData.system_plan_start) || "Not determined" }}
@@ -87,12 +87,12 @@
     </div>
     <!-- Dialogs -->
     <v-dialog v-model="addScreenDialog" max-width="800px">
-      <add-form :users="userSystems" :systemId="systemid" :projectId="systemData.project_id"
+      <add-form :users="userSystems" :systemId="Number(systemid)" :projectId="systemData.project_id"
         @closeDialog="handleCloseDialog" @reload="reloadPage"></add-form>
     </v-dialog>
     <v-dialog v-model="historyDialog" max-width="800px">
       {{ systemid }}
-      <srceenHistory :systemId="systemid" @close-dialog="closeHistoryDialog"></srceenHistory>
+      <srceenHistory :systemId="Number(systemid)" @close-dialog=" closeHistoryDialog"></srceenHistory>
     </v-dialog>
   </div>
 </template>
@@ -272,7 +272,7 @@ export default {
     },
     async handleDeleteScreen(screenId) {
       try {
-        await axios.delete(`http://localhost:7777/screens/delete/${screenId}`);
+        await this.$axios.delete(`/screens/delete/${screenId}`);
         await this.reloadPage();
       } catch (error) {
         console.error("Failed to delete screen:", error);
@@ -288,8 +288,8 @@ export default {
       };
 
       try {
-        const response = await axios.put(
-          `http://localhost:7777/screens/updateScreen/${screenId}`,
+        const response = await this.$axios.put(
+          `/screens/updateScreen/${screenId}`,
           screenData
         );
 

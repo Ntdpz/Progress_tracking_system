@@ -24,17 +24,17 @@
                             </v-text-field>
                         </v-col>
                     </v-row>
-
-                    <!-- Line 2: Difficulty Level & Screen Status -->
+                    <!-- Line 2: Difficulty Level& File Input for Image -->
                     <v-row>
                         <v-col cols="6">
                             <v-select label="Difficulty Level" v-model="screenLevel"
                                 :items="[1, 2, 3, 4, 5]"></v-select>
                         </v-col>
                         <v-col cols="6">
-                            <v-select label="Screen Status" v-model="screenStatus"
-                                :items="['Not started', 'Design', 'Dev', 'Test']"></v-select>
+                            <v-file-input label="Upload Image" v-model="imageFile" accept="image/*"
+                                @change="convertImageToBase64"></v-file-input>
                         </v-col>
+
                     </v-row>
 
                     <!-- Line 3: Screen SA & Screen Dev -->
@@ -51,16 +51,12 @@
                         </v-col>
                     </v-row>
 
-                    <!-- Line 4: Screen Imp & File Input for Image -->
+                    <!-- Line 4: Screen Imp  -->
                     <v-row>
                         <v-col cols="6">
                             <v-select label="Screen Imp" v-model="selectedImp"
                                 :items="filterUsersByPosition('Implementer')" item-text="name" item-value="id" multiple
                                 chips></v-select>
-                        </v-col>
-                        <v-col cols="6">
-                            <v-file-input label="Upload Image" v-model="imageFile" accept="image/*"
-                                @change="convertImageToBase64"></v-file-input>
                         </v-col>
                     </v-row>
 
@@ -156,7 +152,7 @@ export default {
                     ]
                 };
 
-                const response = await axios.post('http://localhost:7777/screens/createScreen', requestData);
+                const response = await this.$axios.post('/screens/createScreen', requestData);
 
                 if (response.status === 200) {
                     await Swal.fire({
