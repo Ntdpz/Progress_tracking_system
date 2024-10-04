@@ -34,8 +34,8 @@
             {{ Math.round(designProgress || 0) }}%
           </span>
           {{
-            truncateName(getUserNamesByPosition("System Analyst")) ||
-            "No assignee"
+          truncateName(getUserNamesByPosition("System Analyst")) ||
+          "No assignee"
           }}
           <span>&nbsp;</span>
           <br />
@@ -44,13 +44,13 @@
             {{ Math.round(devProgress || 0) }}%
           </span>
           {{
-            truncateName(getUserNamesByPosition("Developer")) || "No assignee"
+          truncateName(getUserNamesByPosition("Developer")) || "No assignee"
           }}
           <span>&nbsp;</span>
           <br />
           <strong>Implementer:</strong>
           {{
-            truncateName(getUserNamesByPosition("Implementer")) || "No assignee"
+          truncateName(getUserNamesByPosition("Implementer")) || "No assignee"
           }}
         </v-card-subtitle>
         <v-card-actions>
@@ -71,7 +71,7 @@
                 <v-icon>mdi-account-edit</v-icon>
               </v-btn>
             </template>
-            <span>Edit User</span>
+            <span>Manage User</span>
           </v-tooltip>
         </v-card-actions>
       </v-card>
