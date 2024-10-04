@@ -9,12 +9,7 @@
             <v-layout align-center justify-center>
               <!-- Main logo -->
               <nuxt-link to="/">
-                <v-img
-                  lazy-src="/mainlogo.png"
-                  max-height="150"
-                  max-width="100"
-                  src="/mainlogo.png"
-                ></v-img>
+                <v-img lazy-src="/mainlogo.png" max-height="150" max-width="100" src="/mainlogo.png"></v-img>
               </nuxt-link>
             </v-layout>
           </v-list-item-title>
@@ -35,12 +30,9 @@
 
       <!-- Project button -->
       <v-list class="pt-0" dense rounded>
-        <v-list-item
-          v-if="user_role !== 'Admin'"
-          @click="
+        <v-list-item v-if="user_role !== 'Admin'" @click="
             navigateTo('/Progress_Tracking/ManageProject_Progress_Tracking')
-          "
-        >
+          ">
           <v-list-item-action>
             <v-icon color="black">mdi-puzzle</v-icon>
           </v-list-item-action>
@@ -53,21 +45,14 @@
       <!-- Admin menu items -->
       <v-list class="pa-0" v-show="user_role == 'Admin'" dense rounded>
         <!-- ติดตามงาน Menu -->
-        <v-list-group
-          v-model="reportActiveworktracking"
-          :prepend-icon="'mdi-pencil'"
-          no-action
-          class="pl-2"
-        >
+        <v-list-group v-model="reportActiveworktracking" :prepend-icon="'mdi-pencil'" no-action class="pl-2">
           <template v-slot:activator>
             <v-list-item-content>
               <v-list-item-title>TrackProgress</v-list-item-title>
             </v-list-item-content>
           </template>
 
-          <v-list-item
-            @click="navigateTo('/Progress_Tracking/Dashbord_Progress_Tracking')"
-          >
+          <v-list-item @click="navigateTo('/Progress_Tracking/Dashbord_Progress_Tracking')">
             <v-list-item-content>
               <v-list-item-title>
                 <v-icon color="primary" class="mr-2">mdi-table-edit</v-icon>
@@ -76,11 +61,9 @@
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item
-            @click="
+          <v-list-item @click="
               navigateTo('/Progress_Tracking/ManageProject_Progress_Tracking')
-            "
-          >
+            ">
             <v-list-item-content>
               <v-list-item-title>
                 <v-icon color="primary" class="mr-2">mdi-puzzle</v-icon>
@@ -90,12 +73,7 @@
           </v-list-item>
         </v-list-group>
         <!-- รายงานปัญหา Menu -->
-        <v-list-group
-          v-model="reportIssueGroupActive"
-          :prepend-icon="'mdi-alert-circle'"
-          no-action
-          class="pl-2"
-        >
+        <v-list-group v-model="reportIssueGroupActive" :prepend-icon="'mdi-alert-circle'" no-action class="pl-2">
           <template v-slot:activator>
             <v-list-item-content>
               <v-list-item-title>ReportIssue</v-list-item-title>
@@ -122,9 +100,7 @@
             </v-list-item-content>
           </v-list-item> -->
 
-          <v-list-item
-            @click="navigateTo('/Note_Management/Dashboard_Note_Management')"
-          >
+          <v-list-item @click="navigateTo('/Note_Management/Dashboard_Note_Management')">
             <v-list-item-content>
               <v-list-item-title>
                 <v-icon color="primary" class="mr-2">mdi-table</v-icon>
@@ -133,9 +109,7 @@
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item
-            @click="navigateTo('/Note_Management/Schedule_Note_Management')"
-          >
+          <v-list-item @click="navigateTo('/Note_Management/Schedule_Note_Management')">
             <v-list-item-content>
               <v-list-item-title>
                 <v-icon color="primary" class="mr-2">mdi-calendar-month</v-icon>
@@ -157,29 +131,19 @@
         </v-list-group>
 
         <!-- รายงานปัญหาเก่า -->
-        <v-list-group
-          v-for="(project, index) in project_issues"
-          :key="index"
-          :prepend-icon="project.action"
-          no-action
-          class="pl-2"
-        >
+        <v-list-group v-for="(project, index) in project_issues" :key="index" :prepend-icon="project.action" no-action
+          class="pl-2">
           <template v-slot:activator>
             <v-list-item-content>
               <v-list-item-title>Report project list</v-list-item-title>
             </v-list-item-content>
           </template>
 
-          <v-list-item
-            v-for="child in project.projectList"
-            :key="child.id"
-            :to="`/Note_Management/issueList/${child?.id}`"
-          >
+          <v-list-item v-for="child in project.projectList" :key="child.id"
+            :to="`/Note_Management/issueList/${child?.id}`">
             <v-list-item-content>
               <v-list-item-title>
-                <v-icon color="primary" class="mr-2"
-                  >mdi-format-list-bulleted</v-icon
-                >
+                <v-icon color="primary" class="mr-2">mdi-format-list-bulleted</v-icon>
                 {{ child.project_name_ENG }}
               </v-list-item-title>
             </v-list-item-content>
@@ -241,10 +205,15 @@
                 </v-col>
               </v-col>
               <v-col cols="2" class="pa-0">
-                <!-- Edit Profile button -->
-                <v-btn icon to="/Profile"
-                  ><v-icon small color="primary">mdi-pencil</v-icon></v-btn
-                >
+                <!-- Edit Profile button with tooltip -->
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn icon to="/Profile" v-bind="attrs" v-on="on">
+                      <v-icon small color="primary">mdi-pencil</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Edit Account</span>
+                </v-tooltip>
               </v-col>
             </v-row>
           </v-card>
@@ -253,15 +222,7 @@
     </v-navigation-drawer>
 
     <!-- App bar -->
-    <v-app-bar
-      :clipped-left="clipped"
-      app
-      style="height: 49px"
-      class="app-bar"
-      color="blacl"
-      elevation="1"
-      outlined
-    >
+    <v-app-bar :clipped-left="clipped" app style="height: 49px" class="app-bar" color="blacl" elevation="1" outlined>
       <!-- Back button -->
       <v-btn icon class="mb-3" color="primary" @click="goBack">
         <v-icon>mdi-chevron-left</v-icon>
