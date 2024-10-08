@@ -126,7 +126,7 @@
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
-                v-model="taskData.task_actual_start"
+                :value="formattedTaskActualStart"
                 label="Task Actual Start"
                 v-bind="attrs"
                 v-on="on"
@@ -152,7 +152,7 @@
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
-                v-model="taskData.task_actual_end"
+                :value="formattedTaskActualEnd"
                 label="Task Actual End"
                 v-bind="attrs"
                 v-on="on"
@@ -242,6 +242,13 @@ export default {
     },
     formattedTaskPlanEnd() {
       return this.formatDateShow(this.taskData.task_plan_end);
+    },
+
+    formattedTaskActualStart() {
+      return this.formatDateShow(this.taskData.task_actual_start);
+    },
+    formattedTaskActualEnd() {
+      return this.formatDateShow(this.taskData.task_actual_end);
     },
     formattedTaskProgress: {
       get() {
@@ -453,24 +460,6 @@ export default {
         const taskProgressValue =
           parseInt(this.taskData.task_progress, 10) || 0;
 
-        // ตรวจสอบค่า task_actual_start หากเป็น null และ task_progress มากกว่า 0 ให้บันทึกเป็นวันปัจจุบัน
-        let taskActualStartValue = this.taskData.task_actual_start;
-        if (!taskActualStartValue && taskProgressValue > 0) {
-          taskActualStartValue = new Date().toISOString().substr(0, 10); // บันทึกเป็นวันที่ปัจจุบัน
-        }
-
-        // หาก task_progress เท่ากับ 100 ให้ตั้งค่า task_actual_end เป็นวันปัจจุบัน
-        let taskActualEndValue = this.taskData.task_actual_end;
-        if (taskProgressValue === 100) {
-          taskActualEndValue = new Date().toISOString().substr(0, 10); // บันทึกเป็นวันที่ปัจจุบัน
-        } else if (
-          this.taskData.task_progress !== taskProgressValue ||
-          taskActualEndValue
-        ) {
-          // หาก task_progress น้อยกว่า 100 ให้ตั้งค่า task_actual_end เป็น null
-          taskActualEndValue = null;
-        }
-
         // เรียก API เพื่ออัปเดตข้อมูลพื้นฐานของ task
         await this.$axios.put(`/tasks/save_history_tasks/${this.task.id}`, {
           task_name: this.task.task_name,
@@ -478,16 +467,15 @@ export default {
           task_progress: taskProgressValue,
           task_plan_start: formatDateValue(this.taskData.task_plan_start),
           task_plan_end: formatDateValue(this.taskData.task_plan_end),
-          task_actual_start: formatDateValue(taskActualStartValue), // ใช้ค่า taskActualStartValue
-          task_actual_end: formatDateValue(taskActualEndValue), // ใช้ค่า taskActualEndValue
           user_update: this.user.id,
           task_manday: this.taskData.task_manday,
           task_actual_manday:
-            taskActualEndValue === null && taskProgressValue < 100
+            taskProgressValue < 100
               ? 0
               : parseFloat(this.taskData.task_actual_manday),
           task_status: this.taskData.task_status,
         });
+
         // เช็คเงื่อนไข task_progress = 100 และ task_status = 'Completed'
         if (
           taskProgressValue === 100 &&
@@ -502,7 +490,7 @@ export default {
             showCancelButton: true,
             cancelButtonText: "Cancel",
             html: `<input type="checkbox" id="archiveTask" checked /> 
-           <label for="archiveTask">Close Task</label>`, // Checkbox
+               <label for="archiveTask">Close Task</label>`, // Checkbox
           }).then(async (result) => {
             if (result.isConfirmed) {
               const archiveTaskChecked =
@@ -516,8 +504,6 @@ export default {
                 task_progress: taskProgressValue,
                 task_plan_start: formatDateValue(this.taskData.task_plan_start),
                 task_plan_end: formatDateValue(this.taskData.task_plan_end),
-                task_actual_start: formatDateValue(taskActualStartValue), // ใช้ค่า taskActualStartValue
-                task_actual_end: formatDateValue(taskActualEndValue), // ใช้ค่า taskActualEndValue
                 user_update: this.user.id,
                 task_manday: this.taskData.task_manday,
                 task_actual_manday: this.taskData.task_actual_manday,
@@ -539,8 +525,6 @@ export default {
             task_progress: taskProgressValue,
             task_plan_start: formatDateValue(this.taskData.task_plan_start),
             task_plan_end: formatDateValue(this.taskData.task_plan_end),
-            task_actual_start: formatDateValue(taskActualStartValue), // ใช้ค่า taskActualStartValue
-            task_actual_end: formatDateValue(taskActualEndValue), // ใช้ค่า taskActualEndValue
             user_update: this.user.id,
             task_manday: this.taskData.task_manday,
             task_actual_manday: this.taskData.task_actual_manday,
