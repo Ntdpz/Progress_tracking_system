@@ -279,10 +279,14 @@ export default {
     "taskData.task_plan_end": function (newVal) {
       this.updatePlanDates("end");
     },
-    "taskData.task_actual_start": function (newVal) {
+
+    "taskData.task_progress": function (newValue) {
       this.updateActualDates();
     },
-    "taskData.task_actual_end": function (newVal) {
+    "taskData.task_actual_start": function () {
+      this.updateActualDates();
+    },
+    "taskData.task_actual_end": function () {
       this.updateActualDates();
     },
     task: {
@@ -359,6 +363,21 @@ export default {
       return count;
     },
     updateActualDates() {
+      // ถ้า task_progress > 0 และ task_actual_start เป็น null ให้ใช้วันปัจจุบันใน timezone ของประเทศไทย
+      if (this.taskData.task_progress > 0 && !this.taskData.task_actual_start) {
+        const today = new Date();
+        const options = {
+          timeZone: "Asia/Bangkok",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        };
+        const formattedDate = new Intl.DateTimeFormat("en-CA", options).format(
+          today
+        );
+        this.taskData.task_actual_start = formattedDate; // ใช้ format YYYY-MM-DD
+      }
+
       const startDate = new Date(this.taskData.task_actual_start);
       const endDate = new Date(this.taskData.task_actual_end);
 
