@@ -132,6 +132,8 @@
                 v-on="on"
                 prepend-icon="mdi-calendar"
                 outlined
+                @click="checkTaskProgressActuatStart"
+                @input="checkTaskProgressActuatStart"
               />
             </template>
             <v-date-picker
@@ -158,6 +160,8 @@
                 v-on="on"
                 prepend-icon="mdi-calendar"
                 outlined
+                @click="checkTaskProgressActuatEnd"
+                @input="checkTaskProgressActuatEnd"
               />
             </template>
             <v-date-picker
@@ -361,6 +365,41 @@ export default {
       }
 
       return count;
+    },
+
+    checkTaskProgressActuatStart() {
+      if (this.taskData.task_progress === 0) {
+        // ปิด v-menu ของ v-date-picker ก่อนที่จะแสดงการแจ้งเตือน
+        this.menu.task_actual_start = false;
+
+        // เคลียร์ค่า task_actual_start
+        this.taskData.task_actual_start = null;
+
+        Swal.fire({
+          icon: "warning",
+          title: "Cannot Set Date",
+          text: "You cannot set the Task Actual Start date when progress is 0.",
+          confirmButtonText: "OK",
+          confirmButtonColor: "#629859",
+        });
+      }
+    },
+    checkTaskProgressActuatEnd() {
+      if (this.taskData.task_progress !== 100) {
+        // ปิด v-menu ของ v-date-picker ก่อนที่จะแสดงการแจ้งเตือน
+        this.menu.task_actual_end = false;
+
+        // เคลียร์ค่า task_actual_start
+        this.taskData.task_actual_end = null;
+
+        Swal.fire({
+          icon: "warning",
+          title: "Cannot Set Date",
+          text: "You cannot set the Task Actual End date when progress is 100.",
+          confirmButtonText: "OK",
+          confirmButtonColor: "#629859",
+        });
+      }
     },
     updateActualDates() {
       // ตรวจสอบว่า task_progress มีค่ามากกว่า 0 หรือไม่
