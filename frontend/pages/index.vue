@@ -36,14 +36,14 @@ export default {
   created() {
     // เริ่มต้นการโหลดข้อมูลและแสดง Loader
     this.$store.dispatch("setLoading", true);
-    this.$router.push("/Progress_Tracking/Dashbord_Progress_Tracking");
+    // this.$router.push("/Progress_Tracking/Dashbord_Progress_Tracking");
 
     // เช็คตำแหน่งของ user
-    // if (this.user.user_role === "Admin") {
-    //   this.$router.push("/");
-    // } else {
-    //   this.$router.push("/Progress_Tracking/Dashbord_Progress_Tracking");
-    // }
+    if (this.user.user_role === "SuperAdmin") {
+      this.$router.push("/");
+    } else {
+      this.$router.push("/Progress_Tracking/Dashbord_Progress_Tracking");
+    }
 
     // // เช็คตำแหน่งของ user
     // if (this.user.user_role === "Admin") {
