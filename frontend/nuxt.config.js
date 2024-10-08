@@ -71,8 +71,8 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseURL: `https://backend.prog.desigram-studio.com`,
-    // baseURL: `http://localhost:7777`,
+    // baseURL: `https://backend.prog.desigram-studio.com`,
+    baseURL: `http://localhost:7777`,
     // baseURL: process.env.API_URL || 'http://localhost:7777',
     // proxy: true,
   },

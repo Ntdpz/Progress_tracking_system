@@ -36,7 +36,6 @@
       <!-- Project button -->
       <v-list class="pt-0" dense rounded>
         <v-list-item
-          v-if="user_role !== 'Admin'"
           @click="
             navigateTo('/Progress_Tracking/ManageProject_Progress_Tracking')
           "
@@ -50,8 +49,25 @@
         </v-list-item>
       </v-list>
 
+      <!-- ManageUsers button -->
+      <v-list class="pt-0" dense rounded>
+        <v-list-item
+          v-if="user_role == 'Admin'"
+          @click="navigateTo('/ManageUser')"
+        >
+          <v-list-item-action>
+            <v-icon color="black">mdi-account</v-icon>
+            <!-- ใส่ไอคอนที่ต้องการ -->
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title color="red">ManageUsers</v-list-item-title>
+            <!-- ข้อความที่ต้องการ -->
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+
       <!-- Admin menu items -->
-      <v-list class="pa-0" v-show="user_role == 'Admin'" dense rounded>
+      <v-list class="pa-0" v-show="user_role == 'SuperAdmin'" dense rounded>
         <!-- ติดตามงาน Menu -->
         <v-list-group
           v-model="reportActiveworktracking"
@@ -200,7 +216,6 @@
           </v-list-item>
         </v-list>
       </v-list>
-
       <!-- Logout button -->
       <v-list class="pt-0" dense rounded>
         <v-list-item @click="handleLogout()">
