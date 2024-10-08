@@ -59,7 +59,7 @@
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
-                v-model="taskData.task_plan_start"
+                :value="formattedTaskPlanStart"
                 label="Task Plan Start"
                 v-bind="attrs"
                 v-on="on"
@@ -86,7 +86,7 @@
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
-                v-model="taskData.task_plan_end"
+                :value="formattedTaskPlanEnd"
                 label="Task Plan End"
                 v-bind="attrs"
                 v-on="on"
@@ -110,6 +110,7 @@
             type="number"
             min="0"
             outlined
+            @input="validatePlanManday"
           />
         </v-col>
       </v-row>
@@ -236,6 +237,12 @@ export default {
   },
 
   computed: {
+    formattedTaskPlanStart() {
+      return this.formatDateShow(this.taskData.task_plan_start);
+    },
+    formattedTaskPlanEnd() {
+      return this.formatDateShow(this.taskData.task_plan_end);
+    },
     formattedTaskProgress: {
       get() {
         return this.taskData.task_progress !== undefined
@@ -302,6 +309,14 @@ export default {
   },
 
   methods: {
+    formatDateShow(date) {
+      if (!date) return "";
+      const d = new Date(date);
+      const day = String(d.getDate()).padStart(2, "0"); // วัน
+      const month = String(d.getMonth() + 1).padStart(2, "0"); // เดือน (0-indexed)
+      const year = d.getFullYear(); // ปี
+      return `${day}/${month}/${year}`; // คืนค่าในรูปแบบ dd/mm/yyyy
+    },
     formatDateTime(dateTime) {
       if (!dateTime) return "No dateTime";
 
@@ -362,9 +377,53 @@ export default {
         this.taskData.task_plan_end = this.taskData.task_plan_start;
       }
 
-      if (this.taskData.task_plan_start && this.taskData.task_plan_end) {
-        const businessDays = this.countBusinessDays(startDate, endDate);
-        this.taskData.task_manday = Math.max(1, businessDays);
+      // ตรวจสอบว่าค่า task_manday (จากฐานข้อมูล) เป็น 0 หรือ null
+      if (
+        this.task.task_manday === undefined ||
+        this.task.task_manday === null ||
+        this.task.task_manday <= 0
+      ) {
+        if (this.taskData.task_plan_start && this.taskData.task_plan_end) {
+          const businessDays = this.countBusinessDays(startDate, endDate);
+          this.taskData.task_manday = Math.max(1, businessDays);
+        }
+      } else {
+        // ถ้าค่าจากฐานข้อมูลไม่ใช่ 0 หรือ null
+        this.taskData.task_manday = this.task.task_manday; // ให้แสดงค่าจากฐานข้อมูล
+      }
+    },
+
+    validatePlanManday() {
+      // ตรวจสอบให้ไม่เกินค่าที่คำนวณได้
+      const maxManday = this.countBusinessDays(
+        new Date(this.taskData.task_plan_start),
+        new Date(this.taskData.task_plan_end)
+      );
+
+      // ตรวจสอบค่าติดลบ
+      if (this.taskData.task_manday < 0) {
+        this.taskData.task_manday = 0; // ตั้งค่าให้เป็น 0
+        Swal.fire({
+          icon: "warning",
+          title: "The number of days cannot be negative!",
+          text: "Please enter a valid number of days.",
+          confirmButtonText: "OK",
+          confirmButtonColor: "#629859",
+        });
+        return; // ออกจากฟังก์ชัน
+      }
+
+      if (this.taskData.task_manday > maxManday) {
+        this.taskData.task_manday = maxManday; // ตั้งค่าให้เท่ากับค่าที่คำนวณได้
+
+        // แสดง SweetAlert 2 แจ้งเตือน
+        Swal.fire({
+          icon: "warning",
+          title: "The number of days is incorrect!",
+          text: `The number of days cannot be exceeded ${maxManday} days`,
+          confirmButtonText: "OK",
+          confirmButtonColor: "#629859",
+        });
       }
     },
     calculateTaskStatus() {
