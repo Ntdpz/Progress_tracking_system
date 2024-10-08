@@ -378,6 +378,21 @@ export default {
         this.taskData.task_actual_start = formattedDate; // ใช้ format YYYY-MM-DD
       }
 
+      // ถ้า task_progress เท่ากับ 100 ให้ใช้วันปัจจุบันใน task_actual_end
+      if (this.taskData.task_progress === 100) {
+        const today = new Date();
+        const options = {
+          timeZone: "Asia/Bangkok",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        };
+        const formattedDate = new Intl.DateTimeFormat("en-CA", options).format(
+          today
+        );
+        this.taskData.task_actual_end = formattedDate; // ใช้ format YYYY-MM-DD
+      }
+
       const startDate = new Date(this.taskData.task_actual_start);
       const endDate = new Date(this.taskData.task_actual_end);
 
