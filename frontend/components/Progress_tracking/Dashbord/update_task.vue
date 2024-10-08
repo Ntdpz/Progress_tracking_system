@@ -363,19 +363,28 @@ export default {
       return count;
     },
     updateActualDates() {
-      // ถ้า task_progress > 0 และ task_actual_start เป็น null ให้ใช้วันปัจจุบันใน timezone ของประเทศไทย
-      if (this.taskData.task_progress > 0 && !this.taskData.task_actual_start) {
-        const today = new Date();
-        const options = {
-          timeZone: "Asia/Bangkok",
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-        };
-        const formattedDate = new Intl.DateTimeFormat("en-CA", options).format(
-          today
-        );
-        this.taskData.task_actual_start = formattedDate; // ใช้ format YYYY-MM-DD
+      // ตรวจสอบว่า task_progress มีค่ามากกว่า 0 หรือไม่
+      if (this.taskData.task_progress > 0) {
+        // ถ้า task_actual_start เป็น null ให้ใช้วันปัจจุบันใน timezone ของประเทศไทย
+        if (!this.taskData.task_actual_start) {
+          const today = new Date();
+          const options = {
+            timeZone: "Asia/Bangkok",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+          };
+          const formattedDate = new Intl.DateTimeFormat(
+            "en-CA",
+            options
+          ).format(today);
+          this.taskData.task_actual_start = formattedDate; // ใช้ format YYYY-MM-DD
+        }
+      } else {
+        // ถ้า task_progress <= 0 ให้ทำให้ทั้งสองช่องว่าง
+        this.taskData.task_actual_start = null;
+        this.taskData.task_actual_end = null;
+        return; // ออกจากฟังก์ชันทันที
       }
 
       // ถ้า task_progress เท่ากับ 100 ให้ใช้วันปัจจุบันใน task_actual_end
@@ -391,18 +400,22 @@ export default {
           today
         );
         this.taskData.task_actual_end = formattedDate; // ใช้ format YYYY-MM-DD
+      } else {
+        // ถ้า task_progress < 100 ให้ทำให้ task_actual_end เป็น null
+        this.taskData.task_actual_end = null;
       }
 
       const startDate = new Date(this.taskData.task_actual_start);
       const endDate = new Date(this.taskData.task_actual_end);
 
-      if (startDate > endDate) {
-        this.taskData.task_actual_start = this.taskData.task_actual_end;
-      } else if (endDate < startDate) {
-        this.taskData.task_actual_end = this.taskData.task_actual_start;
-      }
-
+      // เช็คเงื่อนไขวัน
       if (this.taskData.task_actual_start && this.taskData.task_actual_end) {
+        if (startDate > endDate) {
+          this.taskData.task_actual_start = this.taskData.task_actual_end;
+        } else if (endDate < startDate) {
+          this.taskData.task_actual_end = this.taskData.task_actual_start;
+        }
+
         const businessDays = this.countBusinessDays(startDate, endDate);
         this.taskData.task_actual_manday = Math.max(1, businessDays);
       }
