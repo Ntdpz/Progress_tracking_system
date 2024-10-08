@@ -106,8 +106,7 @@
                 <v-menu v-model="planStartMenu" :close-on-content-click="false" :nudge-right="40"
                   transition="scale-transition" offset-y>
                   <template v-slot:activator="{ on }">
-                    <v-text-field :value="
-                        formatDate(editedTask.task_plan_start, 'DD-MM-YYYY')
+                    <v-text-field :value="formatDate(editedTask.task_plan_start, 'DD-MM-YYYY')
                       " label="Plan Start" prepend-icon="mdi-calendar" readonly v-on="on"></v-text-field>
                   </template>
                   <v-date-picker v-model="editedTask.task_plan_start" no-title scrollable></v-date-picker>
@@ -117,8 +116,7 @@
                 <v-menu v-model="planEndMenu" :close-on-content-click="false" :nudge-right="40"
                   transition="scale-transition" offset-y>
                   <template v-slot:activator="{ on }">
-                    <v-text-field :value="
-                        formatDate(editedTask.task_plan_end, 'DD-MM-YYYY')
+                    <v-text-field :value="formatDate(editedTask.task_plan_end, 'DD-MM-YYYY')
                       " label="Plan End" prepend-icon="mdi-calendar" readonly v-on="on"
                       :disabled="!editedTask.task_plan_start"></v-text-field>
                   </template>
@@ -133,8 +131,7 @@
                 <v-menu v-if="editedTask.task_plan_start && editedTask.task_plan_end" v-model="actualStartMenu"
                   :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y>
                   <template v-slot:activator="{ on }">
-                    <v-text-field :value="
-                        formatDate(editedTask.task_actual_start, 'DD-MM-YYYY')
+                    <v-text-field :value="formatDate(editedTask.task_actual_start, 'DD-MM-YYYY')
                       " label="Actual Start" prepend-icon="mdi-calendar" readonly v-on="on"></v-text-field>
                   </template>
                   <v-date-picker v-model="editedTask.task_actual_start" no-title scrollable></v-date-picker>
@@ -144,8 +141,7 @@
                 <v-menu v-if="editedTask.task_plan_start && editedTask.task_plan_end" v-model="actualEndMenu"
                   :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y>
                   <template v-slot:activator="{ on }">
-                    <v-text-field :value="
-                        formatDate(editedTask.task_actual_end, 'DD-MM-YYYY')
+                    <v-text-field :value="formatDate(editedTask.task_actual_end, 'DD-MM-YYYY')
                       " label="Actual End" prepend-icon="mdi-calendar" readonly v-on="on">
                     </v-text-field>
                   </template>
@@ -190,10 +186,10 @@
               </v-col>
               <v-col cols="auto">
                 <v-btn v-if="
-                    (editedTask.memberDetails &&
-                      editedTask.memberDetails.id === user.id) ||
-                    user.user_role === 'Admin'
-                  " color="error" @click.stop="deleteTask(editedTask)">
+                  (editedTask.memberDetails &&
+                    editedTask.memberDetails.id === user.id) ||
+                  user.user_role === 'Admin'
+                " color="error" @click.stop="deleteTask(editedTask)">
                   Delete
                 </v-btn>
               </v-col>
@@ -499,7 +495,7 @@
 
     <v-data-table :headers="taskHeaders" :items="filteredTasks" item-key="task_id" class="elevation-1">
       <template v-slot:item="{ item }">
-        <tr>
+        <tr @click="canShowUpdateIcon(item) && openSaveHistoryDialog(item)">
           <!-- ข้อมูลต่าง ๆ ของ task -->
           <td>{{ item.task_id }}</td>
           <td>{{ item.task_name }}</td>
@@ -528,7 +524,7 @@
           <td>{{ item.task_manday ? item.task_manday : "0" }}</td>
           <td>{{ item.task_type }}</td>
           <!-- Actions column -->
-          <td>
+          <td @click.stop>
             <!-- Existing buttons -->
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -549,7 +545,7 @@
                   (item.memberDetails && item.memberDetails.id === user.id) ||
                   user.user_role === 'Admin'
                 " icon color="primary" @click.stop="openSaveHistoryDialog(item)">
-                  <v-icon>mdi-content-save</v-icon>
+                  <v-icon>mdi-update</v-icon>
                 </v-btn>
               </template>
               <span>Update</span>
@@ -649,7 +645,7 @@ export default {
         { text: "Task Type", value: "task_type" },
         { text: "Actions", value: "actions", sortable: false },
       ],
-      taskTypeOrder: ["Document","Design", "Develop", "Testing", "Maintenance"], // กำหนดลำดับของ task types
+      taskTypeOrder: ["Document", "Design", "Develop", "Testing", "Maintenance"], // กำหนดลำดับของ task types
       userProjects: [],
       historyTaskData: {
         task_name: "",
@@ -719,7 +715,7 @@ export default {
       tasks: [],
       currentPage: 1,
       perPage: 12,
-      statusOptions: ["Document","Design", "Develop","Testing","Maintenance"],
+      statusOptions: ["Document", "Design", "Develop", "Testing", "Maintenance"],
       statusOptionsDev: ["Develop", "Maintenance"],
       statusOptionsImp: ["Document", "Testing"],
       showImageDialog: false,
@@ -885,25 +881,25 @@ export default {
 
         // เรียงลำดับข้อมูลที่กรองแล้วตามเงื่อนไขที่กำหนด
         filtered.sort((a, b) => {
-          
-// เรียกใช้ฟังก์ชัน sortByPosition ก่อน เพื่อตรวจสอบตำแหน่งงาน
-      const positionOrder = this.sortByPosition(a.task_member_position, b.task_member_position);
-      if (positionOrder !== 0) {
-        return positionOrder;
-      }
 
-   // ถ้าหาก task_type เหมือนกัน ให้จัดเรียงตาม task_progress จากน้อยไปมาก
-      const progressA = parseInt(a.task_progress);
-      const progressB = parseInt(b.task_progress);
-      if (progressA !== progressB) {
-        return progressA - progressB;
-      }
+          // เรียกใช้ฟังก์ชัน sortByPosition ก่อน เพื่อตรวจสอบตำแหน่งงาน
+          const positionOrder = this.sortByPosition(a.task_member_position, b.task_member_position);
+          if (positionOrder !== 0) {
+            return positionOrder;
+          }
 
- // ถ้าหาก task_progress เหมือนกัน ให้จัดเรียงตาม task_type โดยใช้ลำดับที่กำหนดไว้ใน taskTypeOrder
-      const typeOrderA = this.taskTypeOrder.indexOf(a.task_type);
-      const typeOrderB = this.taskTypeOrder.indexOf(b.task_type);
-      return typeOrderA - typeOrderB;
-    });
+          // ถ้าหาก task_type เหมือนกัน ให้จัดเรียงตาม task_progress จากน้อยไปมาก
+          const progressA = parseInt(a.task_progress);
+          const progressB = parseInt(b.task_progress);
+          if (progressA !== progressB) {
+            return progressA - progressB;
+          }
+
+          // ถ้าหาก task_progress เหมือนกัน ให้จัดเรียงตาม task_type โดยใช้ลำดับที่กำหนดไว้ใน taskTypeOrder
+          const typeOrderA = this.taskTypeOrder.indexOf(a.task_type);
+          const typeOrderB = this.taskTypeOrder.indexOf(b.task_type);
+          return typeOrderA - typeOrderB;
+        });
 
         return filtered;
       } else {
@@ -919,7 +915,7 @@ export default {
       .then(() => this.fetchScreenDetail())
       .then(() => this.fetchUserList())
       .then(() => this.fetchTasks())
-      
+
       .catch((error) => {
         console.error("Error:", error);
         // Handle error here
@@ -957,7 +953,7 @@ export default {
     filteredTasks: {
       handler() {
         // เรียกใช้ฟังก์ชันเมื่อมีการเปลี่ยนแปลงใน Task ของคุณ
-        
+
         this.getTasksToday();
       },
       deep: true,
@@ -974,11 +970,15 @@ export default {
         this.dialogAddTaskForm = true; // ค่าเริ่มต้นหรือสำหรับตำแหน่งอื่นๆ
       }
     },
+    
+    canShowUpdateIcon(item) {
+      return (item.memberDetails && item.memberDetails.id === this.user.id) || this.user.user_role === 'Admin';
+    },
 
     sortByPosition(positionA, positionB) {
-  const positionOrder = ["System Analyst", "Developer", "Implementer"];
-  return positionOrder.indexOf(positionA) - positionOrder.indexOf(positionB);
-},
+      const positionOrder = ["System Analyst", "Developer", "Implementer"];
+      return positionOrder.indexOf(positionA) - positionOrder.indexOf(positionB);
+    },
 
     refreshTable() {
       // Logic to refresh the table, e.g., re-fetch data
