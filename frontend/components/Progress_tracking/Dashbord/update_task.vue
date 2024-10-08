@@ -109,7 +109,6 @@
             label="Plan Manday"
             type="number"
             min="0"
-            disabled
             outlined
           />
         </v-col>
@@ -132,7 +131,6 @@
                 v-on="on"
                 prepend-icon="mdi-calendar"
                 outlined
-                disabled
               />
             </template>
             <v-date-picker
@@ -159,7 +157,6 @@
                 v-on="on"
                 prepend-icon="mdi-calendar"
                 outlined
-                disabled
               />
             </template>
             <v-date-picker
@@ -177,7 +174,6 @@
             label="Actual Manday"
             type="number"
             min="0"
-            disabled
             outlined
           />
         </v-col>
