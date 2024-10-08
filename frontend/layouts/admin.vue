@@ -36,7 +36,6 @@
       <!-- Project button -->
       <v-list class="pt-0" dense rounded>
         <v-list-item
-          v-if="user_role !== 'SuperAdmin'"
           @click="
             navigateTo('/Progress_Tracking/ManageProject_Progress_Tracking')
           "
@@ -411,29 +410,11 @@ export default {
         .get("/users/getOne/" + this.$auth.user.id)
         .then((res) => {
           this.user_role = res.data[0]?.user_role;
-          this.user_pic = res.data[0]?.user_pic; // ดึงค่า user_pic จาก API
 
-          // ตรวจสอบว่า user_pic มีค่าเป็น null หรือไม่
-          if (!this.user_pic || this.user_pic === "null") {
-            this.user_pic = require("~/images/default_user.jpg"); // ใช้ default_user.png
-          } else {
-            // ใช้ require สำหรับ user_pic ที่ถูกต้อง
-            try {
-              this.user_pic = require(`~/images/${this.user_pic}`);
-            } catch (e) {
-              console.error(
-                `Cannot find module './images/${this.user_pic}'`,
-                e
-              );
-              this.user_pic = require("~/images/default_user.jpg"); // ใช้ default image ถ้าหาไม่พบ
-            }
-          }
+          // ตรวจสอบค่า user_pic หากไม่มีค่าให้ใช้ default
+          this.user_pic = res.data[0]?.user_pic || "/images/default_user.jpg";
 
           this.user_position = res.data[0]?.user_position;
-        })
-        .catch((error) => {
-          console.error("Error fetching user data:", error);
-          this.user_pic = require("~/images/default_user.jpg"); // ใช้ default image ถ้าผิดพลาด
         });
     },
 
