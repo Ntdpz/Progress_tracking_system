@@ -1,7 +1,7 @@
 <!-- projectDetail.vue -->
 <template>
   <v-card>
-    <v-row style="height: 220px">
+    <v-row >
       <v-col>
         <v-card-title>
           <v-tooltip bottom>
