@@ -36,13 +36,16 @@ router.post("/createTasks", async (req, res) => {
       task_plan_start,
       task_plan_end,
       task_member_id,
-      task_manday, // เพิ่มฟิลด์ task_manday เข้ามา
+      task_manday,
     } = req.body;
 
-    const id = generateId(); // ใช้ generateId() function เพื่อสร้าง ID
+    const id = generateId();
+    // ตรวจสอบค่า task_plan_start และ task_plan_end หากเป็นค่าว่างให้ตั้งเป็น null
+    const planStart = task_plan_start ? task_plan_start : null;
+    const planEnd = task_plan_end ? task_plan_end : null;
 
     const query =
-      "INSERT INTO tasks (id, task_id, task_name, task_detail, task_type, screen_id, project_id, system_id, task_plan_start, task_plan_end, task_member_id, task_manday) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"; // เพิ่มฟิลด์ task_manday เข้าไปในคำสั่ง SQL
+      "INSERT INTO tasks (id, task_id, task_name, task_detail, task_type, screen_id, project_id, system_id, task_plan_start, task_plan_end, task_member_id, task_manday, task_date_update) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
 
     await new Promise((resolve, reject) => {
       connection.query(
@@ -56,10 +59,10 @@ router.post("/createTasks", async (req, res) => {
           screen_id,
           project_id,
           system_id,
-          task_plan_start,
-          task_plan_end,
+          planStart,
+          planEnd,
           task_member_id,
-          task_manday, // เพิ่ม task_manday เข้าไปใน array ของ parameters
+          task_manday,
         ],
         (err, result) => {
           if (err) reject(err);
@@ -74,6 +77,7 @@ router.post("/createTasks", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
 
 // Route for getting all tasks
 router.get("/getAll", async (req, res) => {
@@ -158,7 +162,7 @@ router.get("/searchByProjectId/:project_id", async (req, res) => {
   try {
     const { project_id } = req.params;
 
-    // สร้าง query SQL โดยทำการ JOIN ระหว่างตาราง Tasks, Projects, Systems, และ Screens พร้อมเพิ่มการดึงคอลัมน์ is_archived
+    // สร้าง query SQL โดยทำการ JOIN ระหว่างตาราง Tasks, Projects, Systems, และ Screens พร้อมเพิ่มการดึงคอลัมน์ is_archived และ task_actual_manday
     let query = `
             SELECT 
                 tasks.task_id,
@@ -180,7 +184,8 @@ router.get("/searchByProjectId/:project_id", async (req, res) => {
                 tasks.task_actual_end,
                 tasks.task_member_id,
                 tasks.task_date_update,
-                tasks.is_archived
+                tasks.is_archived,
+                tasks.task_actual_manday
 
             FROM tasks
             JOIN projects ON tasks.project_id = projects.id
@@ -203,7 +208,7 @@ router.get("/searchByProjectId/:project_id", async (req, res) => {
           .json({ message: "No tasks found for this project ID" });
       }
 
-      // ส่งข้อมูล tasks กลับในรูปแบบ JSON โดยรวมค่า is_archived ด้วย
+      // ส่งข้อมูล tasks กลับในรูปแบบ JSON โดยรวมค่า is_archived และ task_actual_manday ด้วย
       res.status(200).json(results);
     });
   } catch (error) {
@@ -449,7 +454,7 @@ router.put("/save_history_tasks/:id", async (req, res) => {
       task_actual_end,
       task_member_id,
       user_update,
-      is_archived, // New field for archiving
+      is_archived,
     } = req.body;
 
     // Use existing values if not provided
