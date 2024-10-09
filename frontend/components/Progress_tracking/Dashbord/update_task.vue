@@ -594,12 +594,7 @@ export default {
     async updateTask() {
       try {
         const formatDateValue = (value) => (value === "" ? null : value);
-        console.log("task_plan_start:", this.taskData.task_plan_start);
-        console.log("task_plan_end:", this.taskData.task_plan_end);
-        console.log("task_plan_manday:", this.taskData.task_manday);
-        console.log("task_actual_start:", this.taskData.task_actual_start);
-        console.log("task_actual_end:", this.taskData.task_actual_end);
-        console.log("task_actual_manday:", this.taskData.task_actual_manday);
+       
 
         // แปลงค่า task_progress
         const taskProgressValue =
@@ -634,7 +629,7 @@ export default {
             showCancelButton: true,
             cancelButtonText: "Cancel",
             html: `<input type="checkbox" id="archiveTask" checked /> 
-               <label for="archiveTask">Close Task</label>`, // Checkbox
+               <label for="archiveTask">Close Task</label>`,
           }).then(async (result) => {
             if (result.isConfirmed) {
               const archiveTaskChecked =
@@ -656,7 +651,7 @@ export default {
                 task_manday: this.taskData.task_manday,
                 task_actual_manday: this.taskData.task_actual_manday,
                 task_status: this.taskData.task_status,
-                is_archived: is_archived, // ส่งค่า is_archived
+                is_archived: is_archived,
               });
 
               EventBus.$emit("refresh-data");
