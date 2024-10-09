@@ -595,6 +595,9 @@ export default {
     async updateTask() {
       try {
         const formatDateValue = (value) => (value === "" ? null : value);
+        console.log("task_actual_start:", this.taskData.task_plan_start);
+        console.log("task_actual_end:", this.taskData.task_plan_end);
+        console.log("task_actual_manday:", this.taskData.task_manday);
         console.log("task_actual_start:", this.taskData.task_actual_start);
         console.log("task_actual_end:", this.taskData.task_actual_end);
         console.log("task_actual_manday:", this.taskData.task_actual_manday);
