@@ -373,7 +373,7 @@ export default {
         this.menu.task_actual_start = false;
 
         // เคลียร์ค่า task_actual_start
-        this.taskData.task_actual_start = null;
+        this.taskData.task_actual_start = "";
 
         Swal.fire({
           icon: "warning",
@@ -390,7 +390,7 @@ export default {
         this.menu.task_actual_end = false;
 
         // เคลียร์ค่า task_actual_start
-        this.taskData.task_actual_end = null;
+        this.taskData.task_actual_end = "";
 
         Swal.fire({
           icon: "warning",
@@ -426,19 +426,22 @@ export default {
         return; // ออกจากฟังก์ชันทันที
       }
 
-      // ถ้า task_progress เท่ากับ 100 ให้ใช้วันปัจจุบันใน task_actual_end
+      // ถ้า task_progress เท่ากับ 100 ให้ตรวจสอบว่า task_actual_end ถูกกำหนดแล้วหรือไม่
       if (this.taskData.task_progress === 100) {
-        const today = new Date();
-        const options = {
-          timeZone: "Asia/Bangkok",
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-        };
-        const formattedDate = new Intl.DateTimeFormat("en-CA", options).format(
-          today
-        );
-        this.taskData.task_actual_end = formattedDate; // ใช้ format YYYY-MM-DD
+        if (!this.taskData.task_actual_end) {
+          const today = new Date();
+          const options = {
+            timeZone: "Asia/Bangkok",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+          };
+          const formattedDate = new Intl.DateTimeFormat(
+            "en-CA",
+            options
+          ).format(today);
+          this.taskData.task_actual_end = formattedDate; // ใช้ format YYYY-MM-DD
+        }
       } else {
         // ถ้า task_progress < 100 ให้ทำให้ task_actual_end เป็น null
         this.taskData.task_actual_end = null;
@@ -459,7 +462,6 @@ export default {
         this.taskData.task_actual_manday = Math.max(1, businessDays);
       }
     },
-
     updatePlanDates(type) {
       const startDate = new Date(this.taskData.task_plan_start);
       const endDate = new Date(this.taskData.task_plan_end);
