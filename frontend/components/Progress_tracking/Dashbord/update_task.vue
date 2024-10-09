@@ -405,20 +405,25 @@ export default {
     updateActualDates() {
       // ตรวจสอบว่า task_progress มีค่ามากกว่า 0 หรือไม่
       if (this.taskData.task_progress > 0) {
-        // ถ้า task_actual_start เป็น null ให้ใช้วันปัจจุบันใน timezone ของประเทศไทย
-        if (!this.taskData.task_actual_start) {
-          const today = new Date();
-          const options = {
-            timeZone: "Asia/Bangkok",
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-          };
-          const formattedDate = new Intl.DateTimeFormat(
-            "en-CA",
-            options
-          ).format(today);
-          this.taskData.task_actual_start = formattedDate; // ใช้ format YYYY-MM-DD
+        // ถ้า task_actual_start มาจากฐานข้อมูล ให้ใช้ค่านั้น
+        if (this.task.task_actual_start) {
+          this.taskData.task_actual_start = this.task.task_actual_start;
+        } else {
+          // ถ้า task_actual_start เป็น null ให้ใช้วันปัจจุบันใน timezone ของประเทศไทย
+          if (!this.taskData.task_actual_start) {
+            const today = new Date();
+            const options = {
+              timeZone: "Asia/Bangkok",
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+            };
+            const formattedDate = new Intl.DateTimeFormat(
+              "en-CA",
+              options
+            ).format(today);
+            this.taskData.task_actual_start = formattedDate; // ใช้ format YYYY-MM-DD
+          }
         }
       } else {
         // ถ้า task_progress <= 0 ให้ทำให้ทั้งสองช่องว่าง
@@ -429,20 +434,27 @@ export default {
       }
 
       // ถ้า task_progress เท่ากับ 100 ให้ตรวจสอบว่า task_actual_end ถูกกำหนดแล้วหรือไม่
+      // ถ้า task_progress เท่ากับ 100 ให้ตรวจสอบว่า task_actual_end มาจากฐานข้อมูลหรือไม่
       if (this.taskData.task_progress === 100) {
-        if (!this.taskData.task_actual_end) {
-          const today = new Date();
-          const options = {
-            timeZone: "Asia/Bangkok",
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-          };
-          const formattedDate = new Intl.DateTimeFormat(
-            "en-CA",
-            options
-          ).format(today);
-          this.taskData.task_actual_end = formattedDate; // ใช้ format YYYY-MM-DD
+        if (this.task.task_actual_end) {
+          // ถ้ามีค่า task_actual_end จากฐานข้อมูล ให้ใช้ค่านั้น
+          this.taskData.task_actual_end = this.task.task_actual_end;
+        } else {
+          // ถ้า task_actual_end เป็น null ให้ใช้วันปัจจุบันใน timezone ของประเทศไทย
+          if (!this.taskData.task_actual_end) {
+            const today = new Date();
+            const options = {
+              timeZone: "Asia/Bangkok",
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+            };
+            const formattedDate = new Intl.DateTimeFormat(
+              "en-CA",
+              options
+            ).format(today);
+            this.taskData.task_actual_end = formattedDate; // ใช้ format YYYY-MM-DD
+          }
         }
       } else {
         // ถ้า task_progress < 100 ให้ทำให้ task_actual_end เป็น null
@@ -467,6 +479,7 @@ export default {
         this.taskData.task_actual_manday = this.task.task_actual_manday; // ให้แสดงค่าจากฐานข้อมูล
       }
     },
+
     validatePlanActual() {
       // ตรวจสอบให้ไม่เกินค่าที่คำนวณได้
       const maxManday = this.countBusinessDays(
