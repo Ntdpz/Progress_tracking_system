@@ -180,6 +180,7 @@
             type="number"
             min="0"
             outlined
+            @input="validatePlanActual"
           />
         </v-col>
       </v-row>
@@ -330,7 +331,7 @@ export default {
       const day = String(d.getDate()).padStart(2, "0"); // วัน
       const month = String(d.getMonth() + 1).padStart(2, "0"); // เดือน (0-indexed)
       const year = d.getFullYear(); // ปี
-      return `${day}/${month}/${year}`; // คืนค่าในรูปแบบ dd/mm/yyyy
+      return `${day}-${month}-${year}`; // คืนค่าในรูปแบบ dd/mm/yyyy
     },
     formatDateTime(dateTime) {
       if (!dateTime) return "No dateTime";
@@ -423,6 +424,7 @@ export default {
         // ถ้า task_progress <= 0 ให้ทำให้ทั้งสองช่องว่าง
         this.taskData.task_actual_start = null;
         this.taskData.task_actual_end = null;
+        this.taskData.task_actual_manday = null; // รีเซ็ตค่า task_actual_manday
         return; // ออกจากฟังก์ชันทันที
       }
 
@@ -447,21 +449,58 @@ export default {
         this.taskData.task_actual_end = null;
       }
 
+      // ทำการคำนวณค่า task_actual_manday ทันทีหลังจากที่กำหนดวันแล้ว
       const startDate = new Date(this.taskData.task_actual_start);
       const endDate = new Date(this.taskData.task_actual_end);
-
-      // เช็คเงื่อนไขวัน
-      if (this.taskData.task_actual_start && this.taskData.task_actual_end) {
-        if (startDate > endDate) {
-          this.taskData.task_actual_start = this.taskData.task_actual_end;
-        } else if (endDate < startDate) {
-          this.taskData.task_actual_end = this.taskData.task_actual_start;
+      // ตรวจสอบว่าค่า task_manday (จากฐานข้อมูล) เป็น 0 หรือ null
+      if (
+        this.task.task_actual_manday === undefined ||
+        this.task.task_actual_manday === null ||
+        this.task.task_actual_manday <= 0
+      ) {
+        if (this.taskData.task_plan_start && this.taskData.task_plan_end) {
+          const businessDays = this.countBusinessDays(startDate, endDate);
+          this.taskData.task_actual_manday = Math.max(1, businessDays);
         }
-
-        const businessDays = this.countBusinessDays(startDate, endDate);
-        this.taskData.task_actual_manday = Math.max(1, businessDays);
+      } else {
+        // ถ้าค่าจากฐานข้อมูลไม่ใช่ 0 หรือ null
+        this.taskData.task_actual_manday = this.task.task_actual_manday; // ให้แสดงค่าจากฐานข้อมูล
       }
     },
+    validatePlanActual() {
+      // ตรวจสอบให้ไม่เกินค่าที่คำนวณได้
+      const maxManday = this.countBusinessDays(
+        new Date(this.taskData.task_actual_start),
+        new Date(this.taskData.task_actual_end)
+      );
+
+      // ตรวจสอบค่าติดลบ
+      if (this.taskData.task_actual_manday < 0) {
+        this.taskData.task_actual_manday = 0; // ตั้งค่าให้เป็น 0
+        Swal.fire({
+          icon: "warning",
+          title: "The number of days cannot be negative!",
+          text: "Please enter a valid number of days.",
+          confirmButtonText: "OK",
+          confirmButtonColor: "#629859",
+        });
+        return; // ออกจากฟังก์ชัน
+      }
+
+      if (this.taskData.task_actual_manday > maxManday) {
+        this.taskData.task_actual_manday = maxManday; // ตั้งค่าให้เท่ากับค่าที่คำนวณได้
+
+        // แสดง SweetAlert 2 แจ้งเตือน
+        Swal.fire({
+          icon: "warning",
+          title: "The number of days is incorrect!",
+          text: `The number of days cannot be exceeded ${maxManday} days`,
+          confirmButtonText: "OK",
+          confirmButtonColor: "#629859",
+        });
+      }
+    },
+
     updatePlanDates(type) {
       const startDate = new Date(this.taskData.task_plan_start);
       const endDate = new Date(this.taskData.task_plan_end);
@@ -543,6 +582,9 @@ export default {
     async updateTask() {
       try {
         const formatDateValue = (value) => (value === "" ? null : value);
+        console.log("task_actual_start:", this.taskData.task_actual_start);
+        console.log("task_actual_end:", this.taskData.task_actual_end);
+        console.log("task_actual_manday:", this.taskData.task_actual_manday);
 
         // แปลงค่า task_progress
         const taskProgressValue =
@@ -555,12 +597,11 @@ export default {
           task_progress: taskProgressValue,
           task_plan_start: formatDateValue(this.taskData.task_plan_start),
           task_plan_end: formatDateValue(this.taskData.task_plan_end),
+          task_actual_start: formatDateValue(this.taskData.task_actual_start),
+          task_actual_end: formatDateValue(this.taskData.task_actual_end),
           user_update: this.user.id,
           task_manday: this.taskData.task_manday,
-          task_actual_manday:
-            taskProgressValue < 100
-              ? 0
-              : parseFloat(this.taskData.task_actual_manday),
+          task_actual_manday: this.taskData.task_actual_manday,
           task_status: this.taskData.task_status,
         });
 
@@ -592,6 +633,10 @@ export default {
                 task_progress: taskProgressValue,
                 task_plan_start: formatDateValue(this.taskData.task_plan_start),
                 task_plan_end: formatDateValue(this.taskData.task_plan_end),
+                task_actual_start: formatDateValue(
+                  this.taskData.task_actual_start
+                ),
+                task_actual_end: formatDateValue(this.taskData.task_actual_end),
                 user_update: this.user.id,
                 task_manday: this.taskData.task_manday,
                 task_actual_manday: this.taskData.task_actual_manday,
@@ -613,6 +658,8 @@ export default {
             task_progress: taskProgressValue,
             task_plan_start: formatDateValue(this.taskData.task_plan_start),
             task_plan_end: formatDateValue(this.taskData.task_plan_end),
+            task_actual_start: formatDateValue(this.taskData.task_actual_start),
+            task_actual_end: formatDateValue(this.taskData.task_actual_end),
             user_update: this.user.id,
             task_manday: this.taskData.task_manday,
             task_actual_manday: this.taskData.task_actual_manday,

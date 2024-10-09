@@ -162,7 +162,7 @@ router.get("/searchByProjectId/:project_id", async (req, res) => {
   try {
     const { project_id } = req.params;
 
-    // สร้าง query SQL โดยทำการ JOIN ระหว่างตาราง Tasks, Projects, Systems, และ Screens พร้อมเพิ่มการดึงคอลัมน์ is_archived
+    // สร้าง query SQL โดยทำการ JOIN ระหว่างตาราง Tasks, Projects, Systems, และ Screens พร้อมเพิ่มการดึงคอลัมน์ is_archived และ task_actual_manday
     let query = `
             SELECT 
                 tasks.task_id,
@@ -184,7 +184,8 @@ router.get("/searchByProjectId/:project_id", async (req, res) => {
                 tasks.task_actual_end,
                 tasks.task_member_id,
                 tasks.task_date_update,
-                tasks.is_archived
+                tasks.is_archived,
+                tasks.task_actual_manday
 
             FROM tasks
             JOIN projects ON tasks.project_id = projects.id
@@ -207,7 +208,7 @@ router.get("/searchByProjectId/:project_id", async (req, res) => {
           .json({ message: "No tasks found for this project ID" });
       }
 
-      // ส่งข้อมูล tasks กลับในรูปแบบ JSON โดยรวมค่า is_archived ด้วย
+      // ส่งข้อมูล tasks กลับในรูปแบบ JSON โดยรวมค่า is_archived และ task_actual_manday ด้วย
       res.status(200).json(results);
     });
   } catch (error) {
@@ -453,7 +454,7 @@ router.put("/save_history_tasks/:id", async (req, res) => {
       task_actual_end,
       task_member_id,
       user_update,
-      is_archived, // New field for archiving
+      is_archived,
     } = req.body;
 
     // Use existing values if not provided
