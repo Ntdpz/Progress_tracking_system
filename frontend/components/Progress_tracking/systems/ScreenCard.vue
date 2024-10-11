@@ -148,8 +148,9 @@
 
             <!-- Action buttons in the "Action" column -->
             <template v-slot:item.action="{ item }">
-              <v-btn icon @click="deleteUser(item)">
-                <v-icon color="red">mdi-delete</v-icon>
+              <!-- The delete button is always present, but the icon is conditionally displayed -->
+              <v-btn icon  @click="deleteUser(item)">
+                <v-icon v-if="tasksLoaded && !isUserAssignedToTask(item)" color="red">mdi-delete</v-icon>
               </v-btn>
             </template>
           </v-data-table>
@@ -294,6 +295,7 @@
 </template>
 
 <script>
+import { faTasks } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import Swal from "sweetalert2"; // Make sure to import SweetAlert for notifications
 
@@ -373,6 +375,7 @@ export default {
     return {
       users: [], // Holds the current users assigned to the screen
       usersNotInScreen: [],
+      tasks: [],
       editDialog: false,
       assignUserDialog: false,
       editScreenUserDialog: false,
@@ -401,6 +404,17 @@ export default {
       } catch (error) {
         console.error("Error fetching users:", error);
       }
+    },
+    async fetchScreenTasks() {
+      try {
+        const response = await this.$axios.get(`/tasks/searchByScreenId/${this.screenId}`);
+        this.tasks = response.data;
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
+    },
+    isUserAssignedToTask(user) {
+      return this.tasks.some(task => task.task_member_id === user.user_id);
     },
 
     // Convert Base64 image string to a usable image URL
@@ -683,6 +697,7 @@ export default {
   mounted() {
     this.fetchScreenUsers(); // Load users when the component is mounted
     this.fetchUsersNotInScreen();
+    this.fetchScreenTasks();
   },
   computed: {
     screenLevelLabel() {
