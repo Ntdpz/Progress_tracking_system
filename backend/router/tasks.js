@@ -345,14 +345,7 @@ router.put("/updateTasks/:id", async (req, res) => {
       updatedTaskFields.task_member_id = task_member_id;
     }
 
-    // คำนวณค่า task_actual_manday
-    if (task_actual_end === undefined || task_progress < 100) {
-      updatedTaskFields.task_actual_manday = 0; // กำหนดค่าเป็น 0
-    } else {
-      const taskActualStart = new Date(task_actual_start);
-      const taskActualEnd = new Date(task_actual_end);
-      updatedTaskFields.task_actual_manday = countBusinessDays(taskActualStart, taskActualEnd);
-    }
+  
 
     if (Object.keys(updatedTaskFields).length === 0) {
       return res.status(400).json({ error: "No fields to update" });
