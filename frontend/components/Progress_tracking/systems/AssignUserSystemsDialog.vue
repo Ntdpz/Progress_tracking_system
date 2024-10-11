@@ -384,7 +384,7 @@ export default {
     },
     getBase64Image(base64String) {
       if (!base64String) {
-        return "";
+        return "/images/default_user.jpg";
       }
       if (base64String.startsWith("data:image/jpeg;base64,")) {
         return base64String;
