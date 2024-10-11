@@ -62,19 +62,27 @@
       <v-select
         v-model="selectedDevelopers"
         :items="
-          usersNotInProject.filter((user) => user.user_position === 'Developer')
+          usersNotInProject.filter(
+            (user) =>
+              user.user_position === 'Developer' ||
+              user.user_position === 'Report developer'
+          )
         "
         label="Select Developer"
         item-text="user_firstname"
         item-value="id"
         multiple
-        @click:append="checkSelectAll('Developer')"
+        @click:append="checkSelectAll(['Developer', 'Report developer'])"
       >
         <!-- Select All Option -->
         <template v-slot:prepend-item>
-          <v-list-item @click="toggleSelectAll('Developer')">
+          <v-list-item
+            @click="toggleSelectAll(['Developer', 'Report developer'])"
+          >
             <v-list-item-content>{{
-              isAllSelected("Developer") ? "Deselect All" : "Select All"
+              isAllSelected(["Developer", "Report developer"])
+                ? "Deselect All"
+                : "Select All"
             }}</v-list-item-content>
           </v-list-item>
         </template>
@@ -203,45 +211,48 @@ export default {
     },
   },
   methods: {
-    toggleSelectAll(position) {
+    toggleSelectAll(positions) {
       let selected = [];
-      switch (position) {
-        case "System Analyst":
-          selected =
-            this.selectedSystemAnalysts.length ===
-            this.usersNotInProject.filter(
-              (user) => user.user_position === "System Analyst"
-            ).length
-              ? []
-              : this.usersNotInProject
-                  .filter((user) => user.user_position === "System Analyst")
-                  .map((user) => user.id);
-          this.selectedSystemAnalysts = selected;
-          break;
-        case "Developer":
-          selected =
-            this.selectedDevelopers.length ===
-            this.usersNotInProject.filter(
-              (user) => user.user_position === "Developer"
-            ).length
-              ? []
-              : this.usersNotInProject
-                  .filter((user) => user.user_position === "Developer")
-                  .map((user) => user.id);
-          this.selectedDevelopers = selected;
-          break;
-        case "Implementer":
-          selected =
-            this.selectedImplementers.length ===
-            this.usersNotInProject.filter(
-              (user) => user.user_position === "Implementer"
-            ).length
-              ? []
-              : this.usersNotInProject
-                  .filter((user) => user.user_position === "Implementer")
-                  .map((user) => user.id);
-          this.selectedImplementers = selected;
-          break;
+
+      if (Array.isArray(positions)) {
+        const usersInPositions = this.usersNotInProject.filter((user) =>
+          positions.includes(user.user_position)
+        );
+
+        selected =
+          this.selectedDevelopers.length === usersInPositions.length
+            ? []
+            : usersInPositions.map((user) => user.id);
+
+        this.selectedDevelopers = selected;
+      } else {
+        // เดิม - จัดการตำแหน่งเดียวเช่น "System Analyst" หรือ "Implementer"
+        switch (positions) {
+          case "System Analyst":
+            selected =
+              this.selectedSystemAnalysts.length ===
+              this.usersNotInProject.filter(
+                (user) => user.user_position === "System Analyst"
+              ).length
+                ? []
+                : this.usersNotInProject
+                    .filter((user) => user.user_position === "System Analyst")
+                    .map((user) => user.id);
+            this.selectedSystemAnalysts = selected;
+            break;
+          case "Implementer":
+            selected =
+              this.selectedImplementers.length ===
+              this.usersNotInProject.filter(
+                (user) => user.user_position === "Implementer"
+              ).length
+                ? []
+                : this.usersNotInProject
+                    .filter((user) => user.user_position === "Implementer")
+                    .map((user) => user.id);
+            this.selectedImplementers = selected;
+            break;
+        }
       }
     },
     isAllSelected(position) {
