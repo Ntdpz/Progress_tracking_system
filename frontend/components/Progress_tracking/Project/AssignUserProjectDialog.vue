@@ -35,24 +35,26 @@
             close
             @click:close="removeSystemAnalyst(item)"
           >
-            <v-avatar left>
-              <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
-            </v-avatar>
-            {{ item.user_firstname }}
+            <div class="d-flex align-center" style="gap: 10px">
+              <v-avatar left>
+                <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
+              </v-avatar>
+              <span>{{ item.user_firstname }}</span>
+            </div>
           </v-chip>
         </template>
+
         <!-- User List with Checkboxes -->
         <template v-slot:item="{ item }">
           <v-list-item>
             <v-checkbox v-model="selectedSystemAnalysts" :value="item.id" />
-            <v-list-item-avatar>
-              <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
-            </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title
-                >{{ item.user_firstname }}
-                {{ item.user_lastname }}</v-list-item-title
-              >
+              <div style="display: flex; align-items: center; gap: 10px">
+                <v-list-item-avatar>
+                  <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
+                </v-list-item-avatar>
+                <span>{{ item.user_firstname }} {{ item.user_lastname }}</span>
+              </div>
             </v-list-item-content>
           </v-list-item>
         </template>
@@ -86,6 +88,7 @@
             }}</v-list-item-content>
           </v-list-item>
         </template>
+
         <!-- Selected User Chips -->
         <template v-slot:selection="{ item, index }">
           <v-chip
@@ -98,21 +101,21 @@
             <v-avatar left>
               <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
             </v-avatar>
-            {{ item.user_firstname }}
+            <span>{{ item.user_firstname }}</span>
           </v-chip>
         </template>
+
         <!-- User List with Checkboxes -->
         <template v-slot:item="{ item }">
           <v-list-item>
             <v-checkbox v-model="selectedDevelopers" :value="item.id" />
-            <v-list-item-avatar>
-              <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
-            </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title
-                >{{ item.user_firstname }}
-                {{ item.user_lastname }}</v-list-item-title
-              >
+              <div style="display: flex; align-items: center; gap: 10px">
+                <v-list-item-avatar>
+                  <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
+                </v-list-item-avatar>
+                <span>{{ item.user_firstname }} {{ item.user_lastname }}</span>
+              </div>
             </v-list-item-content>
           </v-list-item>
         </template>
@@ -140,6 +143,7 @@
             }}</v-list-item-content>
           </v-list-item>
         </template>
+
         <!-- Selected User Chips -->
         <template v-slot:selection="{ item, index }">
           <v-chip
@@ -152,21 +156,21 @@
             <v-avatar left>
               <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
             </v-avatar>
-            {{ item.user_firstname }}
+            <span>{{ item.user_firstname }}</span>
           </v-chip>
         </template>
+
         <!-- User List with Checkboxes -->
         <template v-slot:item="{ item }">
           <v-list-item>
             <v-checkbox v-model="selectedImplementers" :value="item.id" />
-            <v-list-item-avatar>
-              <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
-            </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title
-                >{{ item.user_firstname }}
-                {{ item.user_lastname }}</v-list-item-title
-              >
+              <div style="display: flex; align-items: center; gap: 10px">
+                <v-list-item-avatar>
+                  <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
+                </v-list-item-avatar>
+                <span>{{ item.user_firstname }} {{ item.user_lastname }}</span>
+              </div>
             </v-list-item-content>
           </v-list-item>
         </template>
@@ -390,7 +394,7 @@ export default {
     },
     getBase64Image(base64String) {
       if (!base64String) {
-        return "";
+        return "/images/default_user.jpg";
       }
       if (base64String.startsWith("data:image/jpeg;base64,")) {
         return base64String;
@@ -398,6 +402,7 @@ export default {
         return `data:image/jpeg;base64,${base64String}`;
       }
     },
+
     selectAllUsers() {
       // ตรวจสอบว่ามีการเลือกผู้ใช้ทั้งหมดแล้วหรือยัง
       if (this.selectedUsers.length === this.filteredUsersNotInProject.length) {
