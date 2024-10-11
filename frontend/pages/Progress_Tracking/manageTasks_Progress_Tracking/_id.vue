@@ -545,7 +545,7 @@
                   (item.memberDetails && item.memberDetails.id === user.id) ||
                   user.user_role === 'Admin'
                 " icon color="primary" @click.stop="openSaveHistoryDialog(item)">
-                  <v-icon>mdi-update</v-icon>
+                  <v-icon>mdi-file-chart</v-icon>
                 </v-btn>
               </template>
               <span>Update</span>
