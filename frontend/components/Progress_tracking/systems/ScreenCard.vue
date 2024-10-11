@@ -149,8 +149,8 @@
             <!-- Action buttons in the "Action" column -->
             <template v-slot:item.action="{ item }">
               <!-- The delete button is always present, but the icon is conditionally displayed -->
-              <v-btn icon  @click="deleteUser(item)">
-                <v-icon v-if="tasksLoaded && !isUserAssignedToTask(item)" color="red">mdi-delete</v-icon>
+              <v-btn icon v-if="!isUserAssignedToTask(item)" @click="deleteUser(item)">
+                <v-icon color="red">mdi-delete</v-icon>
               </v-btn>
             </template>
           </v-data-table>
@@ -400,7 +400,6 @@ export default {
           `/user_screens/getOneScreenID/${this.screenId}`
         );
         this.users = response.data;
-        console.log("Fetched users:", this.users); // Debugging log
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -413,10 +412,17 @@ export default {
         console.error("Error fetching tasks:", error);
       }
     },
-    isUserAssignedToTask(user) {
-      return this.tasks.some(task => task.task_member_id === user.user_id);
-    },
 
+    // Check if a user is assigned to any task in the screen
+    isUserAssignedToTask(user) {
+      const userId = user.user_id || user.id; // Use fallback if necessary
+      if (!userId) {
+        console.error("User object does not have a user_id or id!");
+        return false;
+      }
+      // Check if any task has the user's ID as task_member_id
+      return this.tasks.some(task => task.task_member_id === userId);
+    },
     // Convert Base64 image string to a usable image URL
     getBase64Image(base64String) {
       if (!base64String) {
