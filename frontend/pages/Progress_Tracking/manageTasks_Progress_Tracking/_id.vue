@@ -1853,9 +1853,24 @@ export default {
         // Handle error when start date is after end date
         return;
       }
-      const manday = Math.round((end - start) / (1000 * 60 * 60 * 24) + 1);
-      this.editedTask.task_manday = manday;
-    },
+      let manday = 0;
+  let currentDate = new Date(start);
+
+  // วนลูปผ่านทุกวันตั้งแต่ start ถึง end
+  while (currentDate <= end) {
+    const dayOfWeek = currentDate.getDay(); // 0 = อาทิตย์, 6 = เสาร์
+
+    // นับเฉพาะวันจันทร์ถึงวันศุกร์
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      manday++;
+    }
+
+    // เลื่อนไปวันถัดไป
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  this.editedTask.task_manday = manday;
+},
 
     formatAPIDate(dateString) {
       if (!dateString) return null;
