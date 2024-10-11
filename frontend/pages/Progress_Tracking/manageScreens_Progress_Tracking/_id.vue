@@ -45,8 +45,8 @@
       <v-row>
         <!-- Search Bar -->
         <v-col cols="12" md="8">
-          <v-text-field label="Search" append-icon="mdi-magnify" @input="searchScreens" outlined
-            placeholder="search by name" dense></v-text-field>
+          <v-text-field label="Search" append-icon="mdi-magnify" v-model="search" outlined placeholder="search by name"
+            dense></v-text-field>
         </v-col>
         <!-- Add and History Buttons -->
         <v-col cols="12" md="4">
@@ -81,9 +81,9 @@
           </v-col>
         </v-row>
       </v-container>
-
       <!-- Pagination -->
-      <v-pagination v-model="page" :length="totalPages" :total-visible="5" class="pagination"></v-pagination>
+      <v-pagination v-model="page" :length="totalPages" :total-visible="5" @input="handlePageChange"
+      class="pagination"></v-pagination>
     </div>
     <!-- Dialogs -->
     <v-dialog v-model="addScreenDialog" max-width="800px">
@@ -129,11 +129,11 @@ export default {
       systemid: null,
       projectId: null,
       system: null,
+      search: "",
       allScreens: [],
       screens: [],
       users: [],
       userSystems: [],
-      search: "",
       page: 1,
       itemsPerPage: 12,
       totalPages: 0,
@@ -157,24 +157,26 @@ export default {
       );
     },
     paginatedScreens() {
-      const sortedScreens = this.filteredScreens.sort((a, b) => {
-        return a.screen_progress - b.screen_progress;
-      });
+      const sortedScreens = this.filteredScreens.sort((a, b) => a.screen_progress - b.screen_progress);
       const start = (this.page - 1) * this.itemsPerPage;
       const end = start + this.itemsPerPage;
-      return sortedScreens.slice(start, end); // Paginate based on filtered or all screens
+      return sortedScreens.slice(start, end);
     },
     isRestrictedPosition() {
       return this.user && (this.user.user_position === "Developer" || this.user.user_position === "Implementer");
     },
   },
   watch: {
-    allScreens(newAllScreens) {
-      this.page = 1; // Reset page when screens are loaded
+    allScreens(newAllScreens, oldAllScreens) {
+      if (newAllScreens.length !== oldAllScreens.length) {
+        this.page = 1; // Reset only if the length changes
+      }
       this.totalPages = Math.ceil(newAllScreens.length / this.itemsPerPage);
     },
-    filteredScreens(newFilteredScreens) {
-      this.page = 1; // Reset page when filtered screens change
+    filteredScreens(newFilteredScreens, oldFilteredScreens) {
+      if (newFilteredScreens.length !== oldFilteredScreens.length) {
+        this.page = 1; // Reset only if the length changes
+      }
       this.totalPages = Math.ceil(newFilteredScreens.length / this.itemsPerPage);
     },
   },
@@ -229,6 +231,9 @@ export default {
       );
       this.page = 1;
       this.totalPages = Math.ceil(this.screens.length / this.itemsPerPage);
+    },
+    handlePageChange(newPage) {
+      this.page = newPage;
     },
     formatDate(dateString) {
       if (!dateString) return null;
