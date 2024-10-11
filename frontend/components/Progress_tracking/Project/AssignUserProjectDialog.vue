@@ -259,20 +259,32 @@ export default {
         }
       }
     },
-    isAllSelected(position) {
-      switch (position) {
+    isAllSelected(positions) {
+      if (Array.isArray(positions)) {
+        const totalUsers = this.usersNotInProject.filter((user) =>
+          positions.includes(user.user_position)
+        ).length;
+
+        const totalSelected = positions.reduce((sum, position) => {
+          return (
+            sum +
+            (position === "Developer"
+              ? this.selectedDevelopers.length
+              : position === "Report Developer"
+              ? this.selectedReportDevelopers.length
+              : 0)
+          );
+        }, 0);
+
+        return totalUsers === totalSelected;
+      }
+      // xistinghecks for individual positions
+      switch (positions) {
         case "System Analyst":
           return (
             this.selectedSystemAnalysts.length ===
             this.usersNotInProject.filter(
               (user) => user.user_position === "System Analyst"
-            ).length
-          );
-        case "Developer":
-          return (
-            this.selectedDevelopers.length ===
-            this.usersNotInProject.filter(
-              (user) => user.user_position === "Developer"
             ).length
           );
         case "Implementer":
@@ -285,6 +297,7 @@ export default {
       }
       return false;
     },
+
     checkSelectAll(position) {
       if (this.isAllSelected(position)) {
         // Do not apply Select All logic
