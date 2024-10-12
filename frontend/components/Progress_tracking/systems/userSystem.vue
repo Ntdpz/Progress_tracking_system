@@ -1,6 +1,11 @@
 <template>
   <div>
-    <v-data-table :headers="headers" :items="user_systems" item-key="id" :items-per-page="5">
+    <v-data-table
+      :headers="headers"
+      :items="user_systems"
+      item-key="id"
+      :items-per-page="5"
+    >
       <!-- image -->
       <template v-slot:item.user_pic="{ item }">
         <v-avatar size="36">
@@ -16,16 +21,18 @@
       </template>
 
       <template v-slot:item.user_position="{ item }">
-        <div :style="{
-          width: '120px',
-          backgroundColor: getColor(item.user_position),
-          color: 'white',
-          borderRadius: '20px',
-          textAlign: 'center',
-          display: 'inline-block',
-          paddingTop: '5px',
-          paddingBottom: '5px',
-        }">
+        <div
+          :style="{
+            width: '120px',
+            backgroundColor: getColor(item.user_position),
+            color: 'white',
+            borderRadius: '20px',
+            textAlign: 'center',
+            display: 'inline-block',
+            paddingTop: '5px',
+            paddingBottom: '5px',
+          }"
+        >
           {{ item.user_position }}
         </div>
       </template>
@@ -75,7 +82,7 @@ export default {
     },
     getBase64Image(base64String) {
       if (!base64String) {
-        return "";
+        return "/images/default_user.jpg";
       }
       if (base64String.startsWith("data:image/jpeg;base64,")) {
         return base64String;
