@@ -57,27 +57,35 @@
           </v-list-item>
         </template>
       </v-select>
-
       <!-- Select Developer -->
       <v-select
         v-model="selectedDevelopers"
         :items="
-          usersNotInProject.filter((user) => user.user_position === 'Developer')
+          usersNotInProject.filter(
+            (user) =>
+              user.user_position === 'Developer' ||
+              user.user_position === 'Report developer'
+          )
         "
         label="Select Developer"
         item-text="user_firstname"
         item-value="id"
         multiple
-        @click:append="checkSelectAll('Developer')"
+        @click:append="checkSelectAll(['Developer', 'Report developer'])"
       >
         <!-- Select All Option -->
         <template v-slot:prepend-item>
-          <v-list-item @click="toggleSelectAll('Developer')">
+          <v-list-item
+            @click="toggleSelectAll(['Developer', 'Report developer'])"
+          >
             <v-list-item-content>{{
-              isAllSelected("Developer") ? "Deselect All" : "Select All"
+              isAllSelected(["Developer", "Report developer"])
+                ? "Deselect All"
+                : "Select All"
             }}</v-list-item-content>
           </v-list-item>
         </template>
+
         <!-- Selected User Chips -->
         <template v-slot:selection="{ item, index }">
           <v-chip
@@ -90,21 +98,21 @@
             <v-avatar left>
               <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
             </v-avatar>
-            {{ item.user_firstname }}
+            <span>{{ item.user_firstname }}</span>
           </v-chip>
         </template>
+
         <!-- User List with Checkboxes -->
         <template v-slot:item="{ item }">
           <v-list-item>
             <v-checkbox v-model="selectedDevelopers" :value="item.id" />
-            <v-list-item-avatar>
-              <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
-            </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title
-                >{{ item.user_firstname }}
-                {{ item.user_lastname }}</v-list-item-title
-              >
+              <div style="display: flex; align-items: center; gap: 10px">
+                <v-list-item-avatar>
+                  <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
+                </v-list-item-avatar>
+                <span>{{ item.user_firstname }} {{ item.user_lastname }}</span>
+              </div>
             </v-list-item-content>
           </v-list-item>
         </template>
@@ -207,61 +215,76 @@ export default {
     },
   },
   methods: {
-    toggleSelectAll(position) {
+    toggleSelectAll(positions) {
       let selected = [];
-      switch (position) {
-        case "System Analyst":
-          selected =
-            this.selectedSystemAnalysts.length ===
-            this.usersNotInProject.filter(
-              (user) => user.user_position === "System Analyst"
-            ).length
-              ? []
-              : this.usersNotInProject
-                  .filter((user) => user.user_position === "System Analyst")
-                  .map((user) => user.id);
-          this.selectedSystemAnalysts = selected;
-          break;
-        case "Developer":
-          selected =
-            this.selectedDevelopers.length ===
-            this.usersNotInProject.filter(
-              (user) => user.user_position === "Developer"
-            ).length
-              ? []
-              : this.usersNotInProject
-                  .filter((user) => user.user_position === "Developer")
-                  .map((user) => user.id);
-          this.selectedDevelopers = selected;
-          break;
-        case "Implementer":
-          selected =
-            this.selectedImplementers.length ===
-            this.usersNotInProject.filter(
-              (user) => user.user_position === "Implementer"
-            ).length
-              ? []
-              : this.usersNotInProject
-                  .filter((user) => user.user_position === "Implementer")
-                  .map((user) => user.id);
-          this.selectedImplementers = selected;
-          break;
+
+      if (Array.isArray(positions)) {
+        const usersInPositions = this.usersNotInProject.filter((user) =>
+          positions.includes(user.user_position)
+        );
+
+        selected =
+          this.selectedDevelopers.length === usersInPositions.length
+            ? []
+            : usersInPositions.map((user) => user.id);
+
+        this.selectedDevelopers = selected;
+      } else {
+        // เดิม - จัดการตำแหน่งเดียวเช่น "System Analyst" หรือ "Implementer"
+        switch (positions) {
+          case "System Analyst":
+            selected =
+              this.selectedSystemAnalysts.length ===
+              this.usersNotInProject.filter(
+                (user) => user.user_position === "System Analyst"
+              ).length
+                ? []
+                : this.usersNotInProject
+                    .filter((user) => user.user_position === "System Analyst")
+                    .map((user) => user.id);
+            this.selectedSystemAnalysts = selected;
+            break;
+          case "Implementer":
+            selected =
+              this.selectedImplementers.length ===
+              this.usersNotInProject.filter(
+                (user) => user.user_position === "Implementer"
+              ).length
+                ? []
+                : this.usersNotInProject
+                    .filter((user) => user.user_position === "Implementer")
+                    .map((user) => user.id);
+            this.selectedImplementers = selected;
+            break;
+        }
       }
     },
-    isAllSelected(position) {
-      switch (position) {
+    isAllSelected(positions) {
+      if (Array.isArray(positions)) {
+        const totalUsers = this.usersNotInProject.filter((user) =>
+          positions.includes(user.user_position)
+        ).length;
+
+        const totalSelected = positions.reduce((sum, position) => {
+          return (
+            sum +
+            (position === "Developer"
+              ? this.selectedDevelopers.length
+              : position === "Report Developer"
+              ? this.selectedReportDevelopers.length
+              : 0)
+          );
+        }, 0);
+
+        return totalUsers === totalSelected;
+      }
+      // xistinghecks for individual positions
+      switch (positions) {
         case "System Analyst":
           return (
             this.selectedSystemAnalysts.length ===
             this.usersNotInProject.filter(
               (user) => user.user_position === "System Analyst"
-            ).length
-          );
-        case "Developer":
-          return (
-            this.selectedDevelopers.length ===
-            this.usersNotInProject.filter(
-              (user) => user.user_position === "Developer"
             ).length
           );
         case "Implementer":
