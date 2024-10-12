@@ -512,16 +512,18 @@
               </v-card-title>
             </v-tooltip>
           </td>
-          <td>{{ getUserFirstName(item.task_member_id) }}</td>
           <td class="progress-cell">
             <v-progress-linear :color="getProgressColor(parseInt(item.task_progress))" height="20"
               :value="parseInt(item.task_progress)">
               <strong>{{ item.task_progress }}%</strong>
             </v-progress-linear>
           </td>
-          <td>{{ formatDate(item.task_plan_start) }}</td>
-          <td>{{ formatDate(item.task_plan_end) }}</td>
-          <td>{{ item.task_manday ? item.task_manday : "0" }}</td>
+          <td>
+            {{ formatDate(item.task_plan_start) }} - {{ formatDate(item.task_plan_end) }}
+          </td>
+          <td>{{ formatDate(item.task_actual_start) }} - {{ formatDate(item.task_actual_end) }}
+          </td>
+          <td>{{ item.task_actual_manday ? item.task_actual_manday : "0" }}</td>
           <td>{{ item.task_type }}</td>
           <!-- Actions column -->
           <td @click.stop>
@@ -637,11 +639,10 @@ export default {
         { text: "Task ID", value: "task_id" },
         { text: "Task Name", value: "task_name" },
         { text: "Task User", value: "user_id" },
-        { text: "Position", value: "task_member_id" },
         { text: "Progress", value: "task_progress" },
-        { text: "Plan Start", value: "task_plan_start" },
-        { text: "Plan End", value: "task_plan_end" },
-        { text: "Manday", value: "task_manday" },
+        { text: "Plan Start - Plan End", value: "task_plan_start" },
+        { text: "Actual Start - Actual End", value: "task_actual_start" },
+        { text: "Actual Manday", value: "actual_manday" },
         { text: "Task Type", value: "task_type" },
         { text: "Actions", value: "actions", sortable: false },
       ],
@@ -970,7 +971,7 @@ export default {
         this.dialogAddTaskForm = true; // ค่าเริ่มต้นหรือสำหรับตำแหน่งอื่นๆ
       }
     },
-    
+
     canShowUpdateIcon(item) {
       return (item.memberDetails && item.memberDetails.id === this.user.id) || this.user.user_role === 'Admin';
     },
@@ -1854,23 +1855,23 @@ export default {
         return;
       }
       let manday = 0;
-  let currentDate = new Date(start);
+      let currentDate = new Date(start);
 
-  // วนลูปผ่านทุกวันตั้งแต่ start ถึง end
-  while (currentDate <= end) {
-    const dayOfWeek = currentDate.getDay(); // 0 = อาทิตย์, 6 = เสาร์
+      // วนลูปผ่านทุกวันตั้งแต่ start ถึง end
+      while (currentDate <= end) {
+        const dayOfWeek = currentDate.getDay(); // 0 = อาทิตย์, 6 = เสาร์
 
-    // นับเฉพาะวันจันทร์ถึงวันศุกร์
-    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
-      manday++;
-    }
+        // นับเฉพาะวันจันทร์ถึงวันศุกร์
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+          manday++;
+        }
 
-    // เลื่อนไปวันถัดไป
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
+        // เลื่อนไปวันถัดไป
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
 
-  this.editedTask.task_manday = manday;
-},
+      this.editedTask.task_manday = manday;
+    },
 
     formatAPIDate(dateString) {
       if (!dateString) return null;
