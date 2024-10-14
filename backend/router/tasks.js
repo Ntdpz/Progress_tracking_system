@@ -37,6 +37,7 @@ router.post("/createTasks", async (req, res) => {
       task_plan_end,
       task_member_id,
       task_manday,
+      task_member_create,
     } = req.body;
 
     const id = generateId();
@@ -45,7 +46,7 @@ router.post("/createTasks", async (req, res) => {
     const planEnd = task_plan_end ? task_plan_end : null;
 
     const query =
-      "INSERT INTO tasks (id, task_id, task_name, task_detail, task_type, screen_id, project_id, system_id, task_plan_start, task_plan_end, task_member_id, task_manday, task_date_update) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+      "INSERT INTO tasks (id, task_id, task_name, task_detail, task_type, screen_id, project_id, system_id, task_plan_start, task_plan_end, task_member_id, task_manday, task_member_create, task_date_update) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
 
     await new Promise((resolve, reject) => {
       connection.query(
@@ -63,6 +64,7 @@ router.post("/createTasks", async (req, res) => {
           planEnd,
           task_member_id,
           task_manday,
+          task_member_create, // เพิ่ม created_by ที่นี่
         ],
         (err, result) => {
           if (err) reject(err);
@@ -77,7 +79,6 @@ router.post("/createTasks", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-
 
 // Route for getting all tasks
 router.get("/getAll", async (req, res) => {
