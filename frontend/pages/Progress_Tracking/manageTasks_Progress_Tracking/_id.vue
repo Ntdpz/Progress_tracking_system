@@ -512,6 +512,19 @@
               </v-card-title>
             </v-tooltip>
           </td>
+          <td>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <!-- แสดงรูปผู้ใช้และเชื่อมต่อกับ tooltip -->
+                <v-list-item-avatar v-bind="attrs" v-on="on">
+                  <v-img :src="getUserPic(item.task_member_create)" alt="User Avatar" />
+                </v-list-item-avatar>
+              </template>
+              <v-card-title class="font-weight" style="font-size: 1rem; text-align: center">
+                {{ getUserName(item.task_member_create) }}
+              </v-card-title>
+            </v-tooltip>
+          </td>
           <td class="progress-cell">
             <v-progress-linear :color="getProgressColor(parseInt(item.task_progress))" height="20"
               :value="parseInt(item.task_progress)">
@@ -639,6 +652,7 @@ export default {
         { text: "Task ID", value: "task_id" },
         { text: "Task Name", value: "task_name" },
         { text: "Task User", value: "user_id" },
+        { text: "Assign By User", value: "task_member_create" },
         { text: "Progress", value: "task_progress" },
         { text: "Plan Start - Plan End", value: "task_plan_start" },
         { text: "Actual Start - Actual End", value: "task_actual_start" },
@@ -1714,6 +1728,9 @@ export default {
           throw new Error("Task ID, Task Name, Task Type are required.");
         }
 
+        // ดึงข้อมูลผู้ใช้ที่ล็อกอินจาก this.$auth.user
+        const task_member_create = this.$auth.user.id;
+
         // ส่งข้อมูลไปยัง backend เพื่อสร้าง task ใหม่
         const response = await this.$axios.post("/tasks/createTasks", {
           task_id,
@@ -1727,6 +1744,7 @@ export default {
           task_plan_end,
           task_member_id,
           task_manday,
+          task_member_create
         });
 
         // ตรวจสอบว่าคำสั่ง HTTP สำเร็จหรือไม่
@@ -1766,6 +1784,7 @@ export default {
         });
       }
     },
+
     async goToHistoryTasks() {
       await this.fetchDeletedTasks();
       this.showHistoryDialog = true;
