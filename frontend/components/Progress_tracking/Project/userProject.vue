@@ -1,7 +1,13 @@
 <template>
   <div>
-    <v-data-table :headers="headers" :items="user_projects" item-key="id" class="styled-table" :items-per-page="5"
-      align="center">
+    <v-data-table
+      :headers="headers"
+      :items="user_projects"
+      item-key="id"
+      class="styled-table"
+      :items-per-page="5"
+      align="center"
+    >
       <template v-slot:top>
         <v-toolbar flat class="toolbar">
           <v-toolbar-title class="toolbar-title">
@@ -19,16 +25,18 @@
 
       <!-- position -->
       <template v-slot:item.user_position="{ item }">
-        <div :style="{
-          width: '120px',
-          backgroundColor: getColor(item.user_position),
-          color: 'white',
-          borderRadius: '20px',
-          textAlign: 'center',
-          display: 'inline-block',
-          paddingTop: '5px',
-          paddingBottom: '5px',
-        }">
+        <div
+          :style="{
+            width: '120px',
+            backgroundColor: getColor(item.user_position),
+            color: 'white',
+            borderRadius: '20px',
+            textAlign: 'center',
+            display: 'inline-block',
+            paddingTop: '5px',
+            paddingBottom: '5px',
+          }"
+        >
           {{ item.user_position }}
         </div>
       </template>
@@ -70,11 +78,13 @@ export default {
   methods: {
     getColor(position) {
       switch (position) {
-        case "Manager":
+        case "System Analyst":
           return "#864F80";
         case "Developer":
           return "#374AAB";
-        case "Tester":
+        case "Report developer":
+          return "#a5c3f6";
+        case "Implementer":
           return "#359C73";
         default:
           return "grey";
@@ -82,7 +92,7 @@ export default {
     },
     getBase64Image(base64String) {
       if (!base64String) {
-        return "";
+        return "/images/default_user.jpg";
       }
       if (base64String.startsWith("data:image/jpeg;base64,")) {
         return base64String;
@@ -91,7 +101,12 @@ export default {
       }
     },
     sortByPosition(userProjects) {
-      const positionOrder = ["System Analyst", "Developer", "Implementer"];
+      const positionOrder = [
+        "System Analyst",
+        "Developer",
+        "Report developer",
+        "Implementer",
+      ];
       return userProjects.sort((a, b) => {
         return (
           positionOrder.indexOf(a.user_position) -
