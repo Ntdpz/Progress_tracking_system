@@ -106,7 +106,12 @@ export default {
         { text: "User Position", value: "user_position", align: "start" },
         { text: "Action", value: "action", sortable: false },
       ],
-      positionOrder: ["System Analyst", "Developer", "Implementer"],
+      positionOrder: [
+        "System Analyst",
+        "Developer",
+        "Report developer",
+        "Implementer",
+      ],
     };
   },
   methods: {
@@ -159,13 +164,15 @@ export default {
     getColor(position) {
       switch (position) {
         case "System Analyst":
-          return "#864F80"; // สีสำหรับตำแหน่ง System Analyst
+          return "#864F80";
         case "Developer":
-          return "#374AAB"; // สีสำหรับตำแหน่ง Developer
-        case "Tester":
-          return "#359C73"; // สีสำหรับตำแหน่ง Tester
+          return "#374AAB";
+        case "Report developer":
+          return "#a5c3f6";
+        case "Implementer":
+          return "#359C73";
         default:
-          return "grey"; // สีสำหรับตำแหน่งที่ไม่ระบุ
+          return "grey";
       }
     },
     async deleteUser(item) {
