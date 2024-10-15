@@ -346,7 +346,7 @@ router.put("/updateTasks/:id", async (req, res) => {
       updatedTaskFields.task_member_id = task_member_id;
     }
 
-  
+
 
     if (Object.keys(updatedTaskFields).length === 0) {
       return res.status(400).json({ error: "No fields to update" });
@@ -580,6 +580,33 @@ function countBusinessDays(startDate, endDate) {
 
   return count;
 }
+
+
+// Route for counting tasks based on screen_id
+router.get("/countByScreen/:screen_id", async (req, res) => {
+  const screenId = req.params.screen_id;
+
+  try {
+    // SQL query to count tasks for the given screen_id
+    const query = "SELECT COUNT(*) AS taskCount FROM history_tasks WHERE screen_id = ? AND is_deleted = 0";
+
+    const results = await new Promise((resolve, reject) => {
+      connection.query(query, [screenId], (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(results[0]);
+        }
+      });
+    });
+
+    // Return the count in the response
+    res.json({ screen_id: screenId, task_count: results.taskCount });
+  } catch (error) {
+    console.error("Error counting tasks:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
 // Exporting the router
 module.exports = router;

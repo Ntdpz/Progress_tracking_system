@@ -79,11 +79,13 @@ export default {
   methods: {
     getColor(position) {
       switch (position) {
-        case "Manager":
+        case "System Analyst":
           return "#864F80";
         case "Developer":
           return "#374AAB";
-        case "Tester":
+        case "Report developer":
+          return "#a5c3f6";
+        case "Implementer":
           return "#359C73";
         default:
           return "grey";
@@ -100,7 +102,12 @@ export default {
       }
     },
     sortByPosition(userProjects) {
-      const positionOrder = ["System Analyst", "Developer", "Implementer"];
+      const positionOrder = [
+        "System Analyst",
+        "Developer",
+        "Report developer",
+        "Implementer",
+      ];
       return userProjects.sort((a, b) => {
         return (
           positionOrder.indexOf(a.user_position) -

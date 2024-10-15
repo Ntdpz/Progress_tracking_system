@@ -74,7 +74,9 @@ export default {
           return "#864F80";
         case "Developer":
           return "#374AAB";
-        case "Tester":
+        case "Report developer":
+          return "#a5c3f6";
+        case "Implementer":
           return "#359C73";
         default:
           return "grey";
@@ -90,9 +92,14 @@ export default {
         return `data:image/jpeg;base64,${base64String}`;
       }
     },
-    sortByPosition(userSystems) {
-      const positionOrder = ["System Analyst", "Developer", "Implementer"];
-      return userSystems.sort((a, b) => {
+    sortByPosition(userProjects) {
+      const positionOrder = [
+        "System Analyst",
+        "Developer",
+        "Report developer",
+        "Implementer",
+      ];
+      return userProjects.sort((a, b) => {
         return (
           positionOrder.indexOf(a.user_position) -
           positionOrder.indexOf(b.user_position)
