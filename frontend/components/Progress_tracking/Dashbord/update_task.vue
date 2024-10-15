@@ -9,29 +9,20 @@
     <v-form>
       <v-row>
         <!-- Input and Slider Rows -->
+
+
+
+
         <v-col cols="12" class="d-flex">
           <v-row class="flex-grow-1">
             <v-col cols="12" sm="4" class="task-progress-col">
-              <v-text-field
-                v-model="formattedTaskProgress"
-                required
-                @input="updateProgress"
-                class="task-text-field"
-                label="Task Progress"
-                outlined
-              ></v-text-field>
+              <v-text-field v-model="formattedTaskProgress" required @input="updateProgress" class="task-text-field"
+                label="Task Progress" outlined></v-text-field>
             </v-col>
 
             <v-col cols="12" sm="8" class="task-slider-col">
-              <v-slider
-                v-model="taskData.task_progress"
-                min="0"
-                max="100"
-                step="1"
-                thumb-label="always"
-                required
-                @input="updateProgress"
-              ></v-slider>
+              <v-slider v-model="taskData.task_progress" min="0" max="100" step="1" thumb-label="always" required
+                @input="updateProgress"></v-slider>
             </v-col>
           </v-row>
         </v-col>
@@ -39,158 +30,93 @@
 
       <v-row class="row-Remark">
         <v-col cols="12">
-          <v-textarea
-            v-model="taskData.task_detail"
-            outlined
-            clearable
-            label="Remark"
-          ></v-textarea>
+          <v-textarea v-model="taskData.task_detail" outlined clearable label="Remark"></v-textarea>
+        </v-col>
+      </v-row>
+
+      <v-row>
+        <v-col cols="4" v-if="taskPicUrl">
+        </v-col>
+        <v-col cols="4" v-if="taskPicUrl">
+          <v-img height="5rem" :src="taskPicUrl" alt="Task Picture" class="task-pic" />
+        </v-col>
+
+        <v-col cols="4" v-if="taskPicUrl">
         </v-col>
       </v-row>
 
       <v-row class="row-Plan">
         <!-- Task Plan Start -->
         <v-col cols="12" sm="6" md="4">
-          <v-menu
-            v-model="menu.task_plan_start"
-            :close-on-content-click="false"
-            transition="scale-transition"
-            offset-y
-          >
+          <v-menu v-model="menu.task_plan_start" :close-on-content-click="false" transition="scale-transition" offset-y>
             <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                :value="formattedTaskPlanStart"
-                label="Task Plan Start"
-                v-bind="attrs"
-                v-on="on"
-                prepend-icon="mdi-calendar"
-                class="custom-text-field"
-                outlined
-              />
+              <v-text-field :value="formattedTaskPlanStart" label="Task Plan Start" v-bind="attrs" v-on="on"
+                prepend-icon="mdi-calendar" class="custom-text-field" outlined />
             </template>
-            <v-date-picker
-              v-model="taskData.task_plan_start"
-              :max="taskData.task_plan_end || undefined"
-              @input="updatePlanDates('start')"
-            />
+            <v-date-picker v-model="taskData.task_plan_start" :max="taskData.task_plan_end || undefined"
+              @input="updatePlanDates('start')" />
           </v-menu>
         </v-col>
 
         <!-- Task Plan End -->
         <v-col cols="12" sm="6" md="4">
-          <v-menu
-            v-model="menu.task_plan_end"
-            :close-on-content-click="false"
-            transition="scale-transition"
-            offset-y
-          >
+          <v-menu v-model="menu.task_plan_end" :close-on-content-click="false" transition="scale-transition" offset-y>
             <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                :value="formattedTaskPlanEnd"
-                label="Task Plan End"
-                v-bind="attrs"
-                v-on="on"
-                prepend-icon="mdi-calendar"
-                outlined
-              />
+              <v-text-field :value="formattedTaskPlanEnd" label="Task Plan End" v-bind="attrs" v-on="on"
+                prepend-icon="mdi-calendar" outlined />
             </template>
-            <v-date-picker
-              v-model="taskData.task_plan_end"
-              :min="taskData.task_plan_start || undefined"
-              @input="updatePlanDates('end')"
-            />
+            <v-date-picker v-model="taskData.task_plan_end" :min="taskData.task_plan_start || undefined"
+              @input="updatePlanDates('end')" />
           </v-menu>
         </v-col>
 
         <!-- Plan Manday -->
         <v-col cols="12" sm="6" md="4">
-          <v-text-field
-            v-model="taskData.task_manday"
-            label="Plan Manday"
-            type="number"
-            min="0"
-            outlined
-            @input="validatePlanManday"
-          />
+          <v-text-field v-model="taskData.task_manday" label="Plan Manday" type="number" min="0" outlined
+            @input="validatePlanManday" />
         </v-col>
       </v-row>
 
       <v-row class="row-Actual">
         <!-- Task Actual Start -->
         <v-col cols="12" sm="4">
-          <v-menu
-            v-model="menu.task_actual_start"
-            :close-on-content-click="false"
-            transition="scale-transition"
-            offset-y
-          >
+          <v-menu v-model="menu.task_actual_start" :close-on-content-click="false" transition="scale-transition"
+            offset-y>
             <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                :value="formattedTaskActualStart"
-                label="Task Actual Start"
-                v-bind="attrs"
-                v-on="on"
-                prepend-icon="mdi-calendar"
-                outlined
-                @click="checkTaskProgressActuatStart"
-                @input="checkTaskProgressActuatStart"
-              />
+              <v-text-field :value="formattedTaskActualStart" label="Task Actual Start" v-bind="attrs" v-on="on"
+                prepend-icon="mdi-calendar" outlined @click="checkTaskProgressActuatStart"
+                @input="checkTaskProgressActuatStart" />
             </template>
-            <v-date-picker
-              v-model="taskData.task_actual_start"
-              @input="menu.task_actual_start = false"
-              :max="taskData.task_actual_end"
-            />
+            <v-date-picker v-model="taskData.task_actual_start" @input="menu.task_actual_start = false"
+              :max="taskData.task_actual_end" />
           </v-menu>
         </v-col>
 
         <!-- Task Actual End -->
         <v-col cols="12" sm="4">
-          <v-menu
-            v-model="menu.task_actual_end"
-            :close-on-content-click="false"
-            transition="scale-transition"
-            offset-y
-          >
+          <v-menu v-model="menu.task_actual_end" :close-on-content-click="false" transition="scale-transition" offset-y>
             <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                :value="formattedTaskActualEnd"
-                label="Task Actual End"
-                v-bind="attrs"
-                v-on="on"
-                prepend-icon="mdi-calendar"
-                outlined
-                @click="checkTaskProgressActuatEnd"
-                @input="checkTaskProgressActuatEnd"
-              />
+              <v-text-field :value="formattedTaskActualEnd" label="Task Actual End" v-bind="attrs" v-on="on"
+                prepend-icon="mdi-calendar" outlined @click="checkTaskProgressActuatEnd"
+                @input="checkTaskProgressActuatEnd" />
             </template>
-            <v-date-picker
-              v-model="taskData.task_actual_end"
-              @input="menu.task_actual_end = false"
-              :min="taskData.task_actual_start"
-            />
+            <v-date-picker v-model="taskData.task_actual_end" @input="menu.task_actual_end = false"
+              :min="taskData.task_actual_start" />
           </v-menu>
         </v-col>
 
         <!-- Actual Manday -->
         <v-col cols="12" sm="4">
-          <v-text-field
-            v-model="taskData.task_actual_manday"
-            label="Actual Manday"
-            type="number"
-            min="0"
-            outlined
-            @input="validatePlanActual"
-          />
+          <v-text-field v-model="taskData.task_actual_manday" label="Actual Manday" type="number" min="0" outlined
+            @input="validatePlanActual" />
         </v-col>
+
+
+
       </v-row>
     </v-form>
 
-    <history_task_table
-      ref="historyTaskTable"
-      :taskId="task.id"
-      class="history_task_table-table"
-    />
+    <history_task_table ref="historyTaskTable" :taskId="task.id" class="history_task_table-table" />
 
     <v-row class="button-row">
       <v-btn class="save-btn" @click="updateTask">Save</v-btn>
@@ -218,6 +144,7 @@ export default {
   },
   data() {
     return {
+      taskPicUrl: null,
       user: this.$auth.user,
       task_manday: 0,
       task_actual_manday: 0,
@@ -268,6 +195,8 @@ export default {
     },
   },
   mounted() {
+    this.getTaskPicture();
+
     // เรียกใช้ฟังก์ชันเมื่อคอมโพเนนต์ถูก mount
     this.calculateTaskStatus();
     this.updatePlanDates("start");
@@ -325,6 +254,27 @@ export default {
   },
 
   methods: {
+
+    async getTaskPicture() {
+      try {
+        const response = await this.$axios.get(`tasks/getOne/${this.task.id}`);
+        const taskData = response.data[0];
+
+        
+        console.log(taskData)
+
+        if (taskData.task_pic) 
+        {
+
+          this.taskPicUrl = `data:image/jpeg;base64,${taskData.task_pic}`; // Assuming JPEG format, adjust if needed
+
+          console.log(this.taskPicUrl)
+        }
+      } catch (error) {
+        console.error('Error fetching task picture:', error);
+      }
+    },
+
     formatDateShow(date) {
       if (!date) return "";
       const d = new Date(date);
@@ -706,3 +656,12 @@ export default {
   },
 };
 </script>
+
+
+<style scoped>
+.task-pic {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+}
+</style>

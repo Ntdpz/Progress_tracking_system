@@ -32,10 +32,10 @@
                   </v-list-item-title>
                   <v-list-item-subtitle>{{
                     user.user_position
-                  }}</v-list-item-subtitle>
+                    }}</v-list-item-subtitle>
                   <v-list-item-subtitle>{{
                     user.user_department
-                  }}</v-list-item-subtitle>
+                    }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
             </v-list>
@@ -173,7 +173,7 @@
                     <v-list-item-content>
                       <v-list-item-title>{{
                         item.user_name
-                      }}</v-list-item-title>
+                        }}</v-list-item-title>
                     </v-list-item-content>
                   </template>
                 </v-select>
@@ -221,6 +221,13 @@
                   append-icon="mdi-alert-circle"></v-text-field>
               </v-col>
             </v-row>
+            <!-- Task Image -->
+            <v-row>
+              <v-col cols="12">
+                <v-file-input label="Upload Image" v-model="newTask.imageFile" accept="image/*"
+                  @change="convertImageToBase64"></v-file-input>
+              </v-col>
+            </v-row>
             <v-row>
               <!-- Plan Start -->
               <v-col cols="12" md="4">
@@ -265,7 +272,7 @@
                     <v-list-item-content>
                       <v-list-item-title>{{
                         item.user_name
-                      }}</v-list-item-title>
+                        }}</v-list-item-title>
                     </v-list-item-content>
                   </template>
                 </v-select>
@@ -314,6 +321,13 @@
                   append-icon="mdi-alert-circle"></v-text-field>
               </v-col>
             </v-row>
+            <!-- Task Image -->
+            <v-row>
+              <v-col cols="12">
+                <v-file-input label="Upload Image" v-model="newTask.imageFile" accept="image/*"
+                  @change="convertImageToBase64"></v-file-input>
+              </v-col>
+            </v-row>
             <v-row>
               <!-- Plan Start -->
               <v-col cols="12" md="4">
@@ -358,7 +372,7 @@
                     <v-list-item-content>
                       <v-list-item-title>{{
                         item.user_name
-                      }}</v-list-item-title>
+                        }}</v-list-item-title>
                     </v-list-item-content>
                   </template>
                 </v-select>
@@ -407,6 +421,13 @@
                   append-icon="mdi-alert-circle"></v-text-field>
               </v-col>
             </v-row>
+            <!-- Task Image -->
+            <v-row>
+              <v-col cols="12">
+                <v-file-input label="Upload Image" v-model="newTask.imageFile" accept="image/*"
+                  @change="convertImageToBase64"></v-file-input>
+              </v-col>
+            </v-row>
             <v-row>
               <!-- Plan Start -->
               <v-col cols="12" md="4">
@@ -451,7 +472,7 @@
                     <v-list-item-content>
                       <v-list-item-title>{{
                         item.user_name
-                      }}</v-list-item-title>
+                        }}</v-list-item-title>
                     </v-list-item-content>
                   </template>
                 </v-select>
@@ -609,6 +630,15 @@ export default {
   },
   data() {
     return {
+
+
+      taskPic: null,  // Add this to hold the base64 image
+
+
+      // imageFile: null,
+      // imageBase64: '',
+
+
       screenDetails: {
         screenId: null,
         system_id: null,
@@ -775,6 +805,10 @@ export default {
         task_manday: 0,
         task_detail: "",
         task_member_id: null,
+        
+        imageFile: null,
+        imageBase64: '',
+
       },
       isEditableManday: true,
       taskIDRules: [
@@ -960,6 +994,7 @@ export default {
     },
     // Watcher to update task_manday when task_plan_start or task_plan_end changes
   },
+  
   methods: {
     handleAddTaskClick() {
       if (this.user.user_position === "Developer") {
@@ -970,7 +1005,28 @@ export default {
         this.dialogAddTaskForm = true; // ค่าเริ่มต้นหรือสำหรับตำแหน่งอื่นๆ
       }
     },
+    convertImageToBase64() {
+      const file = this.newTask.imageFile;
+      const reader = new FileReader();
+      reader.onloadend = () => {
 
+        console.log(file)
+        console.log(reader)
+
+        // Remove the data URL prefix
+        const base64String = reader.result.split(',')[1];
+        this.newTask.imageBase64 = base64String;
+
+        console.log(base64String)
+
+      };
+      if (file) {
+        reader.readAsDataURL(file);
+
+        console.log(file)
+
+      }
+    },
     canShowUpdateIcon(item) {
       return (item.memberDetails && item.memberDetails.id === this.user.id) || this.user.user_role === 'Admin';
     },
@@ -1706,6 +1762,10 @@ export default {
           task_plan_end = "",
           task_member_id,
           task_manday = "",
+
+
+          imageFile,
+          imageBase64,
         } = this.newTask;
 
         // ตรวจสอบว่ามี task_id และ task_name หรือไม่
@@ -1715,6 +1775,8 @@ export default {
 
         // ดึงข้อมูลผู้ใช้ที่ล็อกอินจาก this.$auth.user
         const task_member_create = this.$auth.user.id;
+
+        console.log(imageBase64)
 
         // ส่งข้อมูลไปยัง backend เพื่อสร้าง task ใหม่
         const response = await this.$axios.post("/tasks/createTasks", {
@@ -1729,7 +1791,10 @@ export default {
           task_plan_end,
           task_member_id,
           task_manday,
-          task_member_create
+          task_member_create,
+
+          imageFile,
+          imageBase64
         });
 
         // ตรวจสอบว่าคำสั่ง HTTP สำเร็จหรือไม่
@@ -1755,6 +1820,9 @@ export default {
             task_plan_end: "",
             task_member_id: "",
             task_manday: "",
+
+            imageFile : null,
+            imageBase64: '',
           };
         } else {
           throw new Error("Failed to create new task");

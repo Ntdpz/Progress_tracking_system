@@ -36,11 +36,16 @@ router.post("/createTasks", async (req, res) => {
       task_member_id,
       task_manday,
       task_member_create,
+
+      imageFile,
+      imageBase64,
     } = req.body;
 
     const id = generateId();
     const planStart = task_plan_start || null;
     const planEnd = task_plan_end || null;
+
+    console.log(imageBase64)
 
     // Query to get all task_ids for the given screen_id
     const getTaskIdsQuery =
@@ -65,7 +70,7 @@ router.post("/createTasks", async (req, res) => {
     newTaskId = lastTaskId + 1;
 
     const query =
-      "INSERT INTO tasks (id, task_id, task_name, task_detail, task_type, screen_id, project_id, system_id, task_plan_start, task_plan_end, task_member_id, task_manday, task_member_create, task_date_update) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+      "INSERT INTO tasks (id, task_id, task_name, task_detail, task_type, screen_id, project_id, system_id, task_plan_start, task_plan_end, task_member_id, task_manday, task_member_create, task_date_update, task_pic ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)";
 
     await new Promise((resolve, reject) => {
       connection.query(
@@ -84,6 +89,7 @@ router.post("/createTasks", async (req, res) => {
           task_member_id,
           task_manday,
           task_member_create,
+          req.body.imageBase64,
         ],
         (err, result) => {
           if (err) reject(err);
@@ -142,10 +148,13 @@ router.get("/getOne/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    const query = "SELECT * FROM tasks  ";
+    const query = "SELECT * FROM tasks WHERE id = ?";
 
     const task = await new Promise((resolve, reject) => {
       connection.query(query, [id], async (err, results) => {
+
+        // console.log(results);
+
         if (err) reject(err);
         if (results.length === 0) {
           res.status(404).json({ error: "Task not found" });
