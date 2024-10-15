@@ -866,6 +866,7 @@
             {{ formatDate(item.task_actual_start) }} -
             {{ formatDate(item.task_actual_end) }}
           </td>
+          <td>{{ item.task_manday ? item.task_manday : "0" }}</td>
           <td>{{ item.task_actual_manday ? item.task_actual_manday : "0" }}</td>
           <td>{{ item.task_type }}</td>
           <!-- Actions column -->
@@ -1004,6 +1005,7 @@ export default {
         { text: "Progress", value: "task_progress" },
         { text: "Plan Start - Plan End", value: "task_plan_start" },
         { text: "Actual Start - Actual End", value: "task_actual_start" },
+        { text: "Plan Manday", value: "task_manday" },
         { text: "Actual Manday", value: "task_actual_manday" },
         { text: "Task Type", value: "task_type" },
         { text: "Actions", value: "actions", sortable: false },

@@ -269,6 +269,7 @@ router.get("/getOne/:id", async (req, res) => {
           MIN(tasks.task_actual_start) AS min_task_actual_start,
           MAX(tasks.task_actual_end) AS max_task_actual_end,
           SUM(COALESCE(tasks.task_actual_manday, 0)) AS screen_actual_manday
+          
       FROM
         screens
       LEFT JOIN tasks ON screens.id = tasks.screen_id
