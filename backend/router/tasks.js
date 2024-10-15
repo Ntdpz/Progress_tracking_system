@@ -22,11 +22,9 @@ router.use(async (req, res, next) => {
   }
 });
 
-// Route for creating tasks
 router.post("/createTasks", async (req, res) => {
   try {
     const {
-      task_id,
       task_name,
       task_detail,
       task_type,
@@ -41,9 +39,30 @@ router.post("/createTasks", async (req, res) => {
     } = req.body;
 
     const id = generateId();
-    // ตรวจสอบค่า task_plan_start และ task_plan_end หากเป็นค่าว่างให้ตั้งเป็น null
-    const planStart = task_plan_start ? task_plan_start : null;
-    const planEnd = task_plan_end ? task_plan_end : null;
+    const planStart = task_plan_start || null;
+    const planEnd = task_plan_end || null;
+
+    // Query to get all task_ids for the given screen_id
+    const getTaskIdsQuery =
+      "SELECT task_id FROM tasks WHERE screen_id = ? ORDER BY task_id";
+
+    const taskIds = await new Promise((resolve, reject) => {
+      connection.query(getTaskIdsQuery, [screen_id], (err, result) => {
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+
+    // Check if the provided task_id is unique within the screen
+    const existingTaskIds = taskIds.map((task) => task.task_id);
+
+    // If task_id is not provided, generate the next sequential task_id
+    // let newTaskId = task_id;
+
+    const lastTaskId =
+      existingTaskIds.length > 0 ? Math.max(...existingTaskIds) : 0;
+
+    newTaskId = lastTaskId + 1;
 
     const query =
       "INSERT INTO tasks (id, task_id, task_name, task_detail, task_type, screen_id, project_id, system_id, task_plan_start, task_plan_end, task_member_id, task_manday, task_member_create, task_date_update) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
@@ -53,7 +72,7 @@ router.post("/createTasks", async (req, res) => {
         query,
         [
           id,
-          task_id,
+          newTaskId,
           task_name,
           task_detail,
           task_type,
@@ -64,7 +83,7 @@ router.post("/createTasks", async (req, res) => {
           planEnd,
           task_member_id,
           task_manday,
-          task_member_create, // เพิ่ม created_by ที่นี่
+          task_member_create,
         ],
         (err, result) => {
           if (err) reject(err);
@@ -346,8 +365,6 @@ router.put("/updateTasks/:id", async (req, res) => {
       updatedTaskFields.task_member_id = task_member_id;
     }
 
-  
-
     if (Object.keys(updatedTaskFields).length === 0) {
       return res.status(400).json({ error: "No fields to update" });
     }
@@ -384,15 +401,14 @@ function countBusinessDays(startDate, endDate) {
   return count;
 }
 
-
-
 // Route for deleting a task and related data
 router.delete("/deleteHistoryTasks/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
     // Delete from history_tasks where task_id matches the task being deleted
-    const deleteHistoryTasksQuery = "DELETE FROM history_tasks WHERE task_id = ?";
+    const deleteHistoryTasksQuery =
+      "DELETE FROM history_tasks WHERE task_id = ?";
     await new Promise((resolve, reject) => {
       connection.query(deleteHistoryTasksQuery, [id], (err, result) => {
         if (err) reject(err);
@@ -469,10 +485,16 @@ router.put("/save_history_tasks/:id", async (req, res) => {
     const currentDateTime = new Date();
 
     // Set task_actual_end to null if task_progress is less than 100
-    const updatedTaskActualEnd = (task_progress < 100) ? null : (task_actual_end || currentTask[0].task_actual_end);
+    const updatedTaskActualEnd =
+      task_progress < 100
+        ? null
+        : task_actual_end || currentTask[0].task_actual_end;
 
     // ตั้งค่า task_actual_manday เป็น 0 หาก task_actual_end เป็น null
-    const updatedTaskActualManday = (updatedTaskActualEnd === null && task_progress < 100) ? 0 : task_actual_manday || currentTask[0].task_actual_manday;
+    const updatedTaskActualManday =
+      updatedTaskActualEnd === null && task_progress < 100
+        ? 0
+        : task_actual_manday || currentTask[0].task_actual_manday;
 
     // Update the task in the database, including is_archived field
     await connection.promise().query(
@@ -543,7 +565,6 @@ router.put("/save_history_tasks/:id", async (req, res) => {
   }
 });
 
-
 // Route for getting history tasks by task_id
 router.get("/history_tasks/:task_id", async (req, res) => {
   try {
@@ -580,6 +601,33 @@ function countBusinessDays(startDate, endDate) {
 
   return count;
 }
+
+// Route for counting tasks based on screen_id
+router.get("/countByScreen/:screen_id", async (req, res) => {
+  const screenId = req.params.screen_id;
+
+  try {
+    // SQL query to count tasks for the given screen_id
+    const query =
+      "SELECT COUNT(*) AS taskCount FROM history_tasks WHERE screen_id = ? AND is_deleted = 0";
+
+    const results = await new Promise((resolve, reject) => {
+      connection.query(query, [screenId], (err, results) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(results[0]);
+        }
+      });
+    });
+
+    // Return the count in the response
+    res.json({ screen_id: screenId, task_count: results.taskCount });
+  } catch (error) {
+    console.error("Error counting tasks:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
 // Exporting the router
 module.exports = router;

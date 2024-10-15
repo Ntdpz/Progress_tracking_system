@@ -32,10 +32,10 @@
                   </v-list-item-title>
                   <v-list-item-subtitle>{{
                     user.user_position
-                    }}</v-list-item-subtitle>
+                  }}</v-list-item-subtitle>
                   <v-list-item-subtitle>{{
                     user.user_department
-                    }}</v-list-item-subtitle>
+                  }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
             </v-list>
@@ -173,7 +173,7 @@
                     <v-list-item-content>
                       <v-list-item-title>{{
                         item.user_name
-                        }}</v-list-item-title>
+                      }}</v-list-item-title>
                     </v-list-item-content>
                   </template>
                 </v-select>
@@ -214,13 +214,8 @@
           <v-form @submit.prevent="createTask(newTask)">
             <h1></h1>
             <v-row>
-              <!-- Task ID -->
-              <v-col cols="12" md="6">
-                <v-text-field v-model="newTask.task_id" label="Task ID" :rules="[(v) => !!v || 'Task ID is required']"
-                  required append-icon="mdi-alert-circle"></v-text-field>
-              </v-col>
               <!-- Task Name -->
-              <v-col cols="12" md="6">
+              <v-col cols="12" md="12">
                 <v-text-field v-model="newTask.task_name" label="Task Name"
                   :rules="[(v) => !!v || 'Task Name is required']" required
                   append-icon="mdi-alert-circle"></v-text-field>
@@ -270,7 +265,7 @@
                     <v-list-item-content>
                       <v-list-item-title>{{
                         item.user_name
-                        }}</v-list-item-title>
+                      }}</v-list-item-title>
                     </v-list-item-content>
                   </template>
                 </v-select>
@@ -286,7 +281,7 @@
             <v-row justify="center">
               <v-col cols="auto">
                 <!-- Submit button -->
-                <v-btn color="primary" :disabled="!newTask.task_id || !newTask.task_name" type="submit">
+                <v-btn color="primary" :disabled="!newTask.task_name" type="submit">
                   Create</v-btn>
                 <!-- Cancel button -->
                 <v-btn color="error" @click="cancel">Cancel</v-btn>
@@ -312,13 +307,8 @@
           <v-form @submit.prevent="createTask(newTask)">
             <h1></h1>
             <v-row>
-              <!-- Task ID -->
-              <v-col cols="12" md="6">
-                <v-text-field v-model="newTask.task_id" label="Task ID" :rules="[(v) => !!v || 'Task ID is required']"
-                  required append-icon="mdi-alert-circle"></v-text-field>
-              </v-col>
               <!-- Task Name -->
-              <v-col cols="12" md="6">
+              <v-col cols="12" md="12">
                 <v-text-field v-model="newTask.task_name" label="Task Name"
                   :rules="[(v) => !!v || 'Task Name is required']" required
                   append-icon="mdi-alert-circle"></v-text-field>
@@ -368,7 +358,7 @@
                     <v-list-item-content>
                       <v-list-item-title>{{
                         item.user_name
-                        }}</v-list-item-title>
+                      }}</v-list-item-title>
                     </v-list-item-content>
                   </template>
                 </v-select>
@@ -384,7 +374,7 @@
             <v-row justify="center">
               <v-col cols="auto">
                 <!-- Submit button -->
-                <v-btn color="primary" :disabled="!newTask.task_id || !newTask.task_name" type="submit">
+                <v-btn color="primary" :disabled="!newTask.task_name" type="submit">
                   Create</v-btn>
                 <!-- Cancel button -->
                 <v-btn color="error" @click="cancel">Cancel</v-btn>
@@ -410,13 +400,8 @@
           <v-form @submit.prevent="createTask(newTask)">
             <h1></h1>
             <v-row>
-              <!-- Task ID -->
-              <v-col cols="12" md="6">
-                <v-text-field v-model="newTask.task_id" label="Task ID" :rules="[(v) => !!v || 'Task ID is required']"
-                  required append-icon="mdi-alert-circle"></v-text-field>
-              </v-col>
               <!-- Task Name -->
-              <v-col cols="12" md="6">
+              <v-col cols="12" md="12">
                 <v-text-field v-model="newTask.task_name" label="Task Name"
                   :rules="[(v) => !!v || 'Task Name is required']" required
                   append-icon="mdi-alert-circle"></v-text-field>
@@ -466,7 +451,7 @@
                     <v-list-item-content>
                       <v-list-item-title>{{
                         item.user_name
-                        }}</v-list-item-title>
+                      }}</v-list-item-title>
                     </v-list-item-content>
                   </template>
                 </v-select>
@@ -482,7 +467,7 @@
             <v-row justify="center">
               <v-col cols="auto">
                 <!-- Submit button -->
-                <v-btn color="primary" :disabled="!newTask.task_id || !newTask.task_name" type="submit">
+                <v-btn color="primary" :disabled="!newTask.task_name" type="submit">
                   Create</v-btn>
                 <!-- Cancel button -->
                 <v-btn color="error" @click="cancel">Cancel</v-btn>
@@ -1724,7 +1709,7 @@ export default {
         } = this.newTask;
 
         // ตรวจสอบว่ามี task_id และ task_name หรือไม่
-        if (!task_id || !task_name) {
+        if (!task_name) {
           throw new Error("Task ID, Task Name, Task Type are required.");
         }
 
