@@ -1004,7 +1004,7 @@ export default {
         { text: "Progress", value: "task_progress" },
         { text: "Plan Start - Plan End", value: "task_plan_start" },
         { text: "Actual Start - Actual End", value: "task_actual_start" },
-        { text: "Actual Manday", value: "actual_manday" },
+        { text: "Actual Manday", value: "task_actual_manday" },
         { text: "Task Type", value: "task_type" },
         { text: "Actions", value: "actions", sortable: false },
       ],
@@ -1957,6 +1957,9 @@ export default {
           task_count: screen.task_count,
           screen_plan_start: screen.screen_plan_start,
           screen_plan_end: screen.screen_plan_end,
+          screen_actual_start: screen.screen_actual_start,
+          screen_actual_end: screen.screen_actual_end,
+          screen_actual_manday: screen.screen_actual_manday,
         };
       } catch (error) {
         console.error("Error fetching screen:", error);

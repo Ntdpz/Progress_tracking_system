@@ -16,8 +16,11 @@
             Screen Name : {{ screenDetails.screen_name }}
           </v-card-title>
           <v-card-subtitle>
-            Screen Manday :
+            Screen Plan Manday :
             {{ screenDetails.screen_manday ? screenDetails.screen_manday : "0" }}
+            days<br />
+            Screen Actual Manday :
+            {{ screenDetails.screen_actual_manday ? screenDetails.screen_actual_manday : "0" }}
             days<br />
             Tasks Count : {{ screenDetails.task_count }} tasks<br />
             Screen Plan :
@@ -26,6 +29,14 @@
             ? formatDate(screenDetails.screen_plan_start) +
             " To " +
             formatDate(screenDetails.screen_plan_end)
+            : "Not determined"
+            }}<br />
+            Screen Actual :
+            {{
+            screenDetails.screen_actual_start && screenDetails.screen_actual_end
+            ? formatDate(screenDetails.screen_actual_start) +
+            " To " +
+            formatDate(screenDetails.screen_actual_end)
             : "Not determined"
             }}
           </v-card-subtitle>
