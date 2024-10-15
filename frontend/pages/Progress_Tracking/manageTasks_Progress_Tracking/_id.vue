@@ -32,10 +32,10 @@
                   </v-list-item-title>
                   <v-list-item-subtitle>{{
                     user.user_position
-                    }}</v-list-item-subtitle>
+                  }}</v-list-item-subtitle>
                   <v-list-item-subtitle>{{
                     user.user_department
-                    }}</v-list-item-subtitle>
+                  }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
             </v-list>
@@ -173,7 +173,7 @@
                     <v-list-item-content>
                       <v-list-item-title>{{
                         item.user_name
-                        }}</v-list-item-title>
+                      }}</v-list-item-title>
                     </v-list-item-content>
                   </template>
                 </v-select>
@@ -272,7 +272,7 @@
                     <v-list-item-content>
                       <v-list-item-title>{{
                         item.user_name
-                        }}</v-list-item-title>
+                      }}</v-list-item-title>
                     </v-list-item-content>
                   </template>
                 </v-select>
@@ -372,7 +372,7 @@
                     <v-list-item-content>
                       <v-list-item-title>{{
                         item.user_name
-                        }}</v-list-item-title>
+                      }}</v-list-item-title>
                     </v-list-item-content>
                   </template>
                 </v-select>
@@ -472,7 +472,7 @@
                     <v-list-item-content>
                       <v-list-item-title>{{
                         item.user_name
-                        }}</v-list-item-title>
+                      }}</v-list-item-title>
                     </v-list-item-content>
                   </template>
                 </v-select>
@@ -805,7 +805,7 @@ export default {
         task_manday: 0,
         task_detail: "",
         task_member_id: null,
-        
+
         imageFile: null,
         imageBase64: '',
 
@@ -994,7 +994,7 @@ export default {
     },
     // Watcher to update task_manday when task_plan_start or task_plan_end changes
   },
-  
+
   methods: {
     handleAddTaskClick() {
       if (this.user.user_position === "Developer") {
@@ -1009,22 +1009,12 @@ export default {
       const file = this.newTask.imageFile;
       const reader = new FileReader();
       reader.onloadend = () => {
-
-        console.log(file)
-        console.log(reader)
-
         // Remove the data URL prefix
         const base64String = reader.result.split(',')[1];
         this.newTask.imageBase64 = base64String;
-
-        console.log(base64String)
-
       };
       if (file) {
         reader.readAsDataURL(file);
-
-        console.log(file)
-
       }
     },
     canShowUpdateIcon(item) {
@@ -1306,7 +1296,6 @@ export default {
       try {
         // ตรวจสอบค่า manday ที่ได้จากฟังก์ชัน calculateMandaySAVE()
         const manday = parseFloat(this.historyTaskData.task_manday);
-        console.log(manday);
         const start = new Date(this.historyTaskData.task_plan_start);
         const end = new Date(this.historyTaskData.task_plan_end);
         const differenceInTime = end.getTime() - start.getTime();
@@ -1776,8 +1765,6 @@ export default {
         // ดึงข้อมูลผู้ใช้ที่ล็อกอินจาก this.$auth.user
         const task_member_create = this.$auth.user.id;
 
-        console.log(imageBase64)
-
         // ส่งข้อมูลไปยัง backend เพื่อสร้าง task ใหม่
         const response = await this.$axios.post("/tasks/createTasks", {
           task_id,
@@ -1821,7 +1808,7 @@ export default {
             task_member_id: "",
             task_manday: "",
 
-            imageFile : null,
+            imageFile: null,
             imageBase64: '',
           };
         } else {

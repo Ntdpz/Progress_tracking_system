@@ -8,11 +8,6 @@
 
     <v-form>
       <v-row>
-        <!-- Input and Slider Rows -->
-
-
-
-
         <v-col cols="12" class="d-flex">
           <v-row class="flex-grow-1">
             <v-col cols="12" sm="4" class="task-progress-col">
@@ -110,9 +105,6 @@
           <v-text-field v-model="taskData.task_actual_manday" label="Actual Manday" type="number" min="0" outlined
             @input="validatePlanActual" />
         </v-col>
-
-
-
       </v-row>
     </v-form>
 
@@ -259,16 +251,8 @@ export default {
       try {
         const response = await this.$axios.get(`tasks/getOne/${this.task.id}`);
         const taskData = response.data[0];
-
-        
-        console.log(taskData)
-
-        if (taskData.task_pic) 
-        {
-
+        if (taskData.task_pic) {
           this.taskPicUrl = `data:image/jpeg;base64,${taskData.task_pic}`; // Assuming JPEG format, adjust if needed
-
-          console.log(this.taskPicUrl)
         }
       } catch (error) {
         console.error('Error fetching task picture:', error);
@@ -285,13 +269,10 @@ export default {
     },
     formatDateTime(dateTime) {
       if (!dateTime) return "No dateTime";
-
       const date = new Date(dateTime);
-
       const day = String(date.getDate()).padStart(2, "0");
       const month = String(date.getMonth() + 1).padStart(2, "0"); // เดือนใน JavaScript เริ่มจาก 0
       const year = date.getFullYear();
-
       const hours = String(date.getHours()).padStart(2, "0");
       const minutes = String(date.getMinutes()).padStart(2, "0");
       const seconds = String(date.getSeconds()).padStart(2, "0");
@@ -544,7 +525,7 @@ export default {
     async updateTask() {
       try {
         const formatDateValue = (value) => (value === "" ? null : value);
-       
+
 
         // แปลงค่า task_progress
         const taskProgressValue =

@@ -36,7 +36,6 @@ router.post("/createTasks", async (req, res) => {
       task_member_id,
       task_manday,
       task_member_create,
-
       imageFile,
       imageBase64,
     } = req.body;
@@ -44,8 +43,6 @@ router.post("/createTasks", async (req, res) => {
     const id = generateId();
     const planStart = task_plan_start || null;
     const planEnd = task_plan_end || null;
-
-    console.log(imageBase64)
 
     // Query to get all task_ids for the given screen_id
     const getTaskIdsQuery =
@@ -152,8 +149,6 @@ router.get("/getOne/:id", async (req, res) => {
 
     const task = await new Promise((resolve, reject) => {
       connection.query(query, [id], async (err, results) => {
-
-        // console.log(results);
 
         if (err) reject(err);
         if (results.length === 0) {
