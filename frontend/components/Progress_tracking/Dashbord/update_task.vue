@@ -29,7 +29,7 @@
         </v-col>
       </v-row>
 
-      <!-- Add imag -->
+      <!--Add image -->
       <v-row>
         <v-col cols="4"></v-col>
         <v-col cols="4" v-if="task.task_picture">
@@ -84,13 +84,14 @@
               :max="taskData.task_actual_end" />
           </v-menu>
         </v-col>
-        
+
         <!-- Task Actual End -->
         <v-col cols="12" sm="4">
           <v-menu v-model="menu.task_actual_end" :close-on-content-click="false" transition="scale-transition" offset-y>
             <template v-slot:activator="{ on, attrs }">
               <v-text-field :value="formattedTaskActualEnd" label="Task Actual End" v-bind="attrs" v-on="on"
-                prepend-icon="mdi-calendar" outlined :disabled="taskData.task_progress !== 100" />
+                prepend-icon="mdi-calendar" outlined @click="checkTaskProgressActuatEnd"
+                @input="checkTaskProgressActuatEnd" />
             </template>
             <v-date-picker v-model="taskData.task_actual_end" @input="menu.task_actual_end = false"
               :min="taskData.task_actual_start" />
@@ -133,7 +134,6 @@ export default {
   },
   data() {
     return {
-      taskPicUrl: null,
       user: this.$auth.user,
       task_manday: 0,
       task_actual_manday: 0,
@@ -143,7 +143,6 @@ export default {
         task_actual_start: false,
         task_actual_end: false,
       },
-      isDisabled: false,
       taskData: {
         task_progress: 0,
         task_status: "",
@@ -159,16 +158,12 @@ export default {
   },
 
   computed: {
-    isTaskActualEndDisabled() {
-      return this.taskData.task_progress !== 100;
-    },
     formattedTaskPlanStart() {
       return this.formatDateShow(this.taskData.task_plan_start);
     },
     formattedTaskPlanEnd() {
       return this.formatDateShow(this.taskData.task_plan_end);
     },
-
     formattedTaskActualStart() {
       return this.formatDateShow(this.taskData.task_actual_start);
     },
@@ -188,7 +183,6 @@ export default {
     },
   },
   mounted() {
-    this.getTaskPicture();
     // เรียกใช้ฟังก์ชันเมื่อคอมโพเนนต์ถูก mount
     this.calculateTaskStatus();
     this.updatePlanDates("start");
@@ -205,7 +199,6 @@ export default {
     "taskData.task_plan_end": function (newVal) {
       this.updatePlanDates("end");
     },
-
     "taskData.task_progress": function (newValue) {
       this.updateActualDates();
     },
@@ -246,19 +239,6 @@ export default {
   },
 
   methods: {
-
-    async getTaskPicture() {
-      try {
-        const response = await this.$axios.get(`tasks/getOne/${this.task.id}`);
-        const taskData = response.data[0];
-        if (taskData.task_pic) {
-          this.taskPicUrl = `data:image/jpeg;base64,${taskData.task_pic}`; // Assuming JPEG format, adjust if needed
-        }
-      } catch (error) {
-        console.error('Error fetching task picture:', error);
-      }
-    },
-
     formatDateShow(date) {
       if (!date) return "";
       const d = new Date(date);
@@ -298,7 +278,6 @@ export default {
 
       return count;
     },
-
     checkTaskProgressActuatStart() {
       if (this.taskData.task_progress === 0) {
         // ปิด v-menu ของ v-date-picker ก่อนที่จะแสดงการแจ้งเตือน
@@ -316,7 +295,23 @@ export default {
         });
       }
     },
+    checkTaskProgressActuatEnd() {
+      if (this.taskData.task_progress !== 100) {
+        // ปิด v-menu ของ v-date-picker ก่อนที่จะแสดงการแจ้งเตือน
+        this.menu.task_actual_end = false;
 
+        // เคลียร์ค่า task_actual_start
+        this.taskData.task_actual_end = "";
+
+        Swal.fire({
+          icon: "warning",
+          title: "Cannot Set Date",
+          text: "You cannot set the Task Actual End date when progress is 100.",
+          confirmButtonText: "OK",
+          confirmButtonColor: "#629859",
+        });
+      }
+    },
     updateActualDates() {
       // ตรวจสอบว่า task_progress มีค่ามากกว่า 0 หรือไม่
       if (this.taskData.task_progress > 0) {
@@ -395,7 +390,6 @@ export default {
         this.taskData.task_actual_manday = this.task.task_actual_manday;
       }
     },
-
     validatePlanActual() {
       const maxManday = this.countBusinessDays(
         new Date(this.formatDate(this.taskData.task_actual_start)),
@@ -427,7 +421,6 @@ export default {
         });
       }
     },
-
     updatePlanDates(type) {
       const startDate = new Date(this.taskData.task_plan_start);
       const endDate = new Date(this.taskData.task_plan_end);
@@ -453,7 +446,6 @@ export default {
         this.taskData.task_manday = this.task.task_manday; // ให้แสดงค่าจากฐานข้อมูล
       }
     },
-
     validatePlanManday() {
       // ตรวจสอบให้ไม่เกินค่าที่คำนวณได้
       const maxManday = this.countBusinessDays(
@@ -509,6 +501,7 @@ export default {
     async updateTask() {
       try {
         const formatDateValue = (value) => (value === "" ? null : value);
+
 
         // แปลงค่า task_progress
         const taskProgressValue =
