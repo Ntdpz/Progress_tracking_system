@@ -133,6 +133,7 @@ export default {
   },
   data() {
     return {
+      taskPicUrl: null,
       user: this.$auth.user,
       task_manday: 0,
       task_actual_manday: 0,
@@ -187,6 +188,7 @@ export default {
     },
   },
   mounted() {
+    this.getTaskPicture();
     // เรียกใช้ฟังก์ชันเมื่อคอมโพเนนต์ถูก mount
     this.calculateTaskStatus();
     this.updatePlanDates("start");
@@ -203,6 +205,7 @@ export default {
     "taskData.task_plan_end": function (newVal) {
       this.updatePlanDates("end");
     },
+
     "taskData.task_progress": function (newValue) {
       this.updateActualDates();
     },
@@ -243,6 +246,19 @@ export default {
   },
 
   methods: {
+
+    async getTaskPicture() {
+      try {
+        const response = await this.$axios.get(`tasks/getOne/${this.task.id}`);
+        const taskData = response.data[0];
+        if (taskData.task_pic) {
+          this.taskPicUrl = `data:image/jpeg;base64,${taskData.task_pic}`; // Assuming JPEG format, adjust if needed
+        }
+      } catch (error) {
+        console.error('Error fetching task picture:', error);
+      }
+    },
+
     formatDateShow(date) {
       if (!date) return "";
       const d = new Date(date);
@@ -282,6 +298,7 @@ export default {
 
       return count;
     },
+
     checkTaskProgressActuatStart() {
       if (this.taskData.task_progress === 0) {
         // ปิด v-menu ของ v-date-picker ก่อนที่จะแสดงการแจ้งเตือน
@@ -378,6 +395,7 @@ export default {
         this.taskData.task_actual_manday = this.task.task_actual_manday;
       }
     },
+
     validatePlanActual() {
       const maxManday = this.countBusinessDays(
         new Date(this.formatDate(this.taskData.task_actual_start)),
@@ -409,6 +427,7 @@ export default {
         });
       }
     },
+
     updatePlanDates(type) {
       const startDate = new Date(this.taskData.task_plan_start);
       const endDate = new Date(this.taskData.task_plan_end);
@@ -434,6 +453,7 @@ export default {
         this.taskData.task_manday = this.task.task_manday; // ให้แสดงค่าจากฐานข้อมูล
       }
     },
+
     validatePlanManday() {
       // ตรวจสอบให้ไม่เกินค่าที่คำนวณได้
       const maxManday = this.countBusinessDays(
