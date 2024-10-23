@@ -106,7 +106,8 @@
                 <v-menu v-model="planStartMenu" :close-on-content-click="false" :nudge-right="40"
                   transition="scale-transition" offset-y>
                   <template v-slot:activator="{ on }">
-                    <v-text-field :value="formatDate(editedTask.task_plan_start, 'DD-MM-YYYY')
+                    <v-text-field :value="
+                        formatDate(editedTask.task_plan_start, 'DD-MM-YYYY')
                       " label="Plan Start" prepend-icon="mdi-calendar" readonly v-on="on"></v-text-field>
                   </template>
                   <v-date-picker v-model="editedTask.task_plan_start" no-title scrollable></v-date-picker>
@@ -116,7 +117,8 @@
                 <v-menu v-model="planEndMenu" :close-on-content-click="false" :nudge-right="40"
                   transition="scale-transition" offset-y>
                   <template v-slot:activator="{ on }">
-                    <v-text-field :value="formatDate(editedTask.task_plan_end, 'DD-MM-YYYY')
+                    <v-text-field :value="
+                        formatDate(editedTask.task_plan_end, 'DD-MM-YYYY')
                       " label="Plan End" prepend-icon="mdi-calendar" readonly v-on="on"
                       :disabled="!editedTask.task_plan_start"></v-text-field>
                   </template>
@@ -131,7 +133,8 @@
                 <v-menu v-if="editedTask.task_plan_start && editedTask.task_plan_end" v-model="actualStartMenu"
                   :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y>
                   <template v-slot:activator="{ on }">
-                    <v-text-field :value="formatDate(editedTask.task_actual_start, 'DD-MM-YYYY')
+                    <v-text-field :value="
+                        formatDate(editedTask.task_actual_start, 'DD-MM-YYYY')
                       " label="Actual Start" prepend-icon="mdi-calendar" readonly v-on="on"></v-text-field>
                   </template>
                   <v-date-picker v-model="editedTask.task_actual_start" no-title scrollable></v-date-picker>
@@ -141,7 +144,8 @@
                 <v-menu v-if="editedTask.task_plan_start && editedTask.task_plan_end" v-model="actualEndMenu"
                   :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y>
                   <template v-slot:activator="{ on }">
-                    <v-text-field :value="formatDate(editedTask.task_actual_end, 'DD-MM-YYYY')
+                    <v-text-field :value="
+                        formatDate(editedTask.task_actual_end, 'DD-MM-YYYY')
                       " label="Actual End" prepend-icon="mdi-calendar" readonly v-on="on">
                     </v-text-field>
                   </template>
@@ -186,10 +190,10 @@
               </v-col>
               <v-col cols="auto">
                 <v-btn v-if="
-                  (editedTask.memberDetails &&
-                    editedTask.memberDetails.id === user.id) ||
-                  user.user_role === 'Admin'
-                " color="error" @click.stop="deleteTask(editedTask)">
+                    (editedTask.memberDetails &&
+                      editedTask.memberDetails.id === user.id) ||
+                    user.user_role === 'Admin'
+                  " color="error" @click.stop="deleteTask(editedTask)">
                   Delete
                 </v-btn>
               </v-col>
@@ -205,7 +209,7 @@
         <v-card-title>
           <h2>Create Task</h2>
           <v-spacer></v-spacer>
-          <v-btn icon @click="dialogAddTaskForm = false">
+          <v-btn icon @click="cancel">
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
@@ -280,8 +284,7 @@
 
               <!-- Status -->
               <v-col cols="12" md="6">
-                <v-select v-model="newTask.task_type" :items="statusOptions" label="Type of Task"
-                  :rules="[(v) => !!v || 'Task Type is required']" required></v-select>
+                <v-select v-model="newTask.task_type" :items="statusOptions" label="Type of Task" required></v-select>
               </v-col>
             </v-row>
 
@@ -305,7 +308,7 @@
         <v-card-title>
           <h2>Create Task</h2>
           <v-spacer></v-spacer>
-          <v-btn icon @click="DevdialogAddTaskForm = false">
+          <v-btn icon @click="cancel">
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
@@ -381,7 +384,7 @@
               <!-- Status -->
               <v-col cols="12" md="6">
                 <v-select v-model="newTask.task_type" :items="statusOptionsDev" label="Type of Task"
-                  :rules="[(v) => !!v || 'Task Type is required']" required></v-select>
+                  required></v-select>
               </v-col>
             </v-row>
 
@@ -405,7 +408,7 @@
         <v-card-title>
           <h2>Create Task</h2>
           <v-spacer></v-spacer>
-          <v-btn icon @click="ImpdialogAddTaskForm = false">
+          <v-btn icon @click="cancel">
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
@@ -481,7 +484,7 @@
               <!-- Status -->
               <v-col cols="12" md="6">
                 <v-select v-model="newTask.task_type" :items="statusOptionsImp" label="Type of Task"
-                  :rules="[(v) => !!v || 'Task Type is required']" required></v-select>
+                  required></v-select>
               </v-col>
             </v-row>
 
@@ -538,10 +541,14 @@
             </v-progress-linear>
           </td>
           <td>
-            {{ formatDate(item.task_plan_start) }} - {{ formatDate(item.task_plan_end) }}
+            {{ formatDate(item.task_plan_start) }} -
+            {{ formatDate(item.task_plan_end) }}
           </td>
-          <td>{{ formatDate(item.task_actual_start) }} - {{ formatDate(item.task_actual_end) }}
+          <td>
+            {{ formatDate(item.task_actual_start) }} -
+            {{ formatDate(item.task_actual_end) }}
           </td>
+          <td>{{ item.task_manday ? item.task_manday : "0" }}</td>
           <td>{{ item.task_actual_manday ? item.task_actual_manday : "0" }}</td>
           <td>{{ item.task_type }}</td>
           <!-- Actions column -->
@@ -550,9 +557,9 @@
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn v-if="user.user_role === 'Admin'" v-bind="attrs" v-on="on" icon color="primary" @click.stop="
-                  dialogEditTaskForm = true;
-                editedTask = item;
-                ">
+                    dialogEditTaskForm = true;
+                    editedTask = item;
+                  ">
                   <v-icon>mdi-pencil</v-icon>
                 </v-btn>
               </template>
@@ -563,9 +570,9 @@
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn v-bind="attrs" v-on="on" v-if="
-                  (item.memberDetails && item.memberDetails.id === user.id) ||
-                  user.user_role === 'Admin'
-                " icon color="primary" @click.stop="openSaveHistoryDialog(item)">
+                    (item.memberDetails && item.memberDetails.id === user.id) ||
+                    user.user_role === 'Admin'
+                  " icon color="primary" @click.stop="openSaveHistoryDialog(item)">
                   <v-icon>mdi-file-chart</v-icon>
                 </v-btn>
               </template>
@@ -671,11 +678,18 @@ export default {
         { text: "Progress", value: "task_progress" },
         { text: "Plan Start - Plan End", value: "task_plan_start" },
         { text: "Actual Start - Actual End", value: "task_actual_start" },
-        { text: "Actual Manday", value: "actual_manday" },
+        { text: "Plan Manday", value: "task_manday" },
+        { text: "Actual Manday", value: "task_actual_manday" },
         { text: "Task Type", value: "task_type" },
         { text: "Actions", value: "actions", sortable: false },
       ],
-      taskTypeOrder: ["Document", "Design", "Develop", "Testing", "Maintenance"], // กำหนดลำดับของ task types
+      taskTypeOrder: [
+        "Document",
+        "Design",
+        "Develop",
+        "Testing",
+        "Maintenance",
+      ], // กำหนดลำดับของ task types
       userProjects: [],
       historyTaskData: {
         task_name: "",
@@ -745,7 +759,13 @@ export default {
       tasks: [],
       currentPage: 1,
       perPage: 12,
-      statusOptions: ["Document", "Design", "Develop", "Testing", "Maintenance"],
+      statusOptions: [
+        "Document",
+        "Design",
+        "Develop",
+        "Testing",
+        "Maintenance",
+      ],
       statusOptionsDev: ["Develop", "Maintenance"],
       statusOptionsImp: ["Document", "Testing"],
       showImageDialog: false,
@@ -915,9 +935,11 @@ export default {
 
         // เรียงลำดับข้อมูลที่กรองแล้วตามเงื่อนไขที่กำหนด
         filtered.sort((a, b) => {
-
           // เรียกใช้ฟังก์ชัน sortByPosition ก่อน เพื่อตรวจสอบตำแหน่งงาน
-          const positionOrder = this.sortByPosition(a.task_member_position, b.task_member_position);
+          const positionOrder = this.sortByPosition(
+            a.task_member_position,
+            b.task_member_position
+          );
           if (positionOrder !== 0) {
             return positionOrder;
           }
@@ -1018,12 +1040,17 @@ export default {
       }
     },
     canShowUpdateIcon(item) {
-      return (item.memberDetails && item.memberDetails.id === this.user.id) || this.user.user_role === 'Admin';
+      return (
+        (item.memberDetails && item.memberDetails.id === this.user.id) ||
+        this.user.user_role === "Admin"
+      );
     },
 
     sortByPosition(positionA, positionB) {
       const positionOrder = ["System Analyst", "Developer", "Implementer"];
-      return positionOrder.indexOf(positionA) - positionOrder.indexOf(positionB);
+      return (
+        positionOrder.indexOf(positionA) - positionOrder.indexOf(positionB)
+      );
     },
 
     refreshTable() {
@@ -1620,6 +1647,9 @@ export default {
           task_count: screen.task_count,
           screen_plan_start: screen.screen_plan_start,
           screen_plan_end: screen.screen_plan_end,
+          screen_actual_start: screen.screen_actual_start,
+          screen_actual_end: screen.screen_actual_end,
+          screen_actual_manday: screen.screen_actual_manday,
         };
       } catch (error) {
         console.error("Error fetching screen:", error);
@@ -1700,6 +1730,22 @@ export default {
       this.dialogAddTaskForm = false;
       this.DevdialogAddTaskForm = false;
       this.ImpdialogAddTaskForm = false;
+
+      // Reset form after closing the dialog
+      this.resetTaskForm();
+    },
+
+    resetTaskForm() {
+      this.newTask = {
+        task_id: "",
+        task_name: "",
+        task_detail: "",
+        task_type: "",
+        task_plan_start: "",
+        task_plan_end: "",
+        task_member_id: "",
+        task_manday: "",
+      };
     },
     //fetch task
     async fetchTasks() {
@@ -1779,9 +1825,6 @@ export default {
           task_member_id,
           task_manday,
           task_member_create,
-
-          imageFile,
-          imageBase64
         });
 
         // ตรวจสอบว่าคำสั่ง HTTP สำเร็จหรือไม่

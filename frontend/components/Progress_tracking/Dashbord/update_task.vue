@@ -86,14 +86,19 @@
               :max="taskData.task_actual_end" />
           </v-menu>
         </v-col>
-
         <!-- Task Actual End -->
         <v-col cols="12" sm="4">
           <v-menu v-model="menu.task_actual_end" :close-on-content-click="false" transition="scale-transition" offset-y>
             <template v-slot:activator="{ on, attrs }">
-              <v-text-field :value="formattedTaskActualEnd" label="Task Actual End" v-bind="attrs" v-on="on"
-                prepend-icon="mdi-calendar" outlined @click="checkTaskProgressActuatEnd"
-                @input="checkTaskProgressActuatEnd" />
+              <v-text-field
+                :value="formattedTaskActualEnd"
+                label="Task Actual End"
+                v-bind="attrs"
+                v-on="on"
+                prepend-icon="mdi-calendar"
+                outlined
+                :disabled="taskData.task_progress !== 100"
+              />
             </template>
             <v-date-picker v-model="taskData.task_actual_end" @input="menu.task_actual_end = false"
               :min="taskData.task_actual_start" />
@@ -146,6 +151,7 @@ export default {
         task_actual_start: false,
         task_actual_end: false,
       },
+      isDisabled: false,
       taskData: {
         task_progress: 0,
         task_status: "",
@@ -161,6 +167,9 @@ export default {
   },
 
   computed: {
+    isTaskActualEndDisabled() {
+      return this.taskData.task_progress !== 100;
+    },
     formattedTaskPlanStart() {
       return this.formatDateShow(this.taskData.task_plan_start);
     },
@@ -316,23 +325,7 @@ export default {
         });
       }
     },
-    checkTaskProgressActuatEnd() {
-      if (this.taskData.task_progress !== 100) {
-        // ปิด v-menu ของ v-date-picker ก่อนที่จะแสดงการแจ้งเตือน
-        this.menu.task_actual_end = false;
 
-        // เคลียร์ค่า task_actual_start
-        this.taskData.task_actual_end = "";
-
-        Swal.fire({
-          icon: "warning",
-          title: "Cannot Set Date",
-          text: "You cannot set the Task Actual End date when progress is 100.",
-          confirmButtonText: "OK",
-          confirmButtonColor: "#629859",
-        });
-      }
-    },
     updateActualDates() {
       // ตรวจสอบว่า task_progress มีค่ามากกว่า 0 หรือไม่
       if (this.taskData.task_progress > 0) {
@@ -525,7 +518,6 @@ export default {
     async updateTask() {
       try {
         const formatDateValue = (value) => (value === "" ? null : value);
-
 
         // แปลงค่า task_progress
         const taskProgressValue =

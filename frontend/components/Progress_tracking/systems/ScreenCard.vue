@@ -169,7 +169,10 @@
             <!-- User Avatar in the "Image" column -->
             <template v-slot:item.user_pic="{ item }">
               <v-avatar>
-                <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
+                <img
+                  :src="getBase64UserImage(item.user_pic)"
+                  alt="User Avatar"
+                />
               </v-avatar>
             </template>
 
@@ -256,7 +259,10 @@
                 @click:close="removeSystemAnalyst(item)"
               >
                 <v-avatar left>
-                  <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
+                  <img
+                    :src="getBase64UserImage(item.user_pic)"
+                    alt="User Avatar"
+                  />
                 </v-avatar>
                 {{ item.user_firstname }}
               </v-chip>
@@ -267,7 +273,10 @@
               <v-list-item>
                 <v-checkbox v-model="selectedSystemAnalysts" :value="item.id" />
                 <v-list-item-avatar>
-                  <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
+                  <img
+                    :src="getBase64UserImage(item.user_pic)"
+                    alt="User Avatar"
+                  />
                 </v-list-item-avatar>
                 <v-list-item-content>
                   <v-list-item-title
@@ -309,7 +318,10 @@
                 @click:close="removeDeveloper(item)"
               >
                 <v-avatar left>
-                  <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
+                  <img
+                    :src="getBase64UserImage(item.user_pic)"
+                    alt="User Avatar"
+                  />
                 </v-avatar>
                 {{ item.user_firstname }}
               </v-chip>
@@ -321,7 +333,10 @@
                 <v-checkbox v-model="selectedDevelopers" :value="item.id" />
 
                 <v-list-item-avatar>
-                  <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
+                  <img
+                    :src="getBase64UserImage(item.user_pic)"
+                    alt="User Avatar"
+                  />
                 </v-list-item-avatar>
                 <v-list-item-content>
                   <v-list-item-title
@@ -363,7 +378,10 @@
                 @click:close="removeImplementer(item)"
               >
                 <v-avatar left>
-                  <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
+                  <img
+                    :src="getBase64UserImage(item.user_pic)"
+                    alt="User Avatar"
+                  />
                 </v-avatar>
                 {{ item.user_firstname }}
               </v-chip>
@@ -374,7 +392,10 @@
               <v-list-item>
                 <v-checkbox v-model="selectedImplementers" :value="item.id" />
                 <v-list-item-avatar>
-                  <img :src="getBase64Image(item.user_pic)" alt="User Avatar" />
+                  <img
+                    :src="getBase64UserImage(item.user_pic)"
+                    alt="User Avatar"
+                  />
                 </v-list-item-avatar>
                 <v-list-item-content>
                   <v-list-item-title
@@ -531,6 +552,19 @@ export default {
     },
     // Convert Base64 image string to a usable image URL
     getBase64Image(base64String) {
+      if (!base64String) {
+        // If base64String is null or undefined, return an empty string or a placeholder image
+        return "/images/Not determined.jpg";
+      }
+      if (base64String.startsWith("data:image/jpeg;base64,")) {
+        // If the base64 string already includes the prefix, return it as is
+        return base64String;
+      } else {
+        // Otherwise, add the prefix and return the modified string
+        return `data:image/jpeg;base64,${base64String}`;
+      }
+    },
+    getBase64UserImage(base64String) {
       if (!base64String) {
         // If base64String is null or undefined, return an empty string or a placeholder image
         return "/images/default_user.jpg";
