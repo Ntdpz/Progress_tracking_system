@@ -432,7 +432,7 @@ router.delete("/deleteHistoryTasks/:id", async (req, res) => {
   }
 });
 
-// Route for saving history tasks and updating tasks
+// Route for saving history tasks, updating tasks, and handling images
 router.put("/save_history_tasks/:id", async (req, res) => {
   try {
     const taskId = req.params.id;
@@ -465,6 +465,7 @@ router.put("/save_history_tasks/:id", async (req, res) => {
       task_member_id,
       user_update,
       is_archived,
+      images // Added to handle image data
     } = req.body;
 
     // Use existing values if not provided
@@ -535,6 +536,7 @@ router.put("/save_history_tasks/:id", async (req, res) => {
         system_id, task_plan_start, task_plan_end, task_actual_start, task_actual_end, task_manday, 
         update_date, user_update, task_member_id, task_type, is_deleted) 
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+
       [
         currentTask[0].id,
         currentTask[0].task_name,
@@ -558,12 +560,28 @@ router.put("/save_history_tasks/:id", async (req, res) => {
       ]
     );
 
-    res.send("History task saved and task updated successfully");
+    // Handle task images
+    if (images && images.length > 0) {
+      for (let image of images) {
+        const { image_base64, image_name, image_type } = image;
+
+        // Insert into task_images table
+        await connection.promise().query(
+          `INSERT INTO task_images 
+          (task_id, image_base64, image_name, image_type, created_by, upload_date, is_deleted) 
+          VALUES (?, ?, ?, ?, ?, ?, 0)`,
+          [taskId, image_base64, image_name, image_type, user_update || currentTask[0].user_update, currentDateTime]
+        );
+      }
+    }
+
+    res.send("History task saved, task updated, and images uploaded successfully.");
   } catch (error) {
-    console.error("Error saving history task and updating task:", error);
+    console.error("Error saving history task, updating task, or uploading images:", error);
     res.status(500).send("Internal Server Error");
   }
 });
+
 
 // Route for getting history tasks by task_id
 router.get("/history_tasks/:task_id", async (req, res) => {
