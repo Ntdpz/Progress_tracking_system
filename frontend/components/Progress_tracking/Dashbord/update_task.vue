@@ -30,14 +30,11 @@
       </v-row>
 
       <v-row>
-        <v-col cols="4" v-if="taskPicUrl">
+        <v-col cols="4"></v-col>
+        <v-col cols="4" v-if="taskPicUrl"> 
+          <v-img max-height="150" max-width="250" :src="taskPicUrl" alt="Task Picture" class="task-pic" />
         </v-col>
-        <v-col cols="4" v-if="taskPicUrl">
-          <v-img height="5rem" :src="taskPicUrl" alt="Task Picture" class="task-pic" />
-        </v-col>
-
-        <v-col cols="4" v-if="taskPicUrl">
-        </v-col>
+        <v-col cols="4"></v-col>
       </v-row>
 
       <v-row class="row-Plan">
@@ -188,7 +185,6 @@ export default {
   },
   mounted() {
     this.getTaskPicture();
-
     // เรียกใช้ฟังก์ชันเมื่อคอมโพเนนต์ถูก mount
     this.calculateTaskStatus();
     this.updatePlanDates("start");
@@ -637,12 +633,3 @@ export default {
   },
 };
 </script>
-
-
-<style scoped>
-.task-pic {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: cover;
-}
-</style>

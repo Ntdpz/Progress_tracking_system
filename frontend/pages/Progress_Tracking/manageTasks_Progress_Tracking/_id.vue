@@ -32,10 +32,10 @@
                   </v-list-item-title>
                   <v-list-item-subtitle>{{
                     user.user_position
-                  }}</v-list-item-subtitle>
+                    }}</v-list-item-subtitle>
                   <v-list-item-subtitle>{{
                     user.user_department
-                  }}</v-list-item-subtitle>
+                    }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
             </v-list>
@@ -62,7 +62,7 @@
         <!-- Search bar -->
 
         <v-col cols="12" md="10">
-          <v-text-field v-model="searchQuery" label="Search" clearable outlined dense>
+          <v-text-field v-model="searchQuery" label="Search" append-icon="mdi-magnify" outlined dense>
           </v-text-field>
         </v-col>
         <!-- open add task form -->
@@ -173,7 +173,7 @@
                     <v-list-item-content>
                       <v-list-item-title>{{
                         item.user_name
-                      }}</v-list-item-title>
+                        }}</v-list-item-title>
                     </v-list-item-content>
                   </template>
                 </v-select>
@@ -272,7 +272,7 @@
                     <v-list-item-content>
                       <v-list-item-title>{{
                         item.user_name
-                      }}</v-list-item-title>
+                        }}</v-list-item-title>
                     </v-list-item-content>
                   </template>
                 </v-select>
@@ -372,7 +372,7 @@
                     <v-list-item-content>
                       <v-list-item-title>{{
                         item.user_name
-                      }}</v-list-item-title>
+                        }}</v-list-item-title>
                     </v-list-item-content>
                   </template>
                 </v-select>
@@ -472,7 +472,7 @@
                     <v-list-item-content>
                       <v-list-item-title>{{
                         item.user_name
-                      }}</v-list-item-title>
+                        }}</v-list-item-title>
                     </v-list-item-content>
                   </template>
                 </v-select>
