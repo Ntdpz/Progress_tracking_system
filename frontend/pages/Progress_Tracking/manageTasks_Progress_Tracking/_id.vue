@@ -632,7 +632,7 @@ export default {
     return {
 
 
-      taskPic: null,  // Add this to hold the base64 image
+      taskPicUrl: null,  // Add this to hold the base64 image
 
 
       // imageFile: null,
@@ -996,6 +996,22 @@ export default {
   },
 
   methods: {
+    async getTaskPicture(taskID) {
+      try {
+        const response = await this.$axios.get(`tasks/getOne/${taskID}`);
+        const taskData = response.data[0];
+        if (taskData.task_pic) {
+          return `data:image/jpeg;base64,${taskData.task_pic}`; // Assuming JPEG format, adjust if needed
+        }
+
+        return ""
+
+      } catch (error) {
+        console.error('Error fetching task picture:', error);
+        return ""
+      }
+    },
+
     handleAddTaskClick() {
       if (this.user.user_position === "Developer") {
         this.DevdialogAddTaskForm = true;
@@ -1215,6 +1231,8 @@ export default {
         task_id: task.task_id,
         // Set other fields as per your API
       };
+
+      console.log(this.historyTaskData.task_picture);
       // Set the task ID for the API endpoint
       this.taskId = task.id; // Assign task ID to a component data property
 
@@ -1227,6 +1245,8 @@ export default {
           `/tasks/history_tasks/${task_Id}`
         );
         this.historyTasks = response.data;
+
+        task.task_picture = await this.getTaskPicture(task_Id);
 
         // เพิ่มส่วนนี้เพื่อดึงรายละเอียดของผู้ใช้และแทนที่ id ด้วยข้อมูลผู้ใช้
         for (let i = 0; i < this.historyTasks.length; i++) {
@@ -1244,6 +1264,7 @@ export default {
 
       // Open the save task dialog
       this.dialogSaveTaskForm = true;
+
       this.selectedTask = task;
     },
     formatDateSAVE(date) {
