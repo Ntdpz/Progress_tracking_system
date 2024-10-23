@@ -637,15 +637,7 @@ export default {
   },
   data() {
     return {
-
-
-      taskPicUrl: null,  // Add this to hold the base64 image
-
-
-      // imageFile: null,
-      // imageBase64: '',
-
-
+      taskPicUrl: null, // Add this to hold the base64 image
       screenDetails: {
         screenId: null,
         system_id: null,
@@ -1291,7 +1283,6 @@ export default {
 
       // Open the save task dialog
       this.dialogSaveTaskForm = true;
-
       this.selectedTask = task;
     },
     formatDateSAVE(date) {

@@ -29,9 +29,10 @@
         </v-col>
       </v-row>
 
+      <!-- Add imag -->
       <v-row>
         <v-col cols="4"></v-col>
-        <v-col cols="4" v-if="task.task_picture"> 
+        <v-col cols="4" v-if="task.task_picture">
           <v-img max-height="150" max-width="250" :src="task.task_picture" alt="Task Picture" class="task-pic" />
         </v-col>
         <v-col cols="4"></v-col>
@@ -83,19 +84,13 @@
               :max="taskData.task_actual_end" />
           </v-menu>
         </v-col>
+        
         <!-- Task Actual End -->
         <v-col cols="12" sm="4">
           <v-menu v-model="menu.task_actual_end" :close-on-content-click="false" transition="scale-transition" offset-y>
             <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                :value="formattedTaskActualEnd"
-                label="Task Actual End"
-                v-bind="attrs"
-                v-on="on"
-                prepend-icon="mdi-calendar"
-                outlined
-                :disabled="taskData.task_progress !== 100"
-              />
+              <v-text-field :value="formattedTaskActualEnd" label="Task Actual End" v-bind="attrs" v-on="on"
+                prepend-icon="mdi-calendar" outlined :disabled="taskData.task_progress !== 100" />
             </template>
             <v-date-picker v-model="taskData.task_actual_end" @input="menu.task_actual_end = false"
               :min="taskData.task_actual_start" />
