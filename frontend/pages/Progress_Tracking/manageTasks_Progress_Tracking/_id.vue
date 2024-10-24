@@ -1074,7 +1074,7 @@ export default {
         "Maintenance",
       ],
       statusOptionsDev: ["Develop", "Maintenance"],
-      statusOptionsImp: ["Document", "Testing"],
+      statusOptionsImp: ["Document", "Testing" , "Develop", "Maintenance"],
       showImageDialog: false,
       showHistoryDialog: false,
       screen_plan_start: "",
