@@ -111,17 +111,12 @@
                         </td>
                         <td>
                           <v-avatar>
-                            <!-- <img
-                              :src="getImageUrl(item.user_pic)"
-                              alt="User avatar"
-                              class="mx-auto"
-                              style="width: 35px; height: 35px"
-                            /> -->
                             <v-img
-                              :src="item.user_pic"
-                              alt="Selected Image"
-                              v-if="item.user_pic"
-                            />
+                          :src="item.user_pic || '/images/default_user.jpg'"
+                          alt="User avatar"
+                          class="mx-auto"
+                          style="width: 35px; height: 35px object-fit: cover; "
+                        />
                           </v-avatar>
                         </td>
                         <td>
@@ -193,17 +188,12 @@
                         </td>
                         <td>
                           <v-avatar>
-                            <!-- <img
-                              :src="getImageUrl(item.user_pic)"
-                              alt="User avatar"
-                              class="mx-auto"
-                              style="width: 35px; height: 35px"
-                            /> -->
                             <v-img
-                              :src="item.user_pic"
-                              alt="Selected Image"
-                              v-if="item.user_pic"
-                            />
+                          :src="item.user_pic || '/images/default_user.jpg'"
+                          alt="User avatar"
+                          class="mx-auto"
+                          style="width: 35px; height: 35px object-fit: cover; "
+                        />
                           </v-avatar>
                         </td>
                         <td>
@@ -276,17 +266,12 @@
                         </td>
                         <td>
                           <v-avatar>
-                            <!-- <img
-                              :src="getImageUrl(item.user_pic)"
-                              alt="User avatar"
-                              class="mx-auto"
-                              style="width: 35px; height: 35px"
-                            /> -->
                             <v-img
-                              :src="item.user_pic"
-                              alt="Selected Image"
-                              v-if="item.user_pic"
-                            />
+                          :src="item.user_pic || '/images/default_user.jpg'"
+                          alt="User avatar"
+                          class="mx-auto"
+                          style="width: 35px; height: 35px object-fit: cover; "
+                        />
                           </v-avatar>
                         </td>
                         <td>
@@ -359,17 +344,12 @@
                         </td>
                         <td>
                           <v-avatar>
-                            <!-- <img
-                              :src="getImageUrl(item.user_pic)"
-                              alt="User avatar"
-                              class="mx-auto"
-                              style="width: 35px; height: 35px"
-                            /> -->
                             <v-img
-                              :src="item.user_pic"
-                              alt="Selected Image"
-                              v-if="item.user_pic"
-                            />
+                          :src="item.user_pic || '/images/default_user.jpg'"
+                          alt="User avatar"
+                          class="mx-auto"
+                          style="width: 35px; height: 35px object-fit: cover; "
+                        />
                           </v-avatar>
                         </td>
                         <td>
@@ -442,17 +422,12 @@
                         </td>
                         <td>
                           <v-avatar>
-                            <!-- <img
-                              :src="getImageUrl(item.user_pic)"
-                              alt="User avatar"
-                              class="mx-auto"
-                              style="width: 35px; height: 35px"
-                            /> -->
-                            <v-img
-                              :src="item.user_pic"
-                              alt="Selected Image"
-                              v-if="item.user_pic"
-                            />
+                           <v-img
+                          :src="item.user_pic || '/images/default_user.jpg'"
+                          alt="User avatar"
+                          class="mx-auto"
+                          style="width: 35px; height: 35px object-fit: cover; "
+                        />
                           </v-avatar>
                         </td>
                         <td>
@@ -525,17 +500,12 @@
                         </td>
                         <td>
                           <v-avatar>
-                            <!-- <img
-                              :src="getImageUrl(item.user_pic)"
-                              alt="User avatar"
-                              class="mx-auto"
-                              style="width: 35px; height: 35px"
-                            /> -->
-                            <v-img
-                              :src="item.user_pic"
-                              alt="Selected Image"
-                              v-if="item.user_pic"
-                            />
+                           <v-img
+                          :src="item.user_pic || '/images/default_user.jpg'"
+                          alt="User avatar"
+                          class="mx-auto"
+                          style="width: 35px; height: 35px object-fit: cover; "
+                        />
                           </v-avatar>
                         </td>
                         <td>
@@ -943,7 +913,8 @@
                                   color="black"
                                   size="30px"
                                   v-if="imageManage == null && base64 == ''"
-                                  >mdi-cloud-upload-outline</v-icon
+                                  >mdi-cloud-upload-outline
+                                  </v-icon
                                 >
                                 <img
                                   :src="base64"
@@ -1262,7 +1233,7 @@ export default {
       user: this.$auth.user,
       loggedIn: this.$auth.loggedIn,
       search: "",
-
+      defaultImage: '/images/default_user.jpg',
       titleFirstname: "",
       imageManageUpload: null,
       imageFileUpload: "",
