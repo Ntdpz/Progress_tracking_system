@@ -25,10 +25,30 @@
                 class="mt-6 mx-auto"
                 style="width: 150px; height: 150px"
               >
-                <!-- <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John" /> -->
-                <img v-if="base64 != null" :src="base64" />
-                <!-- <img v-else-if="base64 = ''" :src="user_pic" /> -->
-                <!-- <img v-else :src="getdefaultImageUrl(defaultImage)" /> -->
+                <!-- แสดงรูป default เมื่อไม่มี base64 -->
+                <img
+                  v-if="base64 == null || base64 === ''"
+                  src="/images/default_user.jpg"
+                  alt="User default"
+                  style="
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    object-position: center;
+                  "
+                />
+                <!-- แสดงรูป base64 ถ้ามีค่า -->
+                <img
+                  v-else
+                  :src="base64"
+                  alt="User Image"
+                  style="
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    object-position: center;
+                  "
+                />
               </v-avatar>
               <v-btn
                 color="white"
@@ -458,21 +478,23 @@ export default {
   },
   methods: {
     async getUser() {
-      await this.$axios.get("/users/getOne/" + this.$auth.user.id).then((res) => {
-        this.id = res.data[0].id;
-        this.user_id = res.data[0].user_id;
-        this.user_firstname = res.data[0].user_firstname;
-        this.user_lastname = res.data[0].user_lastname;
-        this.user_status = res.data[0].user_status;
-        this.user_role = res.data[0].user_role;
-        this.user_position = res.data[0].user_position;
-        this.user_password = res.data[0].user_password;
-        this.user_email = res.data[0].user_email;
-        this.user_department = res.data[0].user_department;
-        this.base64 = res.data[0].user_pic;
-        this.titleName();
-        // console.log(this.user_pic);
-      });
+      await this.$axios
+        .get("/users/getOne/" + this.$auth.user.id)
+        .then((res) => {
+          this.id = res.data[0].id;
+          this.user_id = res.data[0].user_id;
+          this.user_firstname = res.data[0].user_firstname;
+          this.user_lastname = res.data[0].user_lastname;
+          this.user_status = res.data[0].user_status;
+          this.user_role = res.data[0].user_role;
+          this.user_position = res.data[0].user_position;
+          this.user_password = res.data[0].user_password;
+          this.user_email = res.data[0].user_email;
+          this.user_department = res.data[0].user_department;
+          this.base64 = res.data[0].user_pic;
+          this.titleName();
+          // console.log(this.user_pic);
+        });
     },
     titleName() {
       const regex = /^(Mr\.|Miss\.|นาย|นาง|นางสาว)\s+(.*)$/; // Regular expression to match title and name
@@ -574,7 +596,7 @@ export default {
         // formData.append("user_role", this.user_role);
 
         const formdatas = {
-          user_firstname:this.name + " " + this.firstname,
+          user_firstname: this.name + " " + this.firstname,
           user_lastname: this.user_lastname,
           user_id: this.user_id,
           user_position: this.user_position,
@@ -600,6 +622,7 @@ export default {
             promise.then(() => {
               setTimeout(() => {
                 this.$router.push({ name: "index" });
+                window.location.reload();
               }, 2000);
             });
           })
