@@ -1,8 +1,6 @@
 <template>
   <v-card class="fixed-width-card">
     <div class="content">
-      <!-- <p>Task ID: {{ taskId }}</p> -->
-      <!-- Input สำหรับเลือกหลายไฟล์ -->
       <v-file-input
         ref="fileInput"
         v-model="imageFiles"
@@ -17,7 +15,6 @@
 
     <!-- แสดงคอลเลกชันรูปภาพ -->
     <v-row v-if="previews.length" class="gallery" justify="center">
-      <!-- ใช้ justify="center" เพื่อจัดกลาง -->
       <v-col
         v-for="(src, index) in previews"
         :key="index"
@@ -25,16 +22,22 @@
         sm="6"
         md="4"
         class="d-flex justify-center"
-      
-        >
+      >
         <v-img
           :src="src"
           aspect-ratio="1"
           class="gallery-image"
           :alt="'Image ' + (index + 1)"
           contain
-          style="width: 100%; height: auto"
-        ></v-img>
+        >
+          <template v-slot:default>
+            <div class="overlay">
+              <v-btn icon @click="removeImage(index)" class="delete-button">
+                <v-icon>mdi-close-circle</v-icon>
+              </v-btn>
+            </div>
+          </template>
+        </v-img>
       </v-col>
     </v-row>
   </v-card>
@@ -78,6 +81,11 @@ export default {
         }
       }
     },
+
+    removeImage(index) {
+      this.imageFiles.splice(index, 1); // ลบไฟล์จาก imageFiles
+      this.previews.splice(index, 1); // ลบ URL จาก previews
+    },
   },
 };
 </script>
@@ -109,6 +117,17 @@ export default {
 .gallery-image {
   width: 100%; /* ให้ภาพเต็มความกว้างของ v-col */
   height: auto; /* ความสูงอัตโนมัติ */
-  margin: 20px auto; /* จัดให้อยู่ตรงกลางในแกน X */
+  position: relative; /* ทำให้สามารถจัดวาง overlay ได้ */
+}
+
+.overlay {
+  position: absolute; /* จัดให้ overlay อยู่เหนือ v-img */
+  top: 8px; /* ระยะห่างจากด้านบน */
+  right: 8px; /* ระยะห่างจากด้านขวา */
+  z-index: 10; /* ให้อยู่สูงกว่าภาพ */
+}
+
+.delete-button {
+  color: white; /* เปลี่ยนสีปุ่มให้เป็นสีขาว */
 }
 </style>
