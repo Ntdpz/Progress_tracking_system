@@ -17,26 +17,26 @@
     <!-- แสดงคอลเลกชันรูปภาพ -->
     <v-row v-if="previews.length" class="gallery" justify="center">
       <v-col
-        v-for="(src, index) in previews"
-        :key="index"
+        v-for="(image, index) in previews"
+        :key="image.id"
         cols="12"
         sm="6"
         md="4"
         class="d-flex justify-center"
       >
         <v-img
-          :src="src"
+          :src="image.src"
           aspect-ratio="1"
           class="gallery-image"
           :alt="'Image ' + (index + 1)"
           contain
-          @click="openImage(src)"
+          @click="openImage(image.src)"
         >
           <template v-slot:default>
             <div class="overlay">
               <v-btn
                 icon
-                @click.stop="removeImage(index)"
+                @click.stop="removeImage(index, image.id)"
                 class="delete-button"
               >
                 <v-icon>mdi-close-circle</v-icon>
@@ -64,7 +64,7 @@ export default {
       user: this.$auth.user,
       loggedIn: this.$auth.loggedIn,
       imageFiles: [],
-      previews: [],
+      previews: [], // ปรับให้เก็บข้อมูลในรูปแบบของ Object
     };
   },
   mounted() {
@@ -92,7 +92,10 @@ export default {
           // เรียงภาพจากเก่าที่สุดก่อน โดยอ้างอิงจาก `created_at`
           this.previews = response.data
             .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
-            .map((image) => `${image.image_base64}`);
+            .map((image) => ({
+              id: image.id, // เพิ่ม ID ลงใน Object
+              src: `${image.image_base64}`,
+            }));
         }
       } catch (error) {
         console.error("Error loading existing images:", error);
@@ -110,7 +113,7 @@ export default {
           const image_type = file.type;
 
           newImages.push({ image_base64: base64, image_name, image_type });
-          newPreviews.push(base64); // เพิ่ม base64 ของภาพที่อัปโหลดใหม่
+          newPreviews.push({ id: null, src: base64 }); // เพิ่ม base64 ของภาพที่อัปโหลดใหม่
 
           if (newImages.length === this.imageFiles.length) {
             await this.saveImages(newImages);
@@ -141,14 +144,29 @@ export default {
         if (item.type.startsWith("image/")) {
           const file = item.getAsFile();
           this.imageFiles.push(file); // เพิ่มไฟล์ใหม่ลง imageFiles
-          this.previews.push(URL.createObjectURL(file)); // สร้าง URL ของภาพที่วางจากคลิปบอร์ดแล้วเพิ่มเข้า previews
+          this.previews.push({ id: null, src: URL.createObjectURL(file) }); // สร้าง URL ของภาพที่วางจากคลิปบอร์ดแล้วเพิ่มเข้า previews
         }
       }
     },
 
-    removeImage(index) {
-      this.imageFiles.splice(index, 1); // ลบไฟล์จาก imageFiles
-      this.previews.splice(index, 1); // ลบ URL จาก previews
+    removeImage(index, id) {
+      // เรียก API เพื่อลบรูปภาพ
+      this.$axios
+        .delete(`/task_images/DeleteOne/${id}`)
+        .then((response) => {
+          // ตรวจสอบว่า API ตอบกลับว่า success หรือไม่
+          if (response.status === 200) {
+            // ถ้าสำเร็จ, ลบไฟล์จาก imageFiles และ previews
+            this.imageFiles.splice(index, 1); // ลบไฟล์จาก imageFiles
+            const removedImage = this.previews.splice(index, 1); // ลบ URL จาก previews
+            // console.log("Removed image ID:", id); // แสดง ID ของรูปภาพที่ถูกลบ
+          } else {
+            console.error("Error removing image:", response.data.message); // แสดงข้อความเมื่อการลบไม่สำเร็จ
+          }
+        })
+        .catch((error) => {
+          console.error("Error removing image:", error); // แสดงข้อผิดพลาด
+        });
     },
 
     openImage(src) {
