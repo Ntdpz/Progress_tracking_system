@@ -10,6 +10,7 @@
         prepend-icon="mdi-camera"
         @change="previewImages"
         class="file-input"
+        outlined
       ></v-file-input>
     </div>
 
