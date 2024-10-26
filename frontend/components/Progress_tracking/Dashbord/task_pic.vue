@@ -1,7 +1,5 @@
 <template>
   <v-card class="fixed-width-card">
-    <!-- <p>{{ taskId }}</p>
-    <h1>{{ user.id }}</h1> -->
     <div class="content">
       <v-file-input
         ref="fileInput"
@@ -65,27 +63,37 @@ export default {
     return {
       user: this.$auth.user,
       loggedIn: this.$auth.loggedIn,
-      imageFiles: [], // เก็บไฟล์ที่เลือก
-      previews: [], // เก็บ URL ของภาพตัวอย่าง
+      imageFiles: [],
+      previews: [],
     };
   },
   mounted() {
     window.addEventListener("paste", this.handlePaste);
+    this.previews = []; // เคลียร์ previews เมื่อคอมโพเนนต์ถูกสร้าง
     this.loadExistingImages(); // โหลดภาพที่มีอยู่เมื่อคอมโพเนนต์ถูกสร้าง
   },
   beforeDestroy() {
     window.removeEventListener("paste", this.handlePaste);
   },
+  watch: {
+    taskId: "loadExistingImages", // เมื่อ taskId เปลี่ยนให้เรียก loadExistingImages ใหม่
+  },
   methods: {
     async loadExistingImages() {
+      this.previews = []; // เคลียร์ previews ก่อนโหลดภาพใหม่
+
       try {
         const response = await this.$axios.get(
           `/task_images/searchByTaskid/${this.taskId}`
         );
-        // เรียงภาพจากเก่าที่สุดก่อน โดยอ้างอิงจาก `created_at` หากมี
-        this.previews = response.data
-          .sort((a, b) => new Date(a.created_at) - new Date(b.created_at)) // เรียงจากเก่าที่สุด
-          .map((image) => `${image.image_base64}`);
+
+        // ตรวจสอบว่ามีรูปภาพใน response หรือไม่
+        if (response.data && response.data.length > 0) {
+          // เรียงภาพจากเก่าที่สุดก่อน โดยอ้างอิงจาก `created_at`
+          this.previews = response.data
+            .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+            .map((image) => `${image.image_base64}`);
+        }
       } catch (error) {
         console.error("Error loading existing images:", error);
       }
