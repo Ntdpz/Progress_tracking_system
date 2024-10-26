@@ -189,6 +189,11 @@
       :taskId="task.id"
       class="history_task_table-table"
     /> -->
+
+    <div class="Pic-task">
+      <task_pic :taskId="task.id" />
+    </div>
+
     <div class="button-row">
       <v-btn class="history-btn" @click="dialoghistory = true">
         <v-icon left>mdi-history</v-icon>
@@ -231,11 +236,13 @@ import Swal from "sweetalert2";
 import history_task_table from "./history_task_table.vue";
 import "./css/update_task.css";
 import { EventBus } from "@/plugins/event-bus";
+import task_pic from "./task_pic.vue";
 
 export default {
   middleware: "auth",
   components: {
     history_task_table,
+    task_pic,
   },
   props: {
     task: {
