@@ -19,7 +19,7 @@ function generateId() {
 
 // API to get all task images
 router.get("/getAll", (req, res) => {
-    const query = "SELECT * FROM task_images WHERE is_deleted = 0"; // ดึงข้อมูลที่ไม่ได้ถูกลบ
+    const query = "SELECT * FROM task_images "; // ดึงข้อมูลที่ไม่ได้ถูกลบ
 
     connection.query(query, (error, results) => {
         if (error) {
@@ -68,6 +68,30 @@ router.post("/createTaskImages", (req, res) => {
         });
 });
 
+// GET endpoint to retrieve images by task_id
+router.get("/searchByTaskid/:task_id", (req, res) => {
+    const taskId = req.params.task_id;
+
+    // SQL query to retrieve images based on task_id
+    const query = `
+        SELECT * FROM task_images
+        WHERE task_id = ? 
+    `;
+
+    connection.query(query, [taskId], (error, results) => {
+        if (error) {
+            console.error("Error retrieving images:", error);
+            return res.status(500).json({ message: "Internal Server Error" });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: "No images found for this task_id." });
+        }
+
+        // Return the retrieved images
+        res.status(200).json(results);
+    });
+});
 
 
 // Exporting the router

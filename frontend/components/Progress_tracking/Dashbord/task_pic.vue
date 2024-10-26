@@ -1,5 +1,7 @@
 <template>
   <v-card class="fixed-width-card">
+    <!-- <p>{{ taskId }}</p>
+    <h1>{{ user.id }}</h1> -->
     <div class="content">
       <v-file-input
         ref="fileInput"
@@ -8,7 +10,7 @@
         multiple
         label="Upload Images"
         prepend-icon="mdi-camera"
-        @change="previewImages"
+        @change="uploadImages"
         class="file-input"
         outlined
       ></v-file-input>
@@ -51,6 +53,8 @@
 
 <script>
 export default {
+  middleware: "auth",
+
   props: {
     taskId: {
       type: Number,
@@ -59,21 +63,65 @@ export default {
   },
   data() {
     return {
+      user: this.$auth.user,
+      loggedIn: this.$auth.loggedIn,
       imageFiles: [], // เก็บไฟล์ที่เลือก
       previews: [], // เก็บ URL ของภาพตัวอย่าง
     };
   },
   mounted() {
     window.addEventListener("paste", this.handlePaste);
+    this.loadExistingImages(); // โหลดภาพที่มีอยู่เมื่อคอมโพเนนต์ถูกสร้าง
   },
   beforeDestroy() {
     window.removeEventListener("paste", this.handlePaste);
   },
   methods: {
-    previewImages() {
+    async loadExistingImages() {
+      try {
+        const response = await this.$axios.get(
+          `/task_images/searchByTaskid/${this.taskId}`
+        );
+        // แปลง Base64 เป็น URL ที่แสดงเป็นภาพได้
+        this.previews = response.data.map((image) => {
+          return `${image.image_base64}`;
+        });
+      } catch (error) {
+        console.error("Error loading existing images:", error);
+      }
+    },
+    async uploadImages() {
       this.previews = []; // เคลียร์ previews ก่อนเพิ่มใหม่
+      const newImages = [];
+
       for (const file of this.imageFiles) {
-        this.previews.push(URL.createObjectURL(file)); // สร้าง URL ชั่วคราวแล้วเพิ่มเข้า previews
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+          const base64 = event.target.result; // ค่า base64 ของภาพ
+          const image_name = file.name; // ชื่อไฟล์
+          const image_type = file.type; // ประเภทของไฟล์
+
+          // อัปโหลดภาพไปยังฐานข้อมูล
+          newImages.push({ image_base64: base64, image_name, image_type });
+          if (newImages.length === this.imageFiles.length) {
+            await this.saveImages(newImages);
+          }
+        };
+        reader.readAsDataURL(file); // อ่านไฟล์เป็น base64
+      }
+    },
+
+    async saveImages(images) {
+      try {
+        await this.$axios.post(`/task_images/createTaskImages`, {
+          task_id: this.taskId,
+          created_by: this.user.id,
+          images,
+        });
+        // โหลดภาพที่อัปโหลดใหม่
+        this.loadExistingImages();
+      } catch (error) {
+        console.error("Error uploading images:", error);
       }
     },
 
