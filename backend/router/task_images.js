@@ -92,6 +92,31 @@ router.get("/searchByTaskid/:task_id", (req, res) => {
         res.status(200).json(results);
     });
 });
+// DELETE endpoint to remove an image by id
+router.delete("/DeleteOne/:id", (req, res) => {
+    const imageId = req.params.id;
+
+    // SQL query to delete the image by id
+    const query = `
+        DELETE FROM task_images
+        WHERE id = ?
+    `;
+
+    connection.query(query, [imageId], (error, results) => {
+        if (error) {
+            console.error("Error deleting image:", error);
+            return res.status(500).json({ message: "Internal Server Error" });
+        }
+
+        // Check if any rows were affected
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ message: "No image found with this id." });
+        }
+
+        // Successfully deleted
+        res.status(200).json({ message: "Image deleted successfully." });
+    });
+});
 
 
 // Exporting the router
