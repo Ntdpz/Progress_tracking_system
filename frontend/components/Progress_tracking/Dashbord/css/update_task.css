@@ -108,10 +108,31 @@
     /* สีข้อความในปุ่ม */
 }
 
+.history-btn {
+    background-color: #fd9b4b !important;
+    /* สีปุ่ม Save */
+    color: white !important;
+    /* สีข้อความในปุ่ม */
+}
+
 .close-btn {
     background-color: #F67878 !important;
     /* สีปุ่ม Close */
     color: white !important;
     /* 
     สีข้อความในปุ่ม */
+}
+
+.headline-history {
+    text-align: center;
+    /* Center the text horizontally */
+    justify-content: center;
+    /* Center the content within the card title */
+    font-weight: bold;
+    /* Optional: Make the text bold */
+}
+
+.no-padding {
+    padding: 0 !important;
+    /* Remove padding from v-card-text */
 }
