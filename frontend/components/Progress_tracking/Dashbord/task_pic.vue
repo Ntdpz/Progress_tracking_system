@@ -29,10 +29,15 @@
           class="gallery-image"
           :alt="'Image ' + (index + 1)"
           contain
+          @click="openImage(src)"
         >
           <template v-slot:default>
             <div class="overlay">
-              <v-btn icon @click="removeImage(index)" class="delete-button">
+              <v-btn
+                icon
+                @click.stop="removeImage(index)"
+                class="delete-button"
+              >
                 <v-icon>mdi-close-circle</v-icon>
               </v-btn>
             </div>
@@ -85,6 +90,10 @@ export default {
     removeImage(index) {
       this.imageFiles.splice(index, 1); // ลบไฟล์จาก imageFiles
       this.previews.splice(index, 1); // ลบ URL จาก previews
+    },
+
+    openImage(src) {
+      window.open(src, "_blank"); // เปิดภาพในแท็บใหม่
     },
   },
 };
