@@ -82,32 +82,36 @@ export default {
         const response = await this.$axios.get(
           `/task_images/searchByTaskid/${this.taskId}`
         );
-        // แปลง Base64 เป็น URL ที่แสดงเป็นภาพได้
-        this.previews = response.data.map((image) => {
-          return `${image.image_base64}`;
-        });
+        // เรียงภาพจากเก่าที่สุดก่อน โดยอ้างอิงจาก `created_at` หากมี
+        this.previews = response.data
+          .sort((a, b) => new Date(a.created_at) - new Date(b.created_at)) // เรียงจากเก่าที่สุด
+          .map((image) => `${image.image_base64}`);
       } catch (error) {
         console.error("Error loading existing images:", error);
       }
     },
     async uploadImages() {
-      this.previews = []; // เคลียร์ previews ก่อนเพิ่มใหม่
       const newImages = [];
+      const newPreviews = []; // ตัวแปรสำหรับเก็บ previews ของภาพใหม่
 
       for (const file of this.imageFiles) {
         const reader = new FileReader();
         reader.onload = async (event) => {
-          const base64 = event.target.result; // ค่า base64 ของภาพ
-          const image_name = file.name; // ชื่อไฟล์
-          const image_type = file.type; // ประเภทของไฟล์
+          const base64 = event.target.result;
+          const image_name = file.name;
+          const image_type = file.type;
 
-          // อัปโหลดภาพไปยังฐานข้อมูล
           newImages.push({ image_base64: base64, image_name, image_type });
+          newPreviews.push(base64); // เพิ่ม base64 ของภาพที่อัปโหลดใหม่
+
           if (newImages.length === this.imageFiles.length) {
             await this.saveImages(newImages);
+
+            // อัปเดต previews โดยให้รูปจากฐานข้อมูลมาก่อน ตามด้วยภาพใหม่
+            this.previews = this.previews.concat(newPreviews);
           }
         };
-        reader.readAsDataURL(file); // อ่านไฟล์เป็น base64
+        reader.readAsDataURL(file);
       }
     },
 
@@ -118,8 +122,6 @@ export default {
           created_by: this.user.id,
           images,
         });
-        // โหลดภาพที่อัปโหลดใหม่
-        this.loadExistingImages();
       } catch (error) {
         console.error("Error uploading images:", error);
       }
