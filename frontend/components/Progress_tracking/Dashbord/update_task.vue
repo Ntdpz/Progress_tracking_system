@@ -182,7 +182,6 @@
           />
         </v-col>
       </v-row>
-      <!-- ... Your existing form fields ... -->
     </v-form>
 
     <div class="Pic-task">

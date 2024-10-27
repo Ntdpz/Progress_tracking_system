@@ -144,7 +144,6 @@
 
 .floating-buttons {
     position: fixed;
-    /* Change to fixed */
     bottom: 16px;
     /* Adjust as needed */
     right: 16px;

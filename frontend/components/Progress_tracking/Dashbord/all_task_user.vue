@@ -94,7 +94,7 @@
     </div>
 
     <!-- Dialog -->
-    <v-dialog v-model="EditTask_dialog" max-width="70%" class="custom-dialog">
+    <v-dialog v-model="EditTask_dialog" max-width="60%" class="custom-dialog">
       <v-card>
         <v-card-title> </v-card-title>
         <v-card-subtitle>
