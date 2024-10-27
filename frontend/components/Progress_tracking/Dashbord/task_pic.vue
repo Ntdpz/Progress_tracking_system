@@ -1,6 +1,6 @@
 <template>
   <v-card class="fixed-width-card">
-    <div class="content">
+    <div class="content" @dragover.prevent @drop.prevent="handleDrop">
       <v-file-input
         ref="fileInput"
         v-model="imageFiles"
@@ -11,6 +11,7 @@
         @change="uploadImages"
         class="file-input"
         outlined
+        placeholder="Drag and drop images here or click to select"
       ></v-file-input>
     </div>
 
@@ -50,7 +51,6 @@
             </v-img>
           </template>
           <span>Add by : {{ image.createdByName }}</span>
-          s
         </v-tooltip>
       </v-col>
     </v-row>
@@ -164,6 +164,15 @@ export default {
       }
     },
 
+    handleDrop(event) {
+      const files = event.dataTransfer.files;
+      const imageFiles = Array.from(files).filter((file) =>
+        file.type.startsWith("image/")
+      );
+      this.imageFiles = [...this.imageFiles, ...imageFiles];
+      this.uploadImages();
+    },
+
     removeImage(index, id) {
       // เรียก API เพื่อลบรูปภาพ
       this.$axios
@@ -174,7 +183,7 @@ export default {
             // ถ้าสำเร็จ, ลบไฟล์จาก imageFiles และ previews
             this.imageFiles.splice(index, 1); // ลบไฟล์จาก imageFiles
             const removedImage = this.previews.splice(index, 1); // ลบ URL จาก previews
-            console.log("Removed image ID:", id); // แสดง ID ของรูปภาพที่ถูกลบ
+            // console.log("Removed image ID:", id); // แสดง ID ของรูปภาพที่ถูกลบ
           } else {
             console.error("Error removing image:", response.data.message); // แสดงข้อความเมื่อการลบไม่สำเร็จ
           }
