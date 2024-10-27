@@ -1,44 +1,19 @@
 <template>
   <v-card class="fixed-width-card">
     <div class="content">
-      <v-file-input
-        ref="fileInput"
-        v-model="imageFiles"
-        accept="image/*"
-        multiple
-        label="Upload Images"
-        prepend-icon="mdi-camera"
-        @change="uploadImages"
-        class="file-input"
-        outlined
-      ></v-file-input>
+      <v-file-input ref="fileInput" v-model="imageFiles" accept="image/*" multiple label="Upload Images"
+        prepend-icon="mdi-camera" @change="uploadImages" class="file-input" outlined
+        :style="{ width: '95%' }"></v-file-input>
     </div>
 
     <!-- แสดงคอลเลกชันรูปภาพ -->
     <v-row v-if="previews.length" class="gallery" justify="center">
-      <v-col
-        v-for="(image, index) in previews"
-        :key="image.id"
-        cols="12"
-        sm="6"
-        md="4"
-        class="d-flex justify-center"
-      >
-        <v-img
-          :src="image.src"
-          aspect-ratio="1"
-          class="gallery-image"
-          :alt="'Image ' + (index + 1)"
-          contain
-          @click="openImage(image.src)"
-        >
+      <v-col v-for="(image, index) in previews" :key="image.id" cols="12" sm="6" md="4" class="d-flex justify-center">
+        <v-img :src="image.src" aspect-ratio="1" class="gallery-image" :alt="'Image ' + (index + 1)" contain
+          @click="openImage(image.src)">
           <template v-slot:default>
             <div class="overlay">
-              <v-btn
-                icon
-                @click.stop="removeImage(index, image.id)"
-                class="delete-button"
-              >
+              <v-btn icon @click.stop="removeImage(index, image.id)" class="delete-button">
                 <v-icon>mdi-close-circle</v-icon>
               </v-btn>
             </div>
