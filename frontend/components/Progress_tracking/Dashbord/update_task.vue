@@ -190,29 +190,60 @@
 
     <!-- Floating Action Buttons -->
     <div class="floating-buttons">
-      <v-btn
-        fab
-        color="success"
-        @click="dialoghistory = true"
-        class="fab-button"
-      >
-        <v-icon>mdi-history</v-icon>
-      </v-btn>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            fab
+            color="success"
+            @click="dialoghistory = true"
+            class="fab-button"
+            v-on="on"
+          >
+            <v-icon>mdi-history</v-icon>
+          </v-btn>
+        </template>
+        <span>History</span>
+        <!-- Tooltip content -->
+      </v-tooltip>
 
-      <v-btn fab color="success" @click="updateTask" class="fab-button">
-        <v-icon>mdi-content-save</v-icon>
-      </v-btn>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            fab
+            color="success"
+            @click="updateTask"
+            class="fab-button"
+            v-on="on"
+          >
+            <v-icon>mdi-content-save</v-icon>
+          </v-btn>
+        </template>
+        <span>Save Task</span>
+        <!-- Tooltip content -->
+      </v-tooltip>
 
-      <v-btn fab color="red" @click="$emit('close-dialog')" class="fab-button">
-        <v-icon color="white">mdi-close</v-icon>
-      </v-btn>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            fab
+            color="red"
+            @click="$emit('close-dialog')"
+            class="fab-button"
+            v-on="on"
+          >
+            <v-icon color="white">mdi-close</v-icon>
+          </v-btn>
+        </template>
+        <span>Close</span>
+        <!-- Tooltip content -->
+      </v-tooltip>
     </div>
 
     <!-- Dialog for showing history task table -->
-    <v-dialog v-model="dialoghistory" max-width="800px">
+    <v-dialog v-model="dialoghistory" max-width="90%">
       <v-card>
         <v-card-title class="headline-history">
-          History : {{ task.task_name }}
+          Task update history : {{ task.task_name }}
         </v-card-title>
 
         <v-card-text class="no-padding">
@@ -225,7 +256,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" @click="dialoghistory = false">Close</v-btn>
+          <v-btn color="error" @click="dialoghistory = false">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
