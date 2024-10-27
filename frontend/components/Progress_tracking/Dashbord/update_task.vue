@@ -182,55 +182,56 @@
           />
         </v-col>
       </v-row>
+      <!-- ... Your existing form fields ... -->
     </v-form>
-
-    <!-- <history_task_table
-      ref="historyTaskTable"
-      :taskId="task.id"
-      class="history_task_table-table"
-    /> -->
 
     <div class="Pic-task">
       <task_pic :taskId="task.id" />
     </div>
 
-    <div class="button-row">
-      <v-btn class="history-btn" @click="dialoghistory = true">
-        <v-icon left>mdi-history</v-icon>
-        Show History
+    <!-- Floating Action Buttons -->
+    <div class="floating-buttons">
+      <v-btn
+        fab
+        color="primary"
+        @click="dialoghistory = true"
+        class="fab-button"
+      >
+        <v-icon>mdi-history</v-icon>
       </v-btn>
 
-      <!-- Dialog for showing history task table -->
-      <v-dialog v-model="dialoghistory" max-width="800px">
-        <v-card>
-          <v-card-title class="headline-history"
-            >History : {{ task.task_name }}</v-card-title
-          >
+      <v-btn fab color="success" @click="updateTask" class="fab-button">
+        <v-icon>mdi-content-save</v-icon>
+      </v-btn>
 
-          <v-card-text class="no-padding">
-            <!-- Insert your component to display the task history -->
-            <history_task_table
-              ref="historyTaskTable"
-              :taskId="task.id"
-              class="history_task_table-table"
-            />
-          </v-card-text>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="primary" @click="dialoghistory = false">Close</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+      <v-btn fab color="red" @click="$emit('close-dialog')" class="fab-button">
+        <v-icon>mdi-close</v-icon>
+      </v-btn>
     </div>
 
-    <v-row class="button-row">
-      <v-btn class="save-btn" @click="updateTask">Save</v-btn>
-      <v-btn class="close-btn" @click="$emit('close-dialog')">Close</v-btn>
-    </v-row>
+    <!-- Dialog for showing history task table -->
+    <v-dialog v-model="dialoghistory" max-width="800px">
+      <v-card>
+        <v-card-title class="headline-history">
+          History : {{ task.task_name }}
+        </v-card-title>
+
+        <v-card-text class="no-padding">
+          <history_task_table
+            ref="historyTaskTable"
+            :taskId="task.id"
+            class="history_task_table-table"
+          />
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="dialoghistory = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
-
 <script>
 import Swal from "sweetalert2";
 import history_task_table from "./history_task_table.vue";
