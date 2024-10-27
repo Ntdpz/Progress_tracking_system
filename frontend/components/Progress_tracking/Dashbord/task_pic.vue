@@ -24,26 +24,34 @@
         md="4"
         class="d-flex justify-center"
       >
-        <v-img
-          :src="image.src"
-          aspect-ratio="1"
-          class="gallery-image"
-          :alt="'Image ' + (index + 1)"
-          contain
-          @click="openImage(image.src)"
-        >
-          <template v-slot:default>
-            <div class="overlay">
-              <v-btn
-                icon
-                @click.stop="removeImage(index, image.id)"
-                class="delete-button"
-              >
-                <v-icon>mdi-close-circle</v-icon>
-              </v-btn>
-            </div>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-img
+              v-bind="attrs"
+              v-on="on"
+              :src="image.src"
+              aspect-ratio="1"
+              class="gallery-image"
+              :alt="'Image ' + (index + 1)"
+              contain
+              @click="openImage(image.src)"
+            >
+              <template v-slot:default>
+                <div class="overlay">
+                  <v-btn
+                    icon
+                    @click.stop="removeImage(index, image.id)"
+                    class="delete-button"
+                  >
+                    <v-icon>mdi-close-circle</v-icon>
+                  </v-btn>
+                </div>
+              </template>
+            </v-img>
           </template>
-        </v-img>
+          <span>Add by : {{ image.createdByName }}</span>
+          s
+        </v-tooltip>
       </v-col>
     </v-row>
   </v-card>
@@ -76,7 +84,7 @@ export default {
     window.removeEventListener("paste", this.handlePaste);
   },
   watch: {
-    taskId: "loadExistingImages", // เมื่อ taskId เปลี่ยนให้เรียก loadExistingImages ใหม่
+    taskId: "loadExistingImages",
   },
   methods: {
     async loadExistingImages() {
@@ -95,12 +103,14 @@ export default {
             .map((image) => ({
               id: image.id, // เพิ่ม ID ลงใน Object
               src: `${image.image_base64}`,
+              createdByName: image.created_by_name, // เก็บชื่อผู้สร้าง
             }));
         }
       } catch (error) {
         console.error("Error loading existing images:", error);
       }
     },
+
     async uploadImages() {
       const newImages = [];
 
