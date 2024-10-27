@@ -51,6 +51,8 @@
             </v-img>
           </template>
           <span>Add by : {{ image.createdByName }}</span>
+          <br />
+          <span>Upload : {{ image.upload_date }} น.</span>
         </v-tooltip>
       </v-col>
     </v-row>
@@ -97,14 +99,28 @@ export default {
 
         // ตรวจสอบว่ามีรูปภาพใน response หรือไม่
         if (response.data && response.data.length > 0) {
-          // เรียงภาพจากเก่าที่สุดก่อน โดยอ้างอิงจาก `created_at`
+          // เรียงภาพจากเก่าที่สุดก่อน โดยอ้างอิงจาก `upload_date`
           this.previews = response.data
-            .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
-            .map((image) => ({
-              id: image.id, // เพิ่ม ID ลงใน Object
-              src: `${image.image_base64}`,
-              createdByName: image.created_by_name, // เก็บชื่อผู้สร้าง
-            }));
+            .sort((a, b) => new Date(a.upload_date) - new Date(b.upload_date))
+            .map((image) => {
+              const date = new Date(image.upload_date);
+              const formattedDate = date.toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+              });
+              const formattedTime = date.toLocaleTimeString("en-GB", {
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+
+              return {
+                id: image.id, // เพิ่ม ID ลงใน Object
+                src: `${image.image_base64}`,
+                createdByName: image.created_by_name, // เก็บชื่อผู้สร้าง
+                upload_date: `${formattedDate} : ${formattedTime}`, // รูปแบบวันที่และเวลาใหม่
+              };
+            });
         }
       } catch (error) {
         console.error("Error loading existing images:", error);

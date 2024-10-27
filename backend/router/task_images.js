@@ -80,7 +80,6 @@ router.get("/searchByTaskid/:task_id", (req, res) => {
             task_images.image_base64,
             task_images.image_name,
             task_images.image_type,
-            task_images.created_at,
             CONCAT(users.user_firstname, ' ', users.user_lastname) AS created_by_name,
             task_images.upload_date
         FROM 
