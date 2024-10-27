@@ -193,7 +193,7 @@
     <div class="floating-buttons">
       <v-btn
         fab
-        color="primary"
+        color="success"
         @click="dialoghistory = true"
         class="fab-button"
       >
@@ -205,7 +205,7 @@
       </v-btn>
 
       <v-btn fab color="red" @click="$emit('close-dialog')" class="fab-button">
-        <v-icon>mdi-close</v-icon>
+        <v-icon color="white">mdi-close</v-icon>
       </v-btn>
     </div>
 
