@@ -103,23 +103,20 @@ export default {
     },
     async uploadImages() {
       const newImages = [];
-      const newPreviews = []; // ตัวแปรสำหรับเก็บ previews ของภาพใหม่
 
       for (const file of this.imageFiles) {
         const reader = new FileReader();
         reader.onload = async (event) => {
           const base64 = event.target.result;
-          const image_name = file.name;
+          const image_name = file.name || "Pasted Image";
           const image_type = file.type;
 
           newImages.push({ image_base64: base64, image_name, image_type });
-          newPreviews.push({ id: null, src: base64 }); // เพิ่ม base64 ของภาพที่อัปโหลดใหม่
 
+          // ตรวจสอบเมื่ออ่านไฟล์ทั้งหมดแล้วบันทึกภาพลงฐานข้อมูล
           if (newImages.length === this.imageFiles.length) {
             await this.saveImages(newImages);
-
-            // อัปเดต previews โดยให้รูปจากฐานข้อมูลมาก่อน ตามด้วยภาพใหม่
-            this.previews = this.previews.concat(newPreviews);
+            this.loadExistingImages(); // โหลดภาพจากฐานข้อมูลหลังบันทึกเสร็จ
           }
         };
         reader.readAsDataURL(file);
@@ -140,12 +137,20 @@ export default {
 
     handlePaste(event) {
       const items = event.clipboardData.items;
+      const pastedFiles = [];
+
       for (const item of items) {
         if (item.type.startsWith("image/")) {
           const file = item.getAsFile();
-          this.imageFiles.push(file); // เพิ่มไฟล์ใหม่ลง imageFiles
-          this.previews.push({ id: null, src: URL.createObjectURL(file) }); // สร้าง URL ของภาพที่วางจากคลิปบอร์ดแล้วเพิ่มเข้า previews
+          if (file) {
+            pastedFiles.push(file); // เก็บไฟล์ที่ Paste มาใหม่
+          }
         }
+      }
+
+      if (pastedFiles.length > 0) {
+        this.imageFiles = pastedFiles;
+        this.uploadImages();
       }
     },
 
@@ -159,7 +164,7 @@ export default {
             // ถ้าสำเร็จ, ลบไฟล์จาก imageFiles และ previews
             this.imageFiles.splice(index, 1); // ลบไฟล์จาก imageFiles
             const removedImage = this.previews.splice(index, 1); // ลบ URL จาก previews
-            // console.log("Removed image ID:", id); // แสดง ID ของรูปภาพที่ถูกลบ
+            console.log("Removed image ID:", id); // แสดง ID ของรูปภาพที่ถูกลบ
           } else {
             console.error("Error removing image:", response.data.message); // แสดงข้อความเมื่อการลบไม่สำเร็จ
           }
