@@ -184,11 +184,45 @@
       </v-row>
     </v-form>
 
-    <history_task_table
+    <!-- <history_task_table
       ref="historyTaskTable"
       :taskId="task.id"
       class="history_task_table-table"
-    />
+    /> -->
+
+    <div class="Pic-task">
+      <task_pic :taskId="task.id" />
+    </div>
+
+    <div class="button-row">
+      <v-btn class="history-btn" @click="dialoghistory = true">
+        <v-icon left>mdi-history</v-icon>
+        Show History
+      </v-btn>
+
+      <!-- Dialog for showing history task table -->
+      <v-dialog v-model="dialoghistory" max-width="800px">
+        <v-card>
+          <v-card-title class="headline-history"
+            >History : {{ task.task_name }}</v-card-title
+          >
+
+          <v-card-text class="no-padding">
+            <!-- Insert your component to display the task history -->
+            <history_task_table
+              ref="historyTaskTable"
+              :taskId="task.id"
+              class="history_task_table-table"
+            />
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" @click="dialoghistory = false">Close</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </div>
 
     <v-row class="button-row">
       <v-btn class="save-btn" @click="updateTask">Save</v-btn>
@@ -202,11 +236,13 @@ import Swal from "sweetalert2";
 import history_task_table from "./history_task_table.vue";
 import "./css/update_task.css";
 import { EventBus } from "@/plugins/event-bus";
+import task_pic from "./task_pic.vue";
 
 export default {
   middleware: "auth",
   components: {
     history_task_table,
+    task_pic,
   },
   props: {
     task: {
@@ -216,6 +252,7 @@ export default {
   },
   data() {
     return {
+      dialoghistory: false,
       user: this.$auth.user,
       task_manday: 0,
       task_actual_manday: 0,

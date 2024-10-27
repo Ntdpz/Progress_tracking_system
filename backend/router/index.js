@@ -18,6 +18,8 @@ const history_issuesRouter = require("./history_issues");
 
 const dashboard = require("./Note_Management/dashboard");
 
+const task_images = require("./task_images");
+
 
 router.use("/users", usersRouter);
 router.use("/projects", projectsRouter);
@@ -36,5 +38,7 @@ router.use("/auth", authRouter);
 router.use("/history_issues", history_issuesRouter);
 
 router.use("/dashboard", dashboard);
+router.use("/task_images", task_images);
+
 
 module.exports = router;
