@@ -92,7 +92,7 @@ router.post("/createTasks", async (req, res) => {
       );
     });
 
-    res.send("Task created successfully");
+res.json({ message: "Task created successfully", task_id: id });
   } catch (error) {
     console.error("Error creating task:", error);
     res.status(500).send("Internal Server Error");
