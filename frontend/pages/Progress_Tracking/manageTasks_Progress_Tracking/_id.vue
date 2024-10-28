@@ -32,10 +32,10 @@
                   </v-list-item-title>
                   <v-list-item-subtitle>{{
                     user.user_position
-                    }}</v-list-item-subtitle>
+                  }}</v-list-item-subtitle>
                   <v-list-item-subtitle>{{
                     user.user_department
-                    }}</v-list-item-subtitle>
+                  }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
             </v-list>
@@ -106,8 +106,7 @@
                 <v-menu v-model="planStartMenu" :close-on-content-click="false" :nudge-right="40"
                   transition="scale-transition" offset-y>
                   <template v-slot:activator="{ on }">
-                    <v-text-field :value="
-                        formatDate(editedTask.task_plan_start, 'DD-MM-YYYY')
+                    <v-text-field :value="formatDate(editedTask.task_plan_start, 'DD-MM-YYYY')
                       " label="Plan Start" prepend-icon="mdi-calendar" readonly v-on="on"></v-text-field>
                   </template>
                   <v-date-picker v-model="editedTask.task_plan_start" no-title scrollable></v-date-picker>
@@ -117,8 +116,7 @@
                 <v-menu v-model="planEndMenu" :close-on-content-click="false" :nudge-right="40"
                   transition="scale-transition" offset-y>
                   <template v-slot:activator="{ on }">
-                    <v-text-field :value="
-                        formatDate(editedTask.task_plan_end, 'DD-MM-YYYY')
+                    <v-text-field :value="formatDate(editedTask.task_plan_end, 'DD-MM-YYYY')
                       " label="Plan End" prepend-icon="mdi-calendar" readonly v-on="on"
                       :disabled="!editedTask.task_plan_start"></v-text-field>
                   </template>
@@ -133,8 +131,7 @@
                 <v-menu v-if="editedTask.task_plan_start && editedTask.task_plan_end" v-model="actualStartMenu"
                   :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y>
                   <template v-slot:activator="{ on }">
-                    <v-text-field :value="
-                        formatDate(editedTask.task_actual_start, 'DD-MM-YYYY')
+                    <v-text-field :value="formatDate(editedTask.task_actual_start, 'DD-MM-YYYY')
                       " label="Actual Start" prepend-icon="mdi-calendar" readonly v-on="on"></v-text-field>
                   </template>
                   <v-date-picker v-model="editedTask.task_actual_start" no-title scrollable></v-date-picker>
@@ -144,8 +141,7 @@
                 <v-menu v-if="editedTask.task_plan_start && editedTask.task_plan_end" v-model="actualEndMenu"
                   :close-on-content-click="false" :nudge-right="40" transition="scale-transition" offset-y>
                   <template v-slot:activator="{ on }">
-                    <v-text-field :value="
-                        formatDate(editedTask.task_actual_end, 'DD-MM-YYYY')
+                    <v-text-field :value="formatDate(editedTask.task_actual_end, 'DD-MM-YYYY')
                       " label="Actual End" prepend-icon="mdi-calendar" readonly v-on="on">
                     </v-text-field>
                   </template>
@@ -177,7 +173,7 @@
                     <v-list-item-content>
                       <v-list-item-title>{{
                         item.user_name
-                        }}</v-list-item-title>
+                      }}</v-list-item-title>
                     </v-list-item-content>
                   </template>
                 </v-select>
@@ -190,10 +186,10 @@
               </v-col>
               <v-col cols="auto">
                 <v-btn v-if="
-                    (editedTask.memberDetails &&
-                      editedTask.memberDetails.id === user.id) ||
-                    user.user_role === 'Admin'
-                  " color="error" @click.stop="deleteTask(editedTask)">
+                  (editedTask.memberDetails &&
+                    editedTask.memberDetails.id === user.id) ||
+                  user.user_role === 'Admin'
+                " color="error" @click.stop="deleteTask(editedTask)">
                   Delete
                 </v-btn>
               </v-col>
@@ -275,7 +271,7 @@
                     <v-list-item-content>
                       <v-list-item-title>{{
                         item.user_name
-                        }}</v-list-item-title>
+                      }}</v-list-item-title>
                     </v-list-item-content>
                   </template>
                 </v-select>
@@ -324,6 +320,12 @@
               </v-col>
             </v-row>
             <v-row>
+              <v-col cols="12">
+                <!--Add Task Image -->
+                <task_pic_create ref="imageUploader" :taskId="newTask.task_id"></task_pic_create>
+              </v-col>
+            </v-row>
+            <v-row>
               <!-- Plan Start -->
               <v-col cols="12" md="4">
                 <v-menu v-model="planStartMenu" :close-on-content-click="false" :nudge-right="40"
@@ -367,7 +369,7 @@
                     <v-list-item-content>
                       <v-list-item-title>{{
                         item.user_name
-                        }}</v-list-item-title>
+                      }}</v-list-item-title>
                     </v-list-item-content>
                   </template>
                 </v-select>
@@ -417,6 +419,12 @@
               </v-col>
             </v-row>
             <v-row>
+              <v-col cols="12">
+                <!--Add Task Image -->
+                <task_pic_create ref="imageUploader" :taskId="newTask.task_id"></task_pic_create>
+              </v-col>
+            </v-row>
+            <v-row>
               <!-- Plan Start -->
               <v-col cols="12" md="4">
                 <v-menu v-model="planStartMenu" :close-on-content-click="false" :nudge-right="40"
@@ -460,7 +468,7 @@
                     <v-list-item-content>
                       <v-list-item-title>{{
                         item.user_name
-                        }}</v-list-item-title>
+                      }}</v-list-item-title>
                     </v-list-item-content>
                   </template>
                 </v-select>
@@ -542,9 +550,9 @@
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn v-if="user.user_role === 'Admin'" v-bind="attrs" v-on="on" icon color="primary" @click.stop="
-                    dialogEditTaskForm = true;
-                    editedTask = item;
-                  ">
+                  dialogEditTaskForm = true;
+                editedTask = item;
+                ">
                   <v-icon>mdi-pencil</v-icon>
                 </v-btn>
               </template>
@@ -554,10 +562,8 @@
             <!-- Tooltip with Update text -->
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
-                <v-btn v-bind="attrs" v-on="on" v-if="
-                    (item.memberDetails && item.memberDetails.id === user.id) ||
-                    user.user_role === 'Admin'
-                  " icon color="primary" @click.stop="openSaveHistoryDialog(item)">
+                <v-btn v-if="item.task_member_id === $auth.user.id || user.user_role === 'Admin' " v-bind="attrs" v-on="on" icon color="primary"
+                  @click.stop="openSaveHistoryDialog(item)">
                   <v-icon>mdi-file-chart</v-icon>
                 </v-btn>
               </template>
@@ -745,7 +751,7 @@ export default {
         "Maintenance",
       ],
       statusOptionsDev: ["Develop", "Maintenance"],
-      statusOptionsImp: ["Document", "Testing" , "Develop", "Maintenance"],
+      statusOptionsImp: ["Document", "Testing", "Develop", "Maintenance"],
       showImageDialog: false,
       showHistoryDialog: false,
       screen_plan_start: "",
@@ -1743,6 +1749,8 @@ export default {
         );
         const tasks = response.data;
 
+        console.log(tasks)
+
         // แก้ไขโค้ดเพิ่มเติมในการกำหนดค่า showDetails เข้าไปในข้อมูลของแต่ละ task
         this.tasks = await Promise.all(
           tasks.map(async (task) => {
@@ -1813,7 +1821,7 @@ export default {
         if (response.status === 200) {
 
           console.log(response.data.task_id)
-          
+
           this.$refs.imageUploader.submitImages(response.data.task_id);
 
           Swal.fire({
