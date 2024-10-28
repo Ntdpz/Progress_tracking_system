@@ -68,14 +68,26 @@ router.post("/createTaskImages", (req, res) => {
         });
 });
 
-// GET endpoint to retrieve images by task_id
+// GET endpoint to retrieve images by task_id with user information
 router.get("/searchByTaskid/:task_id", (req, res) => {
     const taskId = req.params.task_id;
 
-    // SQL query to retrieve images based on task_id
+    // SQL query to retrieve images and user information based on task_id
     const query = `
-        SELECT * FROM task_images
-        WHERE task_id = ? 
+        SELECT 
+            task_images.id,
+            task_images.task_id,
+            task_images.image_base64,
+            task_images.image_name,
+            task_images.image_type,
+            CONCAT(users.user_firstname, ' ', users.user_lastname) AS created_by_name,
+            task_images.upload_date
+        FROM 
+            task_images
+        JOIN 
+            users ON task_images.created_by = users.id
+        WHERE 
+            task_images.task_id = ?
     `;
 
     connection.query(query, [taskId], (error, results) => {
@@ -88,7 +100,7 @@ router.get("/searchByTaskid/:task_id", (req, res) => {
             return res.status(404).json({ message: "No images found for this task_id." });
         }
 
-        // Return the retrieved images
+        // Return the retrieved images with user information
         res.status(200).json(results);
     });
 });

@@ -293,8 +293,6 @@ function formatDates(tasks) {
     task_actual_end: moment(task.task_actual_end).format("YYYY-MM-DD"),
   }));
 }
-
-// Route for updating task data
 // Route for updating task data
 router.put("/updateTasks/:id", async (req, res) => {
   try {
@@ -309,6 +307,7 @@ router.put("/updateTasks/:id", async (req, res) => {
       task_actual_start,
       task_actual_end,
       task_member_id,
+      is_archived,
     } = req.body;
 
     const { id } = req.params;
@@ -363,6 +362,11 @@ router.put("/updateTasks/:id", async (req, res) => {
     // Check and add task_member_id if provided
     if (task_member_id !== undefined) {
       updatedTaskFields.task_member_id = task_member_id;
+    }
+
+    // Check and add is_archived if provided
+    if (is_archived !== undefined) {
+      updatedTaskFields.is_archived = is_archived;
     }
 
     if (Object.keys(updatedTaskFields).length === 0) {

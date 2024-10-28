@@ -136,3 +136,26 @@
     padding: 0 !important;
     /* Remove padding from v-card-text */
 }
+
+.update-task-dialog {
+    position: relative;
+    /* Ensure the dialog is the reference point */
+}
+
+.floating-buttons {
+    position: fixed;
+    bottom: 16px;
+    /* Adjust as needed */
+    right: 16px;
+    /* Adjust as needed */
+    display: flex;
+    flex-direction: column;
+    /* Stack buttons vertically */
+    gap: 10px;
+    /* Space between buttons */
+}
+
+.fab-button {
+    margin-bottom: 10px;
+    /* Additional spacing if needed */
+}

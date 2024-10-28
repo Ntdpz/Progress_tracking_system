@@ -1,24 +1,59 @@
 <template>
   <v-card class="fixed-width-card">
-    <div class="content">
-      <v-file-input ref="fileInput" v-model="imageFiles" accept="image/*" multiple label="Upload Images"
-        prepend-icon="mdi-camera" @change="uploadImages" class="file-input" outlined
-        :style="{ width: '95%' }"></v-file-input>
+    <div class="content" @dragover.prevent @drop.prevent="handleDrop">
+      <v-file-input
+        ref="fileInput"
+        v-model="imageFiles"
+        accept="image/*"
+        multiple
+        label="Upload Images"
+        prepend-icon="mdi-camera"
+        @change="uploadImages"
+        class="file-input"
+        outlined
+        placeholder="Drag and drop images here or click to select"
+      ></v-file-input>
     </div>
 
     <!-- แสดงคอลเลกชันรูปภาพ -->
     <v-row v-if="previews.length" class="gallery" justify="center">
-      <v-col v-for="(image, index) in previews" :key="image.id" cols="12" sm="6" md="4" class="d-flex justify-center">
-        <v-img :src="image.src" aspect-ratio="1" class="gallery-image" :alt="'Image ' + (index + 1)" contain
-          @click="openImage(image.src)">
-          <template v-slot:default>
-            <div class="overlay">
-              <v-btn icon @click.stop="removeImage(index, image.id)" class="delete-button">
-                <v-icon>mdi-close-circle</v-icon>
-              </v-btn>
-            </div>
+      <v-col
+        v-for="(image, index) in previews"
+        :key="image.id"
+        cols="12"
+        sm="6"
+        md="4"
+        class="d-flex justify-center"
+      >
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-img
+              v-bind="attrs"
+              v-on="on"
+              :src="image.src"
+              aspect-ratio="1"
+              class="gallery-image"
+              :alt="'Image ' + (index + 1)"
+              contain
+              @click="openImage(image.src)"
+            >
+              <template v-slot:default>
+                <div class="overlay">
+                  <v-btn
+                    icon
+                    @click.stop="removeImage(index, image.id)"
+                    class="delete-button"
+                  >
+                    <v-icon>mdi-close-circle</v-icon>
+                  </v-btn>
+                </div>
+              </template>
+            </v-img>
           </template>
-        </v-img>
+          <span>Add by : {{ image.createdByName }}</span>
+          <br />
+          <span>Upload : {{ image.upload_date }} น.</span>
+        </v-tooltip>
       </v-col>
     </v-row>
   </v-card>
@@ -51,7 +86,7 @@ export default {
     window.removeEventListener("paste", this.handlePaste);
   },
   watch: {
-    taskId: "loadExistingImages", // เมื่อ taskId เปลี่ยนให้เรียก loadExistingImages ใหม่
+    taskId: "loadExistingImages",
   },
   methods: {
     async loadExistingImages() {
@@ -64,37 +99,50 @@ export default {
 
         // ตรวจสอบว่ามีรูปภาพใน response หรือไม่
         if (response.data && response.data.length > 0) {
-          // เรียงภาพจากเก่าที่สุดก่อน โดยอ้างอิงจาก `created_at`
+          // เรียงภาพจากเก่าที่สุดก่อน โดยอ้างอิงจาก `upload_date`
           this.previews = response.data
-            .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
-            .map((image) => ({
-              id: image.id, // เพิ่ม ID ลงใน Object
-              src: `${image.image_base64}`,
-            }));
+            .sort((a, b) => new Date(a.upload_date) - new Date(b.upload_date))
+            .map((image) => {
+              const date = new Date(image.upload_date);
+              const formattedDate = date.toLocaleDateString("en-GB", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+              });
+              const formattedTime = date.toLocaleTimeString("en-GB", {
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+
+              return {
+                id: image.id, // เพิ่ม ID ลงใน Object
+                src: `${image.image_base64}`,
+                createdByName: image.created_by_name, // เก็บชื่อผู้สร้าง
+                upload_date: `${formattedDate} : ${formattedTime}`, // รูปแบบวันที่และเวลาใหม่
+              };
+            });
         }
       } catch (error) {
         console.error("Error loading existing images:", error);
       }
     },
+
     async uploadImages() {
       const newImages = [];
-      const newPreviews = []; // ตัวแปรสำหรับเก็บ previews ของภาพใหม่
 
       for (const file of this.imageFiles) {
         const reader = new FileReader();
         reader.onload = async (event) => {
           const base64 = event.target.result;
-          const image_name = file.name;
+          const image_name = file.name || "Pasted Image";
           const image_type = file.type;
 
           newImages.push({ image_base64: base64, image_name, image_type });
-          newPreviews.push({ id: null, src: base64 }); // เพิ่ม base64 ของภาพที่อัปโหลดใหม่
 
+          // ตรวจสอบเมื่ออ่านไฟล์ทั้งหมดแล้วบันทึกภาพลงฐานข้อมูล
           if (newImages.length === this.imageFiles.length) {
             await this.saveImages(newImages);
-
-            // อัปเดต previews โดยให้รูปจากฐานข้อมูลมาก่อน ตามด้วยภาพใหม่
-            this.previews = this.previews.concat(newPreviews);
+            this.loadExistingImages(); // โหลดภาพจากฐานข้อมูลหลังบันทึกเสร็จ
           }
         };
         reader.readAsDataURL(file);
@@ -115,13 +163,30 @@ export default {
 
     handlePaste(event) {
       const items = event.clipboardData.items;
+      const pastedFiles = [];
+
       for (const item of items) {
         if (item.type.startsWith("image/")) {
           const file = item.getAsFile();
-          this.imageFiles.push(file); // เพิ่มไฟล์ใหม่ลง imageFiles
-          this.previews.push({ id: null, src: URL.createObjectURL(file) }); // สร้าง URL ของภาพที่วางจากคลิปบอร์ดแล้วเพิ่มเข้า previews
+          if (file) {
+            pastedFiles.push(file); // เก็บไฟล์ที่ Paste มาใหม่
+          }
         }
       }
+
+      if (pastedFiles.length > 0) {
+        this.imageFiles = pastedFiles;
+        this.uploadImages();
+      }
+    },
+
+    handleDrop(event) {
+      const files = event.dataTransfer.files;
+      const imageFiles = Array.from(files).filter((file) =>
+        file.type.startsWith("image/")
+      );
+      this.imageFiles = [...this.imageFiles, ...imageFiles];
+      this.uploadImages();
     },
 
     removeImage(index, id) {
