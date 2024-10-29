@@ -1026,10 +1026,19 @@ export default {
       this.fetchTasks(); // Replace with actual method to refresh data
     },
     getUserPic(userId) {
-      // หา user object โดยใช้ userId และคืนค่าภาพผู้ใช้
-      const user = this.userList.find((user) => user.user_id === userId);
-      return user ? user.user_pic : "";
-    },
+  // หา user object โดยใช้ userId
+  const user = this.userList.find((user) => user.user_id === userId);
+  
+  // ถ้าไม่มี user หรือ user_pic เป็นค่าว่าง ให้ใช้รูป default
+  if (!user || !user.user_pic) {
+    return "/images/default_user.jpg";
+  }
+
+  // ถ้า user_pic มีค่า และเริ่มต้นด้วย "data:image/jpeg;base64," ให้คืนค่า user_pic ได้เลย
+  return user.user_pic.startsWith("data:image/jpeg;base64,")
+    ? user.user_pic
+    : `data:image/jpeg;base64,${user.user_pic}`;
+},
     getUserName(userId) {
       // หา user object โดยใช้ userId และคืนค่าชื่อผู้ใช้
       const user = this.userList.find((user) => user.user_id === userId);
@@ -1625,6 +1634,7 @@ export default {
       }
     },
     getBase64Image(base64String) {
+      //ส่วนนี้การการแสดงรูป default ที่อยู่ใน dialog ต่างๆ เช่น user ใน screen , create taask ประมาณนี้
       if (!base64String) {
         return "/images/default_user.jpg";
       }
