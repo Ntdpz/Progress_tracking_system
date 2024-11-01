@@ -67,11 +67,19 @@ export default {
   computed: {
     filteredUsers() {
       if (!this.search) return this.users;
-      return this.users.filter((user) =>
-        `${user.user_firstname} ${user.user_lastname}`
-          .toLowerCase()
-          .includes(this.search.toLowerCase())
-      );
+      return this.users.filter((user) => {
+        const fullName =
+          `${user.user_firstname} ${user.user_lastname}`.toLowerCase();
+        const userPosition = user.user_position.toLowerCase();
+        const userDepartment = user.user_department.toLowerCase();
+        const searchTerm = this.search.toLowerCase();
+
+        return (
+          fullName.includes(searchTerm) ||
+          userPosition.includes(searchTerm) ||
+          userDepartment.includes(searchTerm)
+        );
+      });
     },
   },
   methods: {
