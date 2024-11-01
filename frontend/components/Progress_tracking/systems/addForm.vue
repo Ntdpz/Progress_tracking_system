@@ -46,7 +46,7 @@
                         </v-col>
                         <v-col cols="6">
                             <v-select label="Screen Dev" v-model="selectedDev"
-                                :items="filterUsersByPosition('Developer')" item-text="name" item-value="id" multiple
+                                :items="filterUsersByPosition('Developer' || 'Report developer')" item-text="name" item-value="id" multiple
                                 chips></v-select>
                         </v-col>
                     </v-row>

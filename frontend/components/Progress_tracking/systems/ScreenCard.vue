@@ -2,12 +2,7 @@
   <div class="card-wrapper">
     <!-- click -->
     <v-card class="customer-card" @click="$emit('click')" height="">
-      <v-img
-        class="white--text"
-        :src="getBase64Image(ImageSrc)"
-        height="200px"
-        width="400px"
-      >
+      <v-img class="white--text" :src="getBase64Image(ImageSrc)" height="200px" width="400px">
         <v-row class="align-center justify-space-between">
           <!-- Left Side: ID Chip -->
           <v-col cols="auto">
@@ -19,61 +14,58 @@
           <!-- Right Side: Status and Progress Chips -->
           <v-col cols="auto">
             <!-- Replaced chip with circular progress -->
-            <v-progress-circular
-              class="circular-progress"
-              :value="screenProgress || 0"
-              :color="getColorClass(screenProgress)"
-              size="60"
-              width="4"
-            >
+            <v-progress-circular class="circular-progress" :value="screenProgress || 0"
+              :color="getColorClass(screenProgress)" size="60" width="4">
               <strong> {{ Math.round(screenProgress || 0) }}% </strong>
             </v-progress-circular>
           </v-col>
         </v-row>
       </v-img>
+
       <v-card>
         <v-card-title> {{ screenName }} </v-card-title>
+
+        <!-- Small Circular Progress Indicators Row -->
+        <v-row class="justify-center">
+          <v-col cols="auto" class="text-center">
+            <v-progress-circular :value="screen_progress_status_design || 0" color="purple" size="50" width="3">
+              <small>{{ Math.round(screen_progress_status_design || 0) }}%</small>
+            </v-progress-circular>
+            <div class="mt-1" style="font-size: smaller;">Design</div>
+
+          </v-col>
+
+          <v-col cols="auto" class="text-center">
+            <v-progress-circular :value="screen_progress_status_dev || 0" color="green" size="50" width="3">
+              <small>{{ Math.round(screen_progress_status_dev || 0) }}%</small>
+            </v-progress-circular>
+            <div class="mt-1" style="font-size: smaller;">Dev</div>
+          </v-col>
+
+          <v-col cols="auto" class="text-center">
+            <v-progress-circular :value="screen_progress_status_test || 0" color="orange" size="50" width="3">
+              <small>{{ Math.round(screen_progress_status_test || 0) }}%</small>
+            </v-progress-circular>
+            <div class="mt-1" style="font-size: smaller;">Test</div>
+          </v-col>
+        </v-row>
+
+
         <v-card-subtitle>
+          <strong>Manday:</strong> {{ screenManDay }} <br />
           <strong>Plan:</strong> {{ screenPlanStartDate || "-" }}
           <strong>to</strong> {{ screenPlanEndDate || "-" }} <br />
           <strong>Actual:</strong>
           {{ screenActualStartDate || "-" }} <strong>to</strong>
           {{ screenActualEndDate || "-" }}<br />
-          <strong>Design:</strong>
-          <span :class="getColorClassText(designProgress)">
-            {{ Math.round(designProgress || 0) }}%
-          </span>
-          {{
-            truncateName(getUserNamesByPosition("System Analyst")) ||
-            "No assignee"
-          }}
-          <span>&nbsp;</span>
-          <br />
-          <strong>Dev:</strong>
-          <span :class="getColorClassText(devProgress)">
-            {{ Math.round(devProgress || 0) }}%
-          </span>
-          {{
-            truncateName(getUserNamesByPosition("Developer")) || "No assignee"
-          }}
-          <span>&nbsp;</span>
-          <br />
-          <strong>Implementer:</strong>
-          {{
-            truncateName(getUserNamesByPosition("Implementer")) || "No assignee"
-          }}
+          <!-- user avatar which enable  -->
         </v-card-subtitle>
+
         <v-card-actions>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                v-if="!isRestrictedPosition"
-                color="primary"
-                icon
-                v-bind="attrs"
-                v-on="on"
-                @click.stop="openEditDialog"
-              >
+              <v-btn v-if="!isRestrictedPosition" color="primary" icon v-bind="attrs" v-on="on"
+                @click.stop="openEditDialog">
                 <v-icon>mdi-pencil</v-icon>
               </v-btn>
             </template>
@@ -82,14 +74,8 @@
 
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                v-if="!isRestrictedPosition"
-                color="primary"
-                icon
-                v-bind="attrs"
-                v-on="on"
-                @click.stop="editScreenUserDialog = true"
-              >
+              <v-btn v-if="!isRestrictedPosition" color="primary" icon v-bind="attrs" v-on="on"
+                @click.stop="editScreenUserDialog = true">
                 <v-icon>mdi-account-edit</v-icon>
               </v-btn>
             </template>
@@ -99,6 +85,7 @@
       </v-card>
     </v-card>
 
+
     <!-- Edit Dialog -->
     <v-dialog v-model="editDialog" max-width="800px">
       <v-card>
@@ -107,45 +94,24 @@
           <v-form ref="editForm" v-model="isValid" lazy-validation>
             <v-row>
               <v-col cols="6">
-                <v-text-field
-                  v-model="screenCode"
-                  label="Screen Code"
-                  :disabled="true"
-                  outlined
-                />
+                <v-text-field v-model="screenCode" label="Screen Code" :disabled="true" outlined />
               </v-col>
               <v-col cols="6">
-                <v-text-field
-                  v-model="screenName"
-                  label="Screen Name"
-                  outlined
-                />
+                <v-text-field v-model="screenName" label="Screen Name" outlined />
               </v-col>
             </v-row>
             <v-row>
               <v-col cols="6">
-                <v-select
-                  v-model="screenLevel"
-                  :items="[1, 2, 3, 4, 5]"
-                  :label="`Level ${screenLevel}`"
-                  outlined
-                />
+                <v-select v-model="screenLevel" :items="[1, 2, 3, 4, 5]" :label="`Level ${screenLevel}`" outlined />
               </v-col>
               <v-col cols=" 6">
-                <v-file-input
-                  v-model="imageFile"
-                  label="Upload Image"
-                  outlined
-                  accept=".png, .jpeg"
-                />
+                <v-file-input v-model="imageFile" label="Upload Image" outlined accept=".png, .jpeg" />
               </v-col>
             </v-row>
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-btn @click="confirmDeleteScreen" color="red" outlined
-            >Delete</v-btn
-          >
+          <v-btn @click="confirmDeleteScreen" color="red" outlined>Delete</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="primary" @click="submitEdit">Submit</v-btn>
           <v-btn color="secondary" @click="closeEditDialog">Cancel</v-btn>
@@ -157,22 +123,14 @@
       <v-card>
         <!-- Current User Title -->
         <v-card-title color="black">
-          Manage users in Screen : {{ screenName }}</v-card-title
-        >
+          Manage users in Screen : {{ screenName }}</v-card-title>
         <v-card-text>
           <!-- Current User Table -->
-          <v-data-table
-            :headers="headers"
-            :items="users"
-            class="elevation-1 mt-4 mb-3"
-          >
+          <v-data-table :headers="headers" :items="users" class="elevation-1 mt-4 mb-3">
             <!-- User Avatar in the "Image" column -->
             <template v-slot:item.user_pic="{ item }">
               <v-avatar>
-                <img
-                  :src="getBase64UserImage(item.user_pic)"
-                  alt="User Avatar"
-                />
+                <img :src="getBase64UserImage(item.user_pic)" alt="User Avatar" />
               </v-avatar>
             </template>
 
@@ -183,18 +141,16 @@
 
             <!-- User Position in the "User Position" column -->
             <template v-slot:item.user_position="{ item }">
-              <div
-                :style="{
-                  width: '120px',
-                  backgroundColor: getColor(item.user_position),
-                  color: 'white',
-                  paddingTop: '5px',
-                  paddingBottom: '5px',
-                  borderRadius: '20px',
-                  textAlign: 'center',
-                  display: 'inline-block',
-                }"
-              >
+              <div :style="{
+                width: '120px',
+                backgroundColor: getColor(item.user_position),
+                color: 'white',
+                paddingTop: '5px',
+                paddingBottom: '5px',
+                borderRadius: '20px',
+                textAlign: 'center',
+                display: 'inline-block',
+              }">
                 {{ item.user_position }}
               </div>
             </template>
@@ -202,11 +158,7 @@
             <!-- Action buttons in the "Action" column -->
             <template v-slot:item.action="{ item }">
               <!-- The delete button is always present, but the icon is conditionally displayed -->
-              <v-btn
-                icon
-                v-if="!isUserAssignedToTask(item)"
-                @click="deleteUser(item)"
-              >
+              <v-btn icon v-if="!isUserAssignedToTask(item)" @click="deleteUser(item)">
                 <v-icon color="red">mdi-delete</v-icon>
               </v-btn>
             </template>
@@ -215,12 +167,8 @@
         <!-- action -->
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" @click="openAssignUserDialog"
-            >Assign User</v-btn
-          >
-          <v-btn color="secondary" @click="editScreenUserDialog = false"
-            >Close</v-btn
-          >
+          <v-btn color="primary" @click="openAssignUserDialog">Assign User</v-btn>
+          <v-btn color="secondary" @click="editScreenUserDialog = false">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -230,18 +178,10 @@
         <v-card-title color="black">Assign User</v-card-title>
         <v-card-text>
           <!-- Select System Analyst -->
-          <v-select
-            v-model="selectedSystemAnalysts"
-            :items="
-              usersNotInScreen.filter(
-                (user) => user.user_position === 'System Analyst'
-              )
-            "
-            label="Select System Analyst"
-            item-text="user_firstname"
-            item-value="id"
-            multiple
-          >
+          <v-select v-model="selectedSystemAnalysts" :items="usersNotInScreen.filter(
+            (user) => user.user_position === 'System Analyst'
+          )
+            " label="Select System Analyst" item-text="user_firstname" item-value="id" multiple>
             <!-- Select All Option -->
             <template v-slot:prepend-item>
               <v-list-item @click="selectAllSystemAnalystAF">
@@ -251,18 +191,10 @@
 
             <!-- Selected User Chips -->
             <template v-slot:selection="{ item, index }">
-              <v-chip
-                v-if="item"
-                :key="index"
-                class="d-flex align-center"
-                close
-                @click:close="removeSystemAnalyst(item)"
-              >
+              <v-chip v-if="item" :key="index" class="d-flex align-center" close
+                @click:close="removeSystemAnalyst(item)">
                 <v-avatar left>
-                  <img
-                    :src="getBase64UserImage(item.user_pic)"
-                    alt="User Avatar"
-                  />
+                  <img :src="getBase64UserImage(item.user_pic)" alt="User Avatar" />
                 </v-avatar>
                 {{ item.user_firstname }}
               </v-chip>
@@ -273,34 +205,20 @@
               <v-list-item>
                 <v-checkbox v-model="selectedSystemAnalysts" :value="item.id" />
                 <v-list-item-avatar>
-                  <img
-                    :src="getBase64UserImage(item.user_pic)"
-                    alt="User Avatar"
-                  />
+                  <img :src="getBase64UserImage(item.user_pic)" alt="User Avatar" />
                 </v-list-item-avatar>
                 <v-list-item-content>
-                  <v-list-item-title
-                    >{{ item.user_firstname }}
-                    {{ item.user_lastname }}</v-list-item-title
-                  >
+                  <v-list-item-title>{{ item.user_firstname }}
+                    {{ item.user_lastname }}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </template>
           </v-select>
 
           <!-- Select Developer -->
-          <v-select
-            v-model="selectedDevelopers"
-            :items="
-              usersNotInScreen.filter(
-                (user) => user.user_position === 'Developer'
-              )
-            "
-            label="Select Developer"
-            item-text="user_firstname"
-            item-value="id"
-            multiple
-          >
+          <v-select v-model="selectedDevelopers" :items="usersNotInScreen.filter(
+            (user) => user.user_position === 'Developer' || user.user_position === 'Report developer'
+          )" label="Select Developer" item-text="user_firstname" item-value="id" multiple>
             <!-- Select All Option -->
             <template v-slot:prepend-item>
               <v-list-item @click="selectAllDevelopersAF">
@@ -310,18 +228,9 @@
 
             <!-- Selected User Chips -->
             <template v-slot:selection="{ item, index }">
-              <v-chip
-                v-if="item"
-                :key="index"
-                class="d-flex align-center"
-                close
-                @click:close="removeDeveloper(item)"
-              >
+              <v-chip v-if="item" :key="index" class="d-flex align-center" close @click:close="removeDeveloper(item)">
                 <v-avatar left>
-                  <img
-                    :src="getBase64UserImage(item.user_pic)"
-                    alt="User Avatar"
-                  />
+                  <img :src="getBase64UserImage(item.user_pic)" alt="User Avatar" />
                 </v-avatar>
                 {{ item.user_firstname }}
               </v-chip>
@@ -333,34 +242,21 @@
                 <v-checkbox v-model="selectedDevelopers" :value="item.id" />
 
                 <v-list-item-avatar>
-                  <img
-                    :src="getBase64UserImage(item.user_pic)"
-                    alt="User Avatar"
-                  />
+                  <img :src="getBase64UserImage(item.user_pic)" alt="User Avatar" />
                 </v-list-item-avatar>
                 <v-list-item-content>
-                  <v-list-item-title
-                    >{{ item.user_firstname }}
-                    {{ item.user_lastname }}</v-list-item-title
-                  >
+                  <v-list-item-title>{{ item.user_firstname }}
+                    {{ item.user_lastname }}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </template>
           </v-select>
 
           <!-- Select Implementer -->
-          <v-select
-            v-model="selectedImplementers"
-            :items="
-              usersNotInScreen.filter(
-                (user) => user.user_position === 'Implementer'
-              )
-            "
-            label="Select Implementer"
-            item-text="user_firstname"
-            item-value="id"
-            multiple
-          >
+          <v-select v-model="selectedImplementers" :items="usersNotInScreen.filter(
+            (user) => user.user_position === 'Implementer'
+          )
+            " label="Select Implementer" item-text="user_firstname" item-value="id" multiple>
             <!-- Select All Option -->
             <template v-slot:prepend-item>
               <v-list-item @click="selectAllImplementersAF">
@@ -370,18 +266,9 @@
 
             <!-- Selected User Chips -->
             <template v-slot:selection="{ item, index }">
-              <v-chip
-                v-if="item"
-                :key="index"
-                class="d-flex align-center"
-                close
-                @click:close="removeImplementer(item)"
-              >
+              <v-chip v-if="item" :key="index" class="d-flex align-center" close @click:close="removeImplementer(item)">
                 <v-avatar left>
-                  <img
-                    :src="getBase64UserImage(item.user_pic)"
-                    alt="User Avatar"
-                  />
+                  <img :src="getBase64UserImage(item.user_pic)" alt="User Avatar" />
                 </v-avatar>
                 {{ item.user_firstname }}
               </v-chip>
@@ -392,16 +279,11 @@
               <v-list-item>
                 <v-checkbox v-model="selectedImplementers" :value="item.id" />
                 <v-list-item-avatar>
-                  <img
-                    :src="getBase64UserImage(item.user_pic)"
-                    alt="User Avatar"
-                  />
+                  <img :src="getBase64UserImage(item.user_pic)" alt="User Avatar" />
                 </v-list-item-avatar>
                 <v-list-item-content>
-                  <v-list-item-title
-                    >{{ item.user_firstname }}
-                    {{ item.user_lastname }}</v-list-item-title
-                  >
+                  <v-list-item-title>{{ item.user_firstname }}
+                    {{ item.user_lastname }}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </template>
@@ -410,9 +292,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="primary" @click="assignUser">Assign</v-btn>
-          <v-btn color="secondary" @click="assignUserDialog = false"
-            >Close</v-btn
-          >
+          <v-btn color="secondary" @click="assignUserDialog = false">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -820,7 +700,7 @@ export default {
     // Select all developers
     selectAllDevelopersAF() {
       this.selectedDevelopers = this.usersNotInScreen
-        .filter((user) => user.user_position === "Developer")
+        .filter((user) => user.user_position === "Developer" || user.user_position === "Report developer")
         .map((user) => user.id);
     },
     removeDeveloper(item) {
@@ -828,6 +708,7 @@ export default {
         (id) => id !== item.id
       );
     },
+
     // Select all implementers
     selectAllImplementersAF() {
       this.selectedImplementers = this.usersNotInScreen
