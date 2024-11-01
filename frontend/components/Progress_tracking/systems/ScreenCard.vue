@@ -682,6 +682,8 @@ export default {
           return "#374AAB";
         case "Tester":
           return "#359C73";
+        case "Report developer":
+          return "#a5c3f6";
         default:
           return "grey";
       }
