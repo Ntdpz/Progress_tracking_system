@@ -26,4 +26,31 @@ router.get("/GetTasksBytask_member_id/:task_member_id", (req, res) => {
     });
 });
 
+// API เพื่อดึงข้อมูลชื่อผู้ใช้และนับจำนวน tasks ของทุก task_member_id
+router.get("/GetAll", (req, res) => {
+    // สร้าง query สำหรับดึงข้อมูล user และนับจำนวน tasks
+    const query = `
+        SELECT u.id AS user_id, 
+               u.user_firstname, 
+               u.user_lastname, 
+               u.user_position,
+               u.user_department,
+               u.user_pic,
+               COUNT(t.id) AS task_count
+        FROM users u
+        LEFT JOIN tasks t ON u.id = t.task_member_id
+        GROUP BY u.id`;
+
+    // ดึงข้อมูลจากฐานข้อมูล
+    connection.query(query, (error, results) => {
+        if (error) {
+            console.error("Error fetching task members:", error);
+            return res.status(500).json({ message: "Error fetching task members", error });
+        }
+
+        res.status(200).json({ task_members: results });
+    });
+});
+
+
 module.exports = router;

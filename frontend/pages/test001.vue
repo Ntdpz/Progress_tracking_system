@@ -43,7 +43,9 @@
               <v-card-subtitle>
                 {{ user.user_position }} - {{ user.user_department }}
               </v-card-subtitle>
-              <v-card-text>User ID: {{ user.id }}</v-card-text>
+              <!-- <v-card-text>User ID: {{ user.user_id }}</v-card-text> -->
+              <v-card-text>Task Count: {{ user.task_count }}</v-card-text>
+              <!-- แสดงจำนวน tasks -->
             </v-col>
           </v-row>
         </v-card>
@@ -89,9 +91,9 @@ export default {
     async getAllUsers() {
       try {
         const response = await this.$axios.get(
-          "http://localhost:7777/users/getAll"
+          "http://localhost:7777/user_tasks/GetAll" // เปลี่ยน URL ที่นี่
         );
-        this.users = response.data;
+        this.users = response.data.task_members; // ใช้ผลลัพธ์จาก API
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -125,7 +127,6 @@ export default {
   overflow: hidden; /* ซ่อนพื้นที่ที่เกินกรอบ */
   display: flex; /* แสดงผล flex */
   height: 100%; /* ทำให้เต็มความสูง */
-  /* background-color:rgb(9, 255, 0); */
 }
 
 .my-card-Details {
@@ -138,7 +139,5 @@ export default {
   justify-content: center; /* จัดแนวกลางในแกน X */
   align-items: center; /* จัดแนวกลางในแกน Y */
   height: 100%; /* ทำให้เต็มความสูง */
-  /* background-color:rgb(255, 0, 140); */
 }
 </style>
-
