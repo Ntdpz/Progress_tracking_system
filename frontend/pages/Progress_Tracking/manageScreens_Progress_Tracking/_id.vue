@@ -75,7 +75,9 @@
               :screenProgress="Number(screen.screen_progress)" :screenPlanStartDate="screen.screen_plan_start"
               :screenPlanEndDate="screen.screen_plan_end" :screenActualStartDate="screen.screen_actual_start"
               :screenActualEndDate="screen.screen_actual_end" :ImageSrc="screen.screen_pic"
-              :design-progress="screen.screen_progress_status_design" :dev-progress="screen.screen_progress_status_dev"
+              :design-progress="Number(screen.screen_progress_status_design)" :dev-progress="Number(screen.screen_progress_status_dev)"
+              :test-progress="Number(screen.screen_progress_status_test)"
+              
               :isRestrictedPosition="isRestrictedPosition" @click="navigateToScreen(screen.id)" @update="handleUpdate"
               @delete="handleDeleteScreen" @submit-edit="handleSubmitEdit" />
           </v-col>

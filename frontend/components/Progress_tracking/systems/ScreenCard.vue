@@ -26,40 +26,40 @@
         <v-card-title> {{ screenName }} </v-card-title>
 
         <!-- Small Circular Progress Indicators Row -->
+        <!-- Small Circular Progress Indicators Row -->
         <v-row class="justify-center">
           <v-col cols="auto" class="text-center">
-            <v-progress-circular :value="screen_progress_status_design || 0" color="purple" size="50" width="3">
-              <small>{{ Math.round(screen_progress_status_design || 0) }}%</small>
+            <v-progress-circular :value="designProgress || 0" color="purple" size="50" width="3">
+              <small>{{ Math.round(designProgress || 0) }}%</small>
             </v-progress-circular>
             <div class="mt-1" style="font-size: smaller;">Design</div>
-
           </v-col>
 
           <v-col cols="auto" class="text-center">
-            <v-progress-circular :value="screen_progress_status_dev || 0" color="green" size="50" width="3">
-              <small>{{ Math.round(screen_progress_status_dev || 0) }}%</small>
+            <v-progress-circular :value="devProgress || 0" color="blue" size="50" width="3">
+              <small>{{ Math.round(devProgress || 0) }}%</small>
             </v-progress-circular>
             <div class="mt-1" style="font-size: smaller;">Dev</div>
           </v-col>
 
           <v-col cols="auto" class="text-center">
-            <v-progress-circular :value="screen_progress_status_test || 0" color="orange" size="50" width="3">
-              <small>{{ Math.round(screen_progress_status_test || 0) }}%</small>
+            <v-progress-circular :value="testProgress || 0" color="orange" size="50" width="3">
+              <small>{{ Math.round(testProgress || 0) }}%</small>
             </v-progress-circular>
             <div class="mt-1" style="font-size: smaller;">Test</div>
           </v-col>
         </v-row>
 
-
         <v-card-subtitle>
-          <strong>Manday:</strong> {{ screenManDay }} <br />
+          <strong>Plan Manday:</strong> {{ planManDay }} <br />
+          <strong>Actual Manday:</strong> {{ actualManDay }} <br />
           <strong>Plan:</strong> {{ screenPlanStartDate || "-" }}
           <strong>to</strong> {{ screenPlanEndDate || "-" }} <br />
           <strong>Actual:</strong>
           {{ screenActualStartDate || "-" }} <strong>to</strong>
           {{ screenActualEndDate || "-" }}<br />
-          <!-- user avatar which enable  -->
         </v-card-subtitle>
+
 
         <v-card-actions>
           <v-tooltip bottom>
@@ -364,11 +364,15 @@ export default {
       required: false,
     },
     designProgress: {
-      type: String,
+      type: Number,
       required: false,
     },
     devProgress: {
-      type: String,
+      type: Number,
+      required: false,
+    },
+    testProgress: {
+      type: Number,
       required: false,
     },
     isRestrictedPosition: {
@@ -553,7 +557,14 @@ export default {
         });
       }
     },
-
+    calculateMandays(startDate, endDate) {
+      if (!startDate || !endDate) return '-'; // Return "-" if dates are not available
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      const diffInTime = end - start;
+      const mandays = Math.ceil(diffInTime / (1000 * 60 * 60 * 24)) + 1; // Adding 1 to include the start day
+      return mandays > 0 ? mandays : '-'; // Check for positive days only
+    },
     // Dialog handling methods
     openAssignUserDialog() {
       this.assignUserDialog = true;
@@ -729,6 +740,12 @@ export default {
   computed: {
     screenLevelLabel() {
       return `Level ${this.screenLevel || "Not Set"}`;
+    },
+    planManDay() {
+      return this.calculateMandays(this.screenPlanStartDate, this.screenPlanEndDate);
+    },
+    actualManDay() {
+      return this.calculateMandays(this.screenActualStartDate, this.screenActualEndDate);
     },
   },
   created() {

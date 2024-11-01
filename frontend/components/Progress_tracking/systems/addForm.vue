@@ -45,9 +45,10 @@
                                 multiple chips></v-select>
                         </v-col>
                         <v-col cols="6">
+                            <!-- Select Developer & Report developer-->
                             <v-select label="Screen Dev" v-model="selectedDev"
-                                :items="filterUsersByPosition('Developer' || 'Report developer')" item-text="name" item-value="id" multiple
-                                chips></v-select>
+                                :items="filterUsersByPosition(['Developer', 'Report developer'])" item-text="name"
+                                item-value="id" multiple chips></v-select>
                         </v-col>
                     </v-row>
 
@@ -109,9 +110,10 @@ export default {
         }
     },
     methods: {
-        filterUsersByPosition(position) {
+        filterUsersByPosition(positions) {
+            // Ensure 'positions' is an array and filter users who match any position
             return this.users
-                .filter(user => user.user_position === position)
+                .filter(user => positions.includes(user.user_position))
                 .map(user => ({
                     id: user.id,
                     name: `${user.user_firstname} ${user.user_lastname}` // Display name
