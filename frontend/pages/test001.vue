@@ -19,21 +19,24 @@
         sm="6"
         md="4"
       >
-        <v-card class="my-card mt-4">
+        <v-card class="user-image-padding">
           <v-row>
             <!-- User Image -->
-            <v-col cols="4" class="d-flex justify-center align-center">
-              <v-img
-                :src="getBase64Image(user.user_pic)"
-                alt="User Image"
-                height="100px"
-                width="100px"
-                class="rounded-circle"
-              ></v-img>
+            <v-col cols="4" class="user-image-padding">
+              <div class="user-image-container">
+                <!-- ใช้คลาสใหม่ -->
+                <v-img
+                  :src="getBase64Image(user.user_pic)"
+                  alt="User Image"
+                  height="100px"
+                  width="100px"
+                  class="rounded-circle"
+                ></v-img>
+              </div>
             </v-col>
 
             <!-- User Details -->
-            <v-col cols="8">
+            <v-col cols="8" class="my-card-Details">
               <v-card-title>
                 {{ user.user_firstname }} {{ user.user_lastname }}
               </v-card-title>
@@ -115,4 +118,27 @@ export default {
 .rounded-circle {
   border-radius: 50%;
 }
+
+/* คลาสใหม่สำหรับ padding */
+.user-image-padding {
+  padding: 16px; /* ปรับค่าตามต้องการ */
+  overflow: hidden; /* ซ่อนพื้นที่ที่เกินกรอบ */
+  display: flex; /* แสดงผล flex */
+  height: 100%; /* ทำให้เต็มความสูง */
+  /* background-color:rgb(9, 255, 0); */
+}
+
+.my-card-Details {
+  /* background-color:rgb(255, 0, 0); */
+}
+
+/* เพิ่มคลาสสำหรับการจัดกลาง */
+.user-image-container {
+  display: flex;
+  justify-content: center; /* จัดแนวกลางในแกน X */
+  align-items: center; /* จัดแนวกลางในแกน Y */
+  height: 100%; /* ทำให้เต็มความสูง */
+  /* background-color:rgb(255, 0, 140); */
+}
 </style>
+
