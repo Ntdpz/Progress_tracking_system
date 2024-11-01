@@ -44,7 +44,50 @@
                 {{ user.user_position }} - {{ user.user_department }}
               </v-card-subtitle>
               <!-- <v-card-text>User ID: {{ user.user_id }}</v-card-text> -->
-              <v-card-text>Task Count: {{ user.task_count }}</v-card-text>
+              <v-card-text>
+                <div>
+                  <v-chip
+                    class="ma-2"
+                    color="blue lighten-3"
+                    text-color="blue darken-2"
+                    outlined
+                  >
+                    <v-icon left small>mdi-clipboard-text-outline</v-icon>
+                    Task Count: {{ user.task_count }}
+                  </v-chip>
+
+                  <v-chip
+                    class="ma-2"
+                    color="amber lighten-3"
+                    text-color="amber darken-2"
+                    outlined
+                  >
+                    <v-icon left small>mdi-progress-clock</v-icon>
+                    In Progress: {{ user.task_count_inprogress }}
+                  </v-chip>
+
+                  <v-chip
+                    class="ma-2"
+                    color="red lighten-3"
+                    text-color="red darken-2"
+                    outlined
+                  >
+                    <v-icon left small>mdi-alert-circle-outline</v-icon>
+                    Late: {{ user.task_count_late }}
+                  </v-chip>
+
+                  <v-chip
+                    class="ma-2"
+                    color="green lighten-3"
+                    text-color="green darken-2"
+                    outlined
+                  >
+                    <v-icon left small>mdi-check-circle-outline</v-icon>
+                    Complete: {{ user.task_count_complete }}
+                  </v-chip>
+                </div>
+              </v-card-text>
+
               <!-- แสดงจำนวน tasks -->
             </v-col>
           </v-row>
