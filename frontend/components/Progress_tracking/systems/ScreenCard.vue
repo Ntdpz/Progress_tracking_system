@@ -689,8 +689,8 @@ export default {
     // Get user names based on position (System Analyst, Developer, etc.)
     getUserNamesByPosition(position) {
       const usersByPosition = this.users
-        .filter(
-          (user) => user.user_position.toLowerCase() === position.toLowerCase()
+        .filter((user) =>
+          user.user_position.toLowerCase().includes(position.toLowerCase())
         )
         .map((user) => `${user.user_firstname}`)
         .join(", ");
