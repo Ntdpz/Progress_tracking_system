@@ -18,8 +18,10 @@
         cols="12"
         sm="6"
         md="4"
+        lg="3"
       >
-        <v-card class="user-image-padding">
+        <v-card class="user-image-padding" max-width="400">
+          <!-- Set max-width for card -->
           <v-row>
             <!-- User Image -->
             <v-col cols="4" class="user-image-padding">
@@ -95,7 +97,7 @@
       </v-col>
     </v-row>
 
-    <!-- เรียกใช้ Dialog Component -->
+    <!-- Dialog Components -->
     <task_count :dialog.sync="showDialogtask_count" :user="selectedUser" />
     <task_count_inprogress
       :dialog.sync="showDialogtask_count_inprogress"
@@ -109,8 +111,6 @@
       :dialog.sync="showDialogtask_count_complete"
       :user="selectedUser"
     />
-
-    <!-- ส่ง selectedUser -->
   </div>
 </template>
 
@@ -119,6 +119,7 @@ import task_count from "@/components/Progress_tracking/user_tasks/task_count.vue
 import task_count_inprogress from "@/components/Progress_tracking/user_tasks/task_count_inprogress.vue";
 import task_count_late from "@/components/Progress_tracking/user_tasks/task_count_late.vue";
 import task_count_complete from "@/components/Progress_tracking/user_tasks/task_count_complete.vue";
+
 export default {
   middleware: "auth",
   layout: "admin",
@@ -138,8 +139,7 @@ export default {
       showDialogtask_count_inprogress: false,
       showDialogtask_count_late: false,
       showDialogtask_count_complete: false,
-
-      selectedUser: {}, // เปลี่ยนจาก null เป็น object ว่าง
+      selectedUser: {},
     };
   },
   created() {
@@ -165,27 +165,27 @@ export default {
   },
   methods: {
     openDialogtask_count(user) {
-      this.selectedUser = user; // เก็บข้อมูลผู้ใช้ที่ถูกเลือก
-      this.showDialogtask_count = true; // เปิด Dialog
+      this.selectedUser = user;
+      this.showDialogtask_count = true;
     },
 
     openDialogtask_count_inprogress(user) {
-      this.selectedUser = user; // เก็บข้อมูลผู้ใช้ที่ถูกเลือก
-      this.showDialogtask_count_inprogress = true; // เปิด Dialog
+      this.selectedUser = user;
+      this.showDialogtask_count_inprogress = true;
     },
 
     openDialogtask_count_late(user) {
-      this.selectedUser = user; // เก็บข้อมูลผู้ใช้ที่ถูกเลือกf
-      this.showDialogtask_count_late = true; // เปิด Dialog
+      this.selectedUser = user;
+      this.showDialogtask_count_late = true;
     },
     openDialogtask_count_complete(user) {
-      this.selectedUser = user; // เก็บข้อมูลผู้ใช้ที่ถูกเลือก
-      this.showDialogtask_count_complete = true; // เปิด Dialog
+      this.selectedUser = user;
+      this.showDialogtask_count_complete = true;
     },
     async getAllUsers() {
       try {
         const response = await this.$axios.get(
-          "http://localhost:7777/user_tasks/GetAll" // เปลี่ยน URL ที่นี่
+          "http://localhost:7777/user_tasks/GetAll"
         );
         this.users = response.data.task_members;
       } catch (error) {
@@ -205,6 +205,7 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .my-card {
   margin-bottom: 16px;
@@ -214,23 +215,24 @@ export default {
   border-radius: 50%;
 }
 
-/* คลาสใหม่สำหรับ padding */
+/* Padding for user images */
 .user-image-padding {
-  padding: 16px; /* ปรับค่าตามต้องการ */
-  overflow: hidden; /* ซ่อนพื้นที่ที่เกินกรอบ */
-  display: flex; /* แสดงผล flex */
-  height: 100%; /* ทำให้เต็มความสูง */
+  padding: 16px;
+  overflow: hidden;
+  display: flex;
+  height: 100%;
 }
 
+/* Custom styles for card details */
 .my-card-Details {
-  /* background-color:rgb(255, 0, 0); */
+  /* Custom styles can go here */
 }
 
-/* เพิ่มคลาสสำหรับการจัดกลาง */
+/* Centering the user image container */
 .user-image-container {
   display: flex;
-  justify-content: center; /* จัดแนวกลางในแกน X */
-  align-items: center; /* จัดแนวกลางในแกน Y */
-  height: 100%; /* ทำให้เต็มความสูง */
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 </style>
