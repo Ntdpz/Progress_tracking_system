@@ -24,7 +24,6 @@
             <!-- User Image -->
             <v-col cols="4" class="user-image-padding">
               <div class="user-image-container">
-                <!-- ใช้คลาสใหม่ -->
                 <v-img
                   :src="getBase64Image(user.user_pic)"
                   alt="User Image"
@@ -43,7 +42,6 @@
               <v-card-subtitle>
                 {{ user.user_position }} - {{ user.user_department }}
               </v-card-subtitle>
-              <!-- <v-card-text>User ID: {{ user.user_id }}</v-card-text> -->
               <v-card-text>
                 <div>
                   <v-chip
@@ -51,6 +49,7 @@
                     color="blue lighten-3"
                     text-color="blue darken-2"
                     outlined
+                    @click="openDialog(user)"
                   >
                     <v-icon left small>mdi-clipboard-text-outline</v-icon>
                     Task Count: {{ user.task_count }}
@@ -87,26 +86,34 @@
                   </v-chip>
                 </div>
               </v-card-text>
-
-              <!-- แสดงจำนวน tasks -->
             </v-col>
           </v-row>
         </v-card>
       </v-col>
     </v-row>
+
+    <!-- เรียกใช้ Dialog Component -->
+    <TaskDialog :dialog.sync="showDialog" :user="selectedUser" />
+    <!-- ส่ง selectedUser -->
   </div>
 </template>
 
 <script>
+import TaskDialog from "@/components/Progress_tracking/Usertasks/task_count.vue";
 export default {
   middleware: "auth",
   layout: "admin",
+  components: {
+    TaskDialog,
+  },
   data() {
     return {
       user: this.$auth.user,
       loggedIn: this.$auth.loggedIn,
-      users: [], // Stores all users data from the API
-      search: "", // For the search input
+      users: [],
+      search: "",
+      showDialog: false,
+      selectedUser: {}, // เปลี่ยนจาก null เป็น object ว่าง
     };
   },
   created() {
@@ -131,12 +138,16 @@ export default {
     },
   },
   methods: {
+    openDialog(user) {
+      this.selectedUser = user; // เก็บข้อมูลผู้ใช้ที่ถูกเลือก
+      this.showDialog = true; // เปิด Dialog
+    },
     async getAllUsers() {
       try {
         const response = await this.$axios.get(
           "http://localhost:7777/user_tasks/GetAll" // เปลี่ยน URL ที่นี่
         );
-        this.users = response.data.task_members; // ใช้ผลลัพธ์จาก API
+        this.users = response.data.task_members;
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -154,7 +165,6 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 .my-card {
   margin-bottom: 16px;
