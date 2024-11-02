@@ -49,7 +49,7 @@
                     color="blue lighten-3"
                     text-color="blue darken-2"
                     outlined
-                    @click="openDialog(user)"
+                    @click="openDialogtask_count(user)"
                   >
                     <v-icon left small>mdi-clipboard-text-outline</v-icon>
                     Task Count: {{ user.task_count }}
@@ -60,6 +60,7 @@
                     color="amber lighten-3"
                     text-color="amber darken-2"
                     outlined
+                    @click="openDialogtask_count_inprogress(user)"
                   >
                     <v-icon left small>mdi-progress-clock</v-icon>
                     In Progress: {{ user.task_count_inprogress }}
@@ -70,6 +71,7 @@
                     color="red lighten-3"
                     text-color="red darken-2"
                     outlined
+                    @click="openDialogtask_count_late(user)"
                   >
                     <v-icon left small>mdi-alert-circle-outline</v-icon>
                     Late: {{ user.task_count_late }}
@@ -80,6 +82,7 @@
                     color="green lighten-3"
                     text-color="green darken-2"
                     outlined
+                    @click="openDialogtask_count_complete(user)"
                   >
                     <v-icon left small>mdi-check-circle-outline</v-icon>
                     Complete: {{ user.task_count_complete }}
@@ -93,18 +96,37 @@
     </v-row>
 
     <!-- เรียกใช้ Dialog Component -->
-    <TaskDialog :dialog.sync="showDialog" :user="selectedUser" />
+    <task_count :dialog.sync="showDialogtask_count" :user="selectedUser" />
+    <task_count_inprogress
+      :dialog.sync="showDialogtask_count_inprogress"
+      :user="selectedUser"
+    />
+    <task_count_late
+      :dialog.sync="showDialogtask_count_late"
+      :user="selectedUser"
+    />
+    <task_count_complete
+      :dialog.sync="showDialogtask_count_complete"
+      :user="selectedUser"
+    />
+
     <!-- ส่ง selectedUser -->
   </div>
 </template>
 
 <script>
-import TaskDialog from "@/components/Progress_tracking/Usertasks/task_count.vue";
+import task_count from "@/components/Progress_tracking/user_tasks/task_count.vue";
+import task_count_inprogress from "@/components/Progress_tracking/user_tasks/task_count_inprogress.vue";
+import task_count_late from "@/components/Progress_tracking/user_tasks/task_count_late.vue";
+import task_count_complete from "@/components/Progress_tracking/user_tasks/task_count_complete.vue";
 export default {
   middleware: "auth",
   layout: "admin",
   components: {
-    TaskDialog,
+    task_count,
+    task_count_inprogress,
+    task_count_complete,
+    task_count_late,
   },
   data() {
     return {
@@ -112,7 +134,11 @@ export default {
       loggedIn: this.$auth.loggedIn,
       users: [],
       search: "",
-      showDialog: false,
+      showDialogtask_count: false,
+      showDialogtask_count_inprogress: false,
+      showDialogtask_count_late: false,
+      showDialogtask_count_complete: false,
+
       selectedUser: {}, // เปลี่ยนจาก null เป็น object ว่าง
     };
   },
@@ -138,9 +164,23 @@ export default {
     },
   },
   methods: {
-    openDialog(user) {
+    openDialogtask_count(user) {
       this.selectedUser = user; // เก็บข้อมูลผู้ใช้ที่ถูกเลือก
-      this.showDialog = true; // เปิด Dialog
+      this.showDialogtask_count = true; // เปิด Dialog
+    },
+
+    openDialogtask_count_inprogress(user) {
+      this.selectedUser = user; // เก็บข้อมูลผู้ใช้ที่ถูกเลือก
+      this.showDialogtask_count_inprogress = true; // เปิด Dialog
+    },
+
+    openDialogtask_count_late(user) {
+      this.selectedUser = user; // เก็บข้อมูลผู้ใช้ที่ถูกเลือกf
+      this.showDialogtask_count_late = true; // เปิด Dialog
+    },
+    openDialogtask_count_complete(user) {
+      this.selectedUser = user; // เก็บข้อมูลผู้ใช้ที่ถูกเลือก
+      this.showDialogtask_count_complete = true; // เปิด Dialog
     },
     async getAllUsers() {
       try {

@@ -1,17 +1,17 @@
 <template>
   <v-dialog v-model="dialog" max-width="500">
     <v-card>
-      <v-card-title class="headline">Task Details for {{ user.user_firstname }} {{ user.user_lastname }}</v-card-title>
+      <h1>task_count_complete</h1>
+      <v-card-title class="headline"
+        >Task Details for {{ user.user_firstname }}
+        {{ user.user_lastname }}</v-card-title
+      >
       <v-card-text>
         <!-- แสดงรายละเอียดของ user ที่ถูกเลือก -->
         <div>
-           <p><strong>user_id:</strong> {{ user.user_id }}</p>
+          <p><strong>user_id:</strong> {{ user.user_id }}</p>
           <p><strong>Position:</strong> {{ user.user_position }}</p>
           <p><strong>Department:</strong> {{ user.user_department }}</p>
-          <p><strong>Task Count:</strong> {{ user.task_count }}</p>
-          <p><strong>In Progress:</strong> {{ user.task_count_inprogress }}</p>
-          <p><strong>Late:</strong> {{ user.task_count_late }}</p>
-          <p><strong>Complete:</strong> {{ user.task_count_complete }}</p>
         </div>
       </v-card-text>
       <v-card-actions>
@@ -30,8 +30,8 @@ export default {
     },
     user: {
       type: Object,
-      required: true // ทำให้ต้องส่ง prop user เมื่อเรียกใช้งาน
-    }
+      required: true, // ทำให้ต้องส่ง prop user เมื่อเรียกใช้งาน
+    },
   },
   methods: {
     closeDialog() {
