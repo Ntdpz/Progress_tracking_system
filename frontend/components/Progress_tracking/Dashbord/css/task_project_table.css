@@ -230,3 +230,7 @@
     color: red !important;
     /* เปลี่ยนสีเป็นสีแดง */
 }
+
+.task-late {
+    color: red;
+}

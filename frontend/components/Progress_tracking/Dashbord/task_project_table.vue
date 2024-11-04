@@ -53,11 +53,10 @@
         <v-progress-linear
           :value="item.task_progress"
           height="20"
-          color="blue"
-          background-color="grey lighten-2"
-          striped
+          :color="getProgressColor(parseInt(item.task_progress))"
         >
-          <div class="text-center white--text">{{ item.task_progress }}%</div>
+          <!-- กำหนดสีของตัวหนังสือเป็นสีดำ -->
+          <strong> {{ item.task_progress }}% </strong>
         </v-progress-linear>
       </template>
 
@@ -68,7 +67,9 @@
 
       <!-- แสดงวันที่สิ้นสุด -->
       <template v-slot:item.task_plan_end="{ item }">
-        <div class="cell-content">{{ formatDate(item.task_plan_end) }}</div>
+        <div :class="getTaskEndDateClass(item)">
+          {{ formatDate(item.task_plan_end) }}
+        </div>
       </template>
 
       <!-- แสดงไอคอนในคอลัมน์ Action -->
@@ -172,37 +173,44 @@ export default {
 
   methods: {
     getProgressColor(progress) {
-      if (progress >= 100) {
-        return {
-          backgroundColor: "#33cc33", // สีพื้นหลังเขียว
-          color: "#ffffff", // สีข้อความขาว
-          height: "20px", // ความสูงของพื้นหลัง
-          width: "100%", // ความกว้างของพื้นหลัง
-          display: "flex", // ใช้ Flexbox
-          alignItems: "center", // จัดแนวข้อความกลางแนวตั้ง
-          justifyContent: "center", // จัดแนวข้อความกลางแนวนอน
-        };
+      if (progress >= 75 && progress <= 100) {
+        return "#4CAF50";
+      } else if (progress >= 51 && progress <= 74) {
+        return "#03A9F4";
+      } else if (progress >= 26 && progress <= 50) {
+        return "#FFD700";
+      } else if (progress >= 0 && progress <= 25) {
+        return "#FC8705";
       }
-      return {
-        backgroundColor: "transparent", // ไม่มีสีพื้นหลัง
-        color: "#000000", // สีข้อความดำ
-        height: "30px", // ความสูงของพื้นหลัง
-        width: "100%", // ความกว้างของพื้นหลัง
-        display: "flex", // ใช้ Flexbox
-        alignItems: "center", // จัดแนวข้อความกลางแนวตั้ง
-        justifyContent: "center", // จัดแนวข้อความกลางแนวนอน
-      };
+      // เมื่อไม่ตรงกับเงื่อนไขใดๆ ให้คืนค่าเริ่มต้น
+      return "primary";
     },
-    refreshTable() {
-      // Logic to refresh the table, e.g., re-fetch data
-      this.fetchTasks(); // Replace with actual method to refresh data
-    },
+    // ฟอร์แมตวันที่
     formatDate(date) {
       const options = { year: "numeric", month: "2-digit", day: "2-digit" };
       return new Date(date)
         .toLocaleDateString("en-GB", options)
         .replace(/\//g, "-");
     },
+
+    // ตรวจสอบว่าล่าช้าหรือไม่ และตั้งค่าคลาสสี
+    getTaskEndDateClass(item) {
+      const endDate = new Date(item.task_plan_end);
+      const today = new Date();
+      const startOfToday = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate()
+      );
+
+      return endDate < startOfToday ? "task-late" : "";
+    },
+
+    refreshTable() {
+      // Logic to refresh the table, e.g., re-fetch data
+      this.fetchTasks(); // Replace with actual method to refresh data
+    },
+
     async fetchTasks() {
       try {
         // เรียก API เพื่อดึง Tasks ตาม projectId
