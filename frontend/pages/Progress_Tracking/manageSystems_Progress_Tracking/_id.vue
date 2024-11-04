@@ -79,44 +79,37 @@
       </v-dialog>
     </v-row>
 
-    <!-- Search bar -->
-    <v-row no-gutters>
-      <v-col cols="12" :style="{ 'margin-top': '10px' }">
-        <input
-          type="text"
-          v-model="searchQuery"
-          placeholder="Search..."
-          :style="{
-            'margin-bottom': '10px',
-            width: user.user_role === 'Admin' ? '70%' : '100%', // เพิ่มเงื่อนไขในการกำหนด width
-            padding: '5px',
-            border: '1px solid #ccc',
-            'border-radius': '5px',
-            'font-size': '16px',
-          }"
-        />
-
-        <v-btn
-          v-if="user.user_role === 'Admin'"
-          color="primary"
-          class="text-none mb-4"
-          @click="goToCreateSystem"
-          style="margin-left: 50px; width: 10%; height: 70%"
-        >
-          ADD SYSTEM
-        </v-btn>
-        <!-- เพิ่มปุ่ม Show History System -->
-        <v-btn
-          v-if="user.user_role === 'Admin'"
-          color="error"
-          class="text-none mb-4"
-          @click="goToHistorySystems"
-          style="margin-left: 10px; width: 10%; height: 70%"
-        >
-          <v-icon>mdi-history</v-icon> &nbsp;</v-btn
-        >
-      </v-col>
-    </v-row>
+    <!-- Search Section -->
+    <div class="search-section" :style="{ 'margin-top': '30px' }">
+      <v-row>
+        <!-- Search Bar -->
+        <v-col cols="12" md="8">
+          <v-text-field
+            v-model="searchQuery"
+            label="Search"
+            append-icon="mdi-magnify"
+            outlined
+            placeholder="search by name"
+            dense
+          ></v-text-field>
+        </v-col>
+        <!-- Add and History Buttons -->
+        <v-col cols="12" md="4">
+          <v-row>
+            <v-col v-if="user.user_role === 'Admin'" cols="6">
+              <v-btn color="primary" block @click="goToCreateSystem">
+                ADD SYSTEM
+              </v-btn>
+            </v-col>
+            <v-col v-if="user.user_role === 'Admin'" cols="6">
+              <v-btn color="error" block @click="goToHistorySystems">
+                <v-icon class="white--text">mdi-history</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </div>
 
     <!-- Data Table -->
     <v-data-table
