@@ -1,6 +1,6 @@
 <template>
-  <v-card>
-    <v-row>
+  <v-card class="d-flex theme-card">
+    <v-row class="ma-2">
       <v-col cols="9" class="left-col">
         <!-- 70% -->
         <v-card-title>
@@ -52,7 +52,7 @@
           >
             {{ parseInt(project.project_progress) || 0 }} %
           </v-progress-circular>
-          <v-card-subtitle>Project Progress</v-card-subtitle>
+          <v-card-subtitle class="subtitle">Project Progress</v-card-subtitle>
         </div>
       </v-col>
     </v-row>
@@ -108,27 +108,52 @@ export default {
 </script>
 
 <style scoped>
+.theme-card {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
 .progress-container {
   display: flex;
   align-items: center;
   justify-content: flex-end;
 }
-
-.custom-progress {
+.progress-item {
+  padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 20px;
-  padding: 10px;
+  justify-content: center;
+}
+.subtitle {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #555;
+}
+.v-btn {
+  transition: background-color 0.3s;
+}
+.v-btn:hover {
+  background-color: #007a33;
+}
+.icon-style {
+  font-size: 24px;
+  color: #fff;
+}
+@media (max-width: 600px) {
+  .progress-container {
+    flex-direction: column;
+    align-items: center;
+  }
 }
 
-.left-col {
-  padding: 30px; /* เพิ่มระยะห่างภายใน */
-  border-radius: 8px; /* มุมกลม */
+/* Add custom margin class */
+.custom-margin {
+  margin: 16px; /* Adjust as needed */
 }
 
-.right-col {
-  padding: 20px; /* เพิ่มระยะห่างภายใน */
-  border-radius: 8px; /* มุมกลม */
+.subtitle {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #555;
 }
 </style>
