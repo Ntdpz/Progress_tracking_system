@@ -1,28 +1,13 @@
-<!-- projectDetail.vue -->
 <template>
   <v-card>
-    <v-row >
-      <v-col>
+    <v-row>
+      <v-col cols="9" class="left-col">
+        <!-- 70% -->
         <v-card-title>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-icon
-                v-bind="attrs"
-                v-on="on"
-                @click.stop="showUserDialog = true"
-                color="#009933"
-                size="45px"
-              >
-                mdi-account-multiple
-              </v-icon>
-            </template>
-            <span>Show User In Project</span>
-          </v-tooltip>
-
-          Project Name Thai : {{ project.project_name_TH }}
+          {{ project.project_name_TH }}
         </v-card-title>
         <v-card-subtitle>
-          Project Name Eng : {{ project.project_name_ENG }} <br />
+          {{ project.project_name_ENG }} <br />
           Project Manday :
           {{ project.project_manday ? project.project_manday : "0" }} days<br />
           Systems Count : {{ project.system_count }} systems<br />
@@ -35,8 +20,28 @@
               : "Not determined"
           }}
         </v-card-subtitle>
+
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              v-bind="attrs"
+              v-on="on"
+              @click.stop="showUserDialog = true"
+              color="#009933"
+              dark
+              elevation="2"
+              rounded
+              class="d-flex align-center"
+            >
+              <v-icon left>mdi-account-multiple</v-icon>
+              Show Member
+            </v-btn>
+          </template>
+          <span>Show Member in Project</span>
+        </v-tooltip>
       </v-col>
-      <v-col class="progress-container">
+      <v-col cols="3" class="progress-container right-col">
+        <!-- 30% -->
         <div class="custom-progress">
           <v-progress-circular
             :value="parseInt(project.project_progress) || 0"
@@ -68,7 +73,7 @@ export default {
   },
   props: {
     project: {
-      type: Object, // เปลี่ยนเป็น Object
+      type: Object,
       required: true,
     },
   },
@@ -102,19 +107,28 @@ export default {
 };
 </script>
 
-<style scope>
+<style scoped>
 .progress-container {
   display: flex;
-  align-items: center; /* จัดตำแหน่งแนวตั้งตรงกลาง */
-  justify-content: flex-end; /* จัดแนวนอนชิดขวา */
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .custom-progress {
   display: flex;
-  flex-direction: column; /* ให้เนื้อหาภายในจัดแนวในแนวตั้ง */
-  align-items: center; /* จัดแนวให้อยู่ตรงกลางในแนวตั้ง */
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+  padding: 10px;
+}
 
-  margin: 20px; /* เพิ่มระยะห่างรอบๆ ขอบของ div */
-  padding: 10px; /* เพิ่มระยะห่างภายใน div */
+.left-col {
+  padding: 30px; /* เพิ่มระยะห่างภายใน */
+  border-radius: 8px; /* มุมกลม */
+}
+
+.right-col {
+  padding: 20px; /* เพิ่มระยะห่างภายใน */
+  border-radius: 8px; /* มุมกลม */
 }
 </style>

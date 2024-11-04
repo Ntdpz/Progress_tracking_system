@@ -11,7 +11,7 @@
       <template v-slot:top>
         <v-toolbar flat class="toolbar">
           <v-toolbar-title class="toolbar-title">
-            User Projects : {{ project.project_name_ENG }}
+            Member Projects : {{ project.project_name_ENG }}
           </v-toolbar-title>
         </v-toolbar>
       </template>
