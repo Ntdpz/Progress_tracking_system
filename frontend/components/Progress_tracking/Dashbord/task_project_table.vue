@@ -55,8 +55,11 @@
           height="20"
           :color="getProgressColor(parseInt(item.task_progress))"
         >
-          <!-- กำหนดสีของตัวหนังสือเป็นสีดำ -->
-          <strong> {{ item.task_progress }}% </strong>
+          <strong
+            >{{
+              item.task_progress ? parseInt(item.task_progress) : 0
+            }}%</strong
+          >
         </v-progress-linear>
       </template>
 
