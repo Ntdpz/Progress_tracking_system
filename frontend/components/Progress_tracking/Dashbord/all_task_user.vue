@@ -71,7 +71,11 @@
       <!-- แสดงวันที่สิ้นสุด -->
       <template v-slot:item.task_plan_end="{ item }">
         <div
-          :style="{ color: isTaskLate(item.task_plan_end) ? 'red' : 'black' }"
+          :style="{
+            color: isTaskLate(item.task_plan_end, item.task_progress)
+              ? 'red'
+              : 'black',
+          }"
         >
           {{ formatDate(item.task_plan_end) }}
         </div>
@@ -178,10 +182,11 @@ export default {
   },
 
   methods: {
-    isTaskLate(endDate) {
+    isTaskLate(endDate, progress) {
       const today = new Date();
       const end = new Date(endDate);
-      return end < today;
+    
+      return end < today && progress < 100;
     },
     getProgressColor(progress) {
       if (progress >= 75 && progress <= 100) {
