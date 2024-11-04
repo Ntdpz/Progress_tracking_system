@@ -50,9 +50,17 @@
       </template>
 
       <template v-slot:item.task_progress="{ item }">
-        <div class="cell-content" :style="getProgressColor(item.task_progress)">
-          {{ item.task_progress }}%
-        </div>
+        <v-progress-linear
+          :value="item.task_progress"
+          height="20"
+          :color="getProgressColor(parseInt(item.task_progress))"
+        >
+          <strong
+            >{{
+              item.task_progress ? parseInt(item.task_progress) : 0
+            }}%</strong
+          >
+        </v-progress-linear>
       </template>
 
       <!-- แสดงวันที่เริ่มต้น -->
@@ -62,7 +70,11 @@
 
       <!-- แสดงวันที่สิ้นสุด -->
       <template v-slot:item.task_plan_end="{ item }">
-        <div class="cell-content">{{ formatDate(item.task_plan_end) }}</div>
+        <div
+          :style="{ color: isTaskLate(item.task_plan_end) ? 'red' : 'black' }"
+        >
+          {{ formatDate(item.task_plan_end) }}
+        </div>
       </template>
 
       <!-- แสดงไอคอนในคอลัมน์ Action -->
@@ -166,27 +178,23 @@ export default {
   },
 
   methods: {
+    isTaskLate(endDate) {
+      const today = new Date();
+      const end = new Date(endDate);
+      return end < today;
+    },
     getProgressColor(progress) {
-      if (progress >= 100) {
-        return {
-          backgroundColor: "#33cc33", // สีพื้นหลังเขียว
-          color: "#ffffff", // สีข้อความขาว
-          height: "20px", // ความสูงของพื้นหลัง
-          width: "100%", // ความกว้างของพื้นหลัง
-          display: "flex", // ใช้ Flexbox
-          alignItems: "center", // จัดแนวข้อความกลางแนวตั้ง
-          justifyContent: "center", // จัดแนวข้อความกลางแนวนอน
-        };
+      if (progress >= 75 && progress <= 100) {
+        return "#4CAF50";
+      } else if (progress >= 51 && progress <= 74) {
+        return "#03A9F4";
+      } else if (progress >= 26 && progress <= 50) {
+        return "#FFD700";
+      } else if (progress >= 0 && progress <= 25) {
+        return "#FC8705";
       }
-      return {
-        backgroundColor: "transparent", // ไม่มีสีพื้นหลัง
-        color: "#000000", // สีข้อความดำ
-        height: "30px", // ความสูงของพื้นหลัง
-        width: "100%", // ความกว้างของพื้นหลัง
-        display: "flex", // ใช้ Flexbox
-        alignItems: "center", // จัดแนวข้อความกลางแนวตั้ง
-        justifyContent: "center", // จัดแนวข้อความกลางแนวนอน
-      };
+      // เมื่อไม่ตรงกับเงื่อนไขใดๆ ให้คืนค่าเริ่มต้น
+      return "primary";
     },
     refreshTable() {
       // Logic to refresh the table, e.g., re-fetch data
@@ -231,7 +239,6 @@ export default {
     editTask(task) {
       this.selectedTask = task; // เก็บ task ที่ถูกเลือก
       this.EditTask_dialog = true; // เปิด dialog
-     
     },
 
     // ฟังก์ชันที่เรียกใช้เมื่อคลิกไอคอน Delete
