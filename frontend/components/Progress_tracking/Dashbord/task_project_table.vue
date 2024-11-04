@@ -50,9 +50,15 @@
       </template>
 
       <template v-slot:item.task_progress="{ item }">
-        <div class="cell-content" :style="getProgressColor(item.task_progress)">
-          {{ item.task_progress }}%
-        </div>
+        <v-progress-linear
+          :value="item.task_progress"
+          height="20"
+          color="blue"
+          background-color="grey lighten-2"
+          striped
+        >
+          <div class="text-center white--text">{{ item.task_progress }}%</div>
+        </v-progress-linear>
       </template>
 
       <!-- แสดงวันที่เริ่มต้น -->
@@ -217,32 +223,52 @@ export default {
           today.getDate() + 1
         ); // ใช้วันที่ถัดไปเพื่อรวมทั้งวัน
 
-        const filteredTasks = response.data.filter((task) => {
+        // กรอง tasks วันนี้
+        const todayTasks = response.data.filter((task) => {
           const startDate = new Date(task.task_plan_start);
           const endDate = new Date(task.task_plan_end);
 
-          // ตรวจสอบว่า task_member_id ตรงกับ user.id หรือไม่
           return (
-            task.task_member_id === this.user.id && // ตรวจสอบ task_member_id
+            task.task_member_id === this.user.id &&
             startDate <= endOfToday &&
             endDate >= startOfToday &&
             task.is_archived === 0
           );
         });
 
-        // คำนวณจำนวน tasks ที่เสร็จสมบูรณ์
-        const completedTasks = filteredTasks.filter(
+        // กรอง tasks ที่ล่าช้า
+        const lateTasks = response.data.filter((task) => {
+          const endDate = new Date(task.task_plan_end);
+
+          return (
+            task.task_member_id === this.user.id &&
+            endDate < startOfToday && // task ล่าช้าถ้าสิ้นสุดก่อนวันนี้
+            task.is_archived === 0 &&
+            task.task_progress < 100 // ตรวจสอบว่า task ยังไม่เสร็จสมบูรณ์
+          );
+        });
+
+        // คำนวณจำนวน tasks ที่เสร็จสมบูรณ์ของวันนี้
+        const completedTodayTasks = todayTasks.filter(
           (task) => task.task_progress == 100
         );
 
-        // อัปเดตข้อมูล tasks ที่ดึงมา
-        this.tasks = filteredTasks.map((task) => ({
-          ...task,
-          task_name: task.task_name || "No Name", // ตรวจสอบและกำหนดค่าเริ่มต้นหาก task_name เป็น null
-        }));
+        // อัปเดตข้อมูล tasks
+        this.tasks = [
+          ...todayTasks.map((task) => ({
+            ...task,
+            task_name: task.task_name || "No Name", // ตรวจสอบและกำหนดค่าเริ่มต้นหาก task_name เป็น null
+          })),
+          ...lateTasks.map((task) => ({
+            ...task,
+            task_name: task.task_name || "No Name",
+          })),
+        ];
 
-        this.filteredTaskCount = filteredTasks.length; // อัปเดตจำนวน tasks ที่กรองแล้ว
-        this.completedTaskCount = completedTasks.length; // อัปเดตจำนวน tasks ที่เสร็จสมบูรณ์
+        // อัปเดตจำนวน tasks ที่กรองแล้ว
+        this.todayTaskCount = todayTasks.length;
+        this.completedTodayTaskCount = completedTodayTasks.length;
+        this.lateTaskCount = lateTasks.length; // จำนวน tasks ที่ล่าช้า
       } catch (error) {
         // แสดงข้อความข้อผิดพลาดที่กำหนดเอง
         console.error("Error fetching tasks, No task data");
