@@ -66,5 +66,81 @@ router.get("/GetAll", (req, res) => {
     });
 });
 
+// 1. แสดง task ของ task_count_inprogress
+router.get("/tasks/inprogress/:task_member_id", (req, res) => {
+    const taskMemberId = req.params.task_member_id;
+    const query = `
+        SELECT *
+        FROM tasks
+        WHERE task_member_id = ? 
+          AND CURDATE() BETWEEN task_plan_start AND task_plan_end
+          AND task_progress != 100
+          AND is_archived = FALSE`;
+
+    connection.query(query, [taskMemberId], (error, results) => {
+        if (error) {
+            console.error("Error fetching in-progress tasks:", error);
+            return res.status(500).json({ message: "Error fetching in-progress tasks", error });
+        }
+        res.status(200).json({ tasks_inprogress: results });
+    });
+});
+
+// 2. แสดง task ของ task_count_late
+router.get("/tasks/late/:task_member_id", (req, res) => {
+    const taskMemberId = req.params.task_member_id;
+    const query = `
+        SELECT *
+        FROM tasks
+        WHERE task_member_id = ? 
+          AND CURDATE() > task_plan_end
+          AND task_progress != 100
+          AND is_archived = FALSE`;
+
+    connection.query(query, [taskMemberId], (error, results) => {
+        if (error) {
+            console.error("Error fetching late tasks:", error);
+            return res.status(500).json({ message: "Error fetching late tasks", error });
+        }
+        res.status(200).json({ tasks_late: results });
+    });
+});
+
+// 3. แสดง task ของ task_count_complete
+router.get("/tasks/complete/:task_member_id", (req, res) => {
+    const taskMemberId = req.params.task_member_id;
+    const query = `
+        SELECT *
+        FROM tasks
+        WHERE task_member_id = ? 
+          AND task_progress = 100
+          AND is_archived = FALSE`;
+
+    connection.query(query, [taskMemberId], (error, results) => {
+        if (error) {
+            console.error("Error fetching completed tasks:", error);
+            return res.status(500).json({ message: "Error fetching completed tasks", error });
+        }
+        res.status(200).json({ tasks_complete: results });
+    });
+});
+
+// 4. แสดง task ของ task_count (แสดงทุก task โดยไม่กรองตามสถานะ)
+router.get("/tasks/all/:task_member_id", (req, res) => {
+    const taskMemberId = req.params.task_member_id;
+    const query = `
+        SELECT *
+        FROM tasks
+        WHERE task_member_id = ? 
+          AND is_archived = FALSE`;
+
+    connection.query(query, [taskMemberId], (error, results) => {
+        if (error) {
+            console.error("Error fetching all tasks:", error);
+            return res.status(500).json({ message: "Error fetching all tasks", error });
+        }
+        res.status(200).json({ all_tasks: results });
+    });
+});
 
 module.exports = router;

@@ -94,7 +94,7 @@
                           type="submit"
                           rounded
                           block
-                          >เข้าสู่ระบบ</v-btn
+                          >Login</v-btn
                         >
                       </v-form>
                     </v-card-text>
