@@ -140,9 +140,8 @@
               height="20"
               :value="parseInt(item.system_progress)"
               :style="{ width: '100%' }"
-              striped
             >
-              <strong :style="{ color: 'white' }"
+              <strong
                 >{{
                   item.system_progress ? parseInt(item.system_progress) : 0
                 }}%</strong

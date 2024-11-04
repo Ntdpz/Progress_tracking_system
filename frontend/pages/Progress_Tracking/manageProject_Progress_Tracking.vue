@@ -27,8 +27,13 @@
           :style="searchBarStyle"
         />
 
-        <v-btn v-if="user.user_role === 'Admin'" color="primary" class="text-none mb-4" @click="goToCreateProject"
-          style="margin-left: 50px; width: 12%; height: 70%">
+        <v-btn
+          v-if="user.user_role === 'Admin'"
+          color="primary"
+          class="text-none mb-4"
+          @click="goToCreateProject"
+          style="margin-left: 50px; width: 12%; height: 70%"
+        >
           ADD PROJECT
         </v-btn>
         <v-btn
@@ -59,9 +64,8 @@
               height="20"
               :value="parseInt(item.project_progress)"
               :style="{ width: '100%' }"
-              striped
             >
-              <strong :style="{ color: 'white' }"
+              <strong
                 >{{ parseInt(item.project_progress) }}%</strong
               ></v-progress-linear
             >
