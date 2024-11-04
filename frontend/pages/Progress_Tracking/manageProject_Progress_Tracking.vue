@@ -18,33 +18,43 @@
       <Greeting />
     </div>
     <!-- Search bar -->
-    <v-row no-gutters justify-content="flex-end" align-items="flex-end">
-      <v-col cols="12">
-        <input
-          type="text"
+    <v-row>
+      <!-- Search bar -->
+      <v-col cols="12" md="8">
+        <v-text-field
           v-model="searchQuery"
-          placeholder="Search..."
-          :style="searchBarStyle"
+          label="Search"
+          append-icon="mdi-magnify"
+          outlined
+          dense
         />
-
-        <v-btn
-          v-if="user.user_role === 'Admin'"
-          color="primary"
-          class="text-none mb-4"
-          @click="goToCreateProject"
-          style="margin-left: 50px; width: 12%; height: 70%"
-        >
-          ADD PROJECT
-        </v-btn>
-        <v-btn
-          v-if="user.user_role === 'Admin'"
-          color="error"
-          @click="goToHistoryProject"
-          style="margin-left: 10px; width: 10%; height: 70%"
-          class="text-none mb-4"
-        >
-          <v-icon>mdi-history</v-icon> &nbsp;
-        </v-btn>
+      </v-col>
+      <!-- Buttons for Admin actions -->
+      <v-col cols="12" md="4">
+        <v-row>
+          <v-col cols="6">
+            <v-btn
+              v-if="user.user_role === 'Admin'"
+              color="primary"
+              @click="goToCreateProject"
+              class="text-none"
+              style="width: 100%"
+            >
+              ADD PROJECT
+            </v-btn>
+          </v-col>
+          <v-col cols="6">
+            <v-btn
+              v-if="user.user_role === 'Admin'"
+              color="error"
+              @click="goToHistoryProject"
+              class="text-none"
+              style="width: 100%"
+            >
+              <v-icon>mdi-history</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
 
