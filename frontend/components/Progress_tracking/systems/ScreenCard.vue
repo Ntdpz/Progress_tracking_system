@@ -51,37 +51,32 @@
         </v-row>
 
         <v-card-subtitle>
+          <!-- screen leve -->
+          <strong>Screen Level:</strong> {{ screenLevel }} <br />
           <strong>Plan Manday:</strong> {{ planManDay }} <br />
           <strong>Actual Manday:</strong> {{ actualManDay }} <br />
-          <strong>Plan:</strong> {{ screenPlanStartDate || "-" }}
-          <strong>to</strong> {{ screenPlanEndDate || "-" }} <br />
-          <strong>Actual:</strong>
-          {{ screenActualStartDate || "-" }} <strong>to</strong>
-          {{ screenActualEndDate || "-" }}<br />
+          <!-- plan date -->
+          <strong>Plan:</strong> {{ formatDate(screenPlanStartDate) }}
+          <strong>to</strong> {{ formatDate(screenPlanEndDate) }} <br />
+          <!-- actual date -->
+          <strong>Actual:</strong> {{ formatDate(screenActualStartDate) }}
+          <strong>to</strong> {{ formatDate(screenActualEndDate) }} <br />
+
         </v-card-subtitle>
 
 
-        <v-card-actions>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn v-if="!isRestrictedPosition" color="primary" icon v-bind="attrs" v-on="on"
-                @click.stop="openEditDialog">
-                <v-icon>mdi-pencil</v-icon>
-              </v-btn>
-            </template>
-            <span>Edit</span>
-          </v-tooltip>
+        <v-card-actions class="justify-center">
+          <v-btn v-if="!isRestrictedPosition" color="white" @click.stop="openEditDialog">
+            <v-icon color="primary" left>mdi-pencil</v-icon>
+            Edit Screen
+          </v-btn>
 
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn v-if="!isRestrictedPosition" color="primary" icon v-bind="attrs" v-on="on"
-                @click.stop="editScreenUserDialog = true">
-                <v-icon>mdi-account-edit</v-icon>
-              </v-btn>
-            </template>
-            <span>Manage User</span>
-          </v-tooltip>
+          <v-btn v-if="!isRestrictedPosition" color="white" @click.stop="editScreenUserDialog = true">
+            <v-icon color="primary" left>mdi-account-multiple</v-icon>
+            Members
+          </v-btn>
         </v-card-actions>
+
       </v-card>
     </v-card>
 
@@ -92,32 +87,24 @@
         <v-card-title color="black">Edit</v-card-title>
         <v-card-text>
           <v-form ref="editForm" v-model="isValid" lazy-validation>
-            <v-row>
-              <v-col cols="6">
-                <v-text-field v-model="screenCode" label="Screen Code" :disabled="true" outlined />
-              </v-col>
-              <v-col cols="6">
-                <v-text-field v-model="screenName" label="Screen Name" outlined />
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col cols="6">
-                <v-select v-model="screenLevel" :items="[1, 2, 3, 4, 5]" :label="`Level ${screenLevel}`" outlined />
-              </v-col>
-              <v-col cols=" 6">
-                <v-file-input v-model="imageFile" label="Upload Image" outlined accept=".png, .jpeg" />
-              </v-col>
-            </v-row>
+            <v-text-field v-model="screenCode" label="Screen Code" :disabled="true" />
+            <v-text-field v-model="screenName" label="Screen Name" />
+            <v-select v-model="screenLevel" :items="[1, 2, 3, 4, 5]"
+              :label="screenLevel ? `Current Level: ${screenLevel}` : 'Select Screen Level'" />
+            <v-file-input v-model="imageFile" label="Upload Image" accept=".png, .jpeg" />
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-btn @click="confirmDeleteScreen" color="red" outlined>Delete</v-btn>
+          <v-btn @click="confirmDeleteScreen" color="red" outlined>
+            <v-icon color="red" left>mdi-delete</v-icon>
+            Delete</v-btn>
           <v-spacer></v-spacer>
           <v-btn color="primary" @click="submitEdit">Submit</v-btn>
           <v-btn color="secondary" @click="closeEditDialog">Cancel</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
+
     <!-- Edit user dialog -->
     <v-dialog v-model="editScreenUserDialog" max-width="1200px">
       <v-card>
@@ -557,6 +544,11 @@ export default {
         });
       }
     },
+    formatDate(date) {
+      if (!date) return "-";
+      const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+      return new Date(date).toLocaleDateString('en-GB', options);
+    },
     calculateMandays(startDate, endDate) {
       if (!startDate || !endDate) return '-'; // Return "-" if dates are not available
       const start = new Date(startDate);
@@ -740,9 +732,6 @@ export default {
     this.fetchScreenTasks();
   },
   computed: {
-    screenLevelLabel() {
-      return `Level ${this.screenLevel || "Not Set"}`;
-    },
     planManDay() {
       return this.calculateMandays(this.screenPlanStartDate, this.screenPlanEndDate);
     },
@@ -776,4 +765,5 @@ export default {
   margin-top: 5px;
   margin-right: 5px;
 }
+
 </style>

@@ -4,25 +4,9 @@
     <v-row style="height: 220px">
       <v-col>
         <v-card-title>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-icon
-                v-bind="attrs"
-                v-on="on"
-                @click.stop="showUserDialog = true"
-                color="#009933"
-                size="45px"
-              >
-                mdi-account-multiple
-              </v-icon>
-            </template>
-            <span>Show User In Project</span>
-          </v-tooltip>
-
-          System name Thai : {{ systemData.system_nameTH }}
+          System Name Eng : {{ systemData.system_nameEN }}
         </v-card-title>
         <v-card-subtitle>
-          System Name Eng : {{ systemData.system_nameEN }} <br />
           System Shortname : {{ systemData.system_shortname }} <br />
           System Manday :
           {{ systemData.system_manday ? systemData.system_manday : "0" }}
@@ -30,23 +14,28 @@
           Screen Count : {{ systemData.screen_count }} screens<br />
           Project Plan :
           {{
-            systemData.system_plan_start && systemData.system_plan_end
-              ? formatDate(systemData.system_plan_start) +
-                " To " +
-                formatDate(systemData.system_plan_end)
-              : "Not determined"
+          systemData.system_plan_start && systemData.system_plan_end
+          ? formatDate(systemData.system_plan_start) +
+          " To " +
+          formatDate(systemData.system_plan_end)
+          : "Not determined"
           }}
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn v-bind="attrs" v-on="on" @click.stop="showUserDialog = true" color="#009933" dark elevation="2"
+                rounded class="d-flex align-center">
+                <v-icon left>mdi-account-multiple</v-icon>
+                Show Member
+              </v-btn>
+            </template>
+            <span>Show Member in System</span>
+          </v-tooltip>
         </v-card-subtitle>
       </v-col>
       <v-col class="progress-container">
         <div class="custom-progress">
-          <v-progress-circular
-            :value="parseInt(systemData.system_progress) || 0"
-            :color="getProgressColor(parseInt(systemData.system_progress) || 0)"
-            :size="100"
-            :rotate="360"
-            :width="15"
-          >
+          <v-progress-circular :value="parseInt(systemData.system_progress) || 0"
+            :color="getProgressColor(parseInt(systemData.system_progress) || 0)" :size="100" :rotate="360" :width="15">
             {{ parseInt(systemData.system_progress) || 0 }} %
           </v-progress-circular>
           <v-card-subtitle>System Progress</v-card-subtitle>

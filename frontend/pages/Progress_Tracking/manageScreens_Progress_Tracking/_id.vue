@@ -5,22 +5,12 @@
       <v-row>
         <!-- System Detail -->
         <v-col cols="12" md="6">
-          <v-card-title>
-            <!-- User System Icon -->
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-icon v-bind="attrs" v-on="on" @click="openUserSystemDialog" color="primary" class="large-icon">
-                  mdi-account-multiple
-                </v-icon>
-              </template>
-              <span>User system</span>
-            </v-tooltip>
-            <v-dialog v-model="userSystemDialog" max-width="800px">
-              <user-system :systemData="systemData" :userSystems="userSystems"></user-system>
-            </v-dialog>
-            <strong>System:</strong> {{ systemData.system_nameEN || "Wait for name" }}
+          <v-card-title style="margin-bottom: 15px;">
+            <strong>{{ systemData.system_nameEN || "Wait for name" }}</strong>
           </v-card-title>
           <v-card-subtitle>
+            <u><strong style="color: rgb(85, 85, 85);">System
+                Detail</strong></u><br />
             Manday: {{
             systemData.system_manday !== null && !isNaN(systemData.system_manday)
             ? Math.round(systemData.system_manday)
@@ -29,6 +19,19 @@
             Total Screen: {{ systemData.screen_count || 0 }} screens<br />
             Plan: {{ formatDate(systemData.system_plan_start) || "Not determined" }}
             To {{ formatDate(systemData.system_plan_end) || "Not determined" }}<br />
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn v-bind="attrs" v-on="on" @click.stop="userSystemDialog = true" color="#009933" dark elevation="2"
+                  rounded class="d-flex align-center" style="margin-top: 10px;">
+                  <v-icon left>mdi-account-multiple</v-icon>
+                  Show Member
+                </v-btn>
+              </template>
+              <span>Show Member in System</span>
+            </v-tooltip>
+            <v-dialog v-model="userSystemDialog" max-width="800px">
+              <user-system :systemData="systemData" :userSystems="userSystems"></user-system>
+            </v-dialog>
           </v-card-subtitle>
         </v-col>
         <!-- Progress Detail -->
@@ -75,17 +78,17 @@
               :screenProgress="Number(screen.screen_progress)" :screenPlanStartDate="screen.screen_plan_start"
               :screenPlanEndDate="screen.screen_plan_end" :screenActualStartDate="screen.screen_actual_start"
               :screenActualEndDate="screen.screen_actual_end" :ImageSrc="screen.screen_pic"
-              :design-progress="Number(screen.screen_progress_status_design)" :dev-progress="Number(screen.screen_progress_status_dev)"
-              :test-progress="Number(screen.screen_progress_status_test)"
-              
-              :isRestrictedPosition="isRestrictedPosition" @click="navigateToScreen(screen.id)" @update="handleUpdate"
-              @delete="handleDeleteScreen" @submit-edit="handleSubmitEdit" />
+              :design-progress="Number(screen.screen_progress_status_design)"
+              :dev-progress="Number(screen.screen_progress_status_dev)"
+              :test-progress="Number(screen.screen_progress_status_testing)" :isRestrictedPosition="isRestrictedPosition"
+              @click="navigateToScreen(screen.id)" @update="handleUpdate" @delete="handleDeleteScreen"
+              @submit-edit="handleSubmitEdit" />
           </v-col>
         </v-row>
       </v-container>
       <!-- Pagination -->
       <v-pagination v-model="page" :length="totalPages" :total-visible="5" @input="handlePageChange"
-      class="pagination"></v-pagination>
+        class="pagination"></v-pagination>
     </div>
     <!-- Dialogs -->
     <v-dialog v-model="addScreenDialog" max-width="800px">
