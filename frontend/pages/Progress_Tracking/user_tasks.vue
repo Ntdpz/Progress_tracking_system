@@ -99,20 +99,20 @@
 
     <!-- Dialog Components -->
 
-    <v-dialog v-model="showDialogtask_count_inprogress" max-width="500">
+    <v-dialog v-model="showDialogtask_count_inprogress" max-width="950">
       <task_count_inprogress :user="selectedUser" />
     </v-dialog>
 
-    <v-dialog v-model="showDialogtask_count_late" max-width="500">
+    <v-dialog v-model="showDialogtask_count_late" max-width="950">
       <task_count_late :user="selectedUser" />
     </v-dialog>
 
-    <v-dialog v-model="showDialogtask_count_complete" max-width="500">
+    <v-dialog v-model="showDialogtask_count_complete" max-width="950">
       <task_count_complete :user="selectedUser" />
     </v-dialog>
 
-    <v-dialog v-model="showDialogtask_count" max-width="500">
-      <task_count :user="selectedUser" />
+    <v-dialog v-model="showDialogtask_count" max-width="950">
+      <task_count :user="selectedUser" :dialog.sync="showDialogtask_count" />
     </v-dialog>
   </div>
 </template>
@@ -185,9 +185,7 @@ export default {
     },
     async getAllUsers() {
       try {
-        const response = await this.$axios.get(
-          "http://localhost:7777/user_tasks/GetAll"
-        );
+        const response = await this.$axios.get("/user_tasks/GetAll");
         this.users = response.data.task_members;
       } catch (error) {
         console.error("Error fetching users:", error);
