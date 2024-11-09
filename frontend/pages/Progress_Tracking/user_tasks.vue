@@ -98,19 +98,22 @@
     </v-row>
 
     <!-- Dialog Components -->
-    <task_count :dialog.sync="showDialogtask_count" :user="selectedUser" />
-    <task_count_inprogress
-      :dialog.sync="showDialogtask_count_inprogress"
-      :user="selectedUser"
-    />
-    <task_count_late
-      :dialog.sync="showDialogtask_count_late"
-      :user="selectedUser"
-    />
-    <task_count_complete
-      :dialog.sync="showDialogtask_count_complete"
-      :user="selectedUser"
-    />
+
+    <v-dialog v-model="showDialogtask_count_inprogress" max-width="500">
+      <task_count_inprogress :user="selectedUser" />
+    </v-dialog>
+
+    <v-dialog v-model="showDialogtask_count_late" max-width="500">
+      <task_count_late :user="selectedUser" />
+    </v-dialog>
+
+    <v-dialog v-model="showDialogtask_count_complete" max-width="500">
+      <task_count_complete :user="selectedUser" />
+    </v-dialog>
+
+    <v-dialog v-model="showDialogtask_count" max-width="500">
+      <task_count :user="selectedUser" />
+    </v-dialog>
   </div>
 </template>
 
@@ -165,15 +168,13 @@ export default {
   },
   methods: {
     openDialogtask_count(user) {
-      this.selectedUser = user;
-      this.showDialogtask_count = true;
+      this.selectedUser = user; // ตั้งค่าผู้ใช้ที่เลือก
+      this.showDialogtask_count = true; // เปิด dialog
     },
-
     openDialogtask_count_inprogress(user) {
       this.selectedUser = user;
       this.showDialogtask_count_inprogress = true;
     },
-
     openDialogtask_count_late(user) {
       this.selectedUser = user;
       this.showDialogtask_count_late = true;
