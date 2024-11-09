@@ -134,8 +134,8 @@
                 <!-- คั่น -->
                 <div class="pa-2"></div>
                 <v-row class="mr-2 mt-0" style="margin-bottom: -2%; font-weight: bold; color: black">
-                  <v-col class="hidden-xs-only" cols="6" sm="6"> สถานะ </v-col>
-                  <v-col class="hidden-xs-only" cols="6" sm="6"> บทบาท </v-col>
+                  <v-col class="hidden-xs-only" cols="6" sm="6"> Status </v-col>
+                  <v-col class="hidden-xs-only" cols="6" sm="6"> Role </v-col>
                 </v-row>
                 <v-row class="mr-2 mt-0" style="margin-bottom: -4%; font-weight: bold; color: black">
                   <v-col class="" cols="6" sm="6">
