@@ -49,6 +49,23 @@
         </v-list-item>
       </v-list>
 
+      <!-- User tasks button -->
+      <v-list
+        class="pt-0"
+        v-show="user_position == 'System Analyst'"
+        dense
+        rounded
+      >
+        <v-list-item @click="navigateTo('/Progress_Tracking/user_tasks')">
+          <v-list-item-action>
+            <v-icon color="black">mdi-account-cog</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>User tasks</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+
       <!-- ManageUsers button -->
       <v-list class="pt-0" dense rounded>
         <v-list-item
@@ -216,6 +233,7 @@
           </v-list-item>
         </v-list>
       </v-list>
+
       <!-- Logout button -->
       <v-list class="pt-0" dense rounded>
         <v-list-item @click="handleLogout()">
