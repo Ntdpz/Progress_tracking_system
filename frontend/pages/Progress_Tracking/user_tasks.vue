@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1 class="centered-heading">User Tasks</h1>
     <!-- Search Box -->
     <v-text-field
       v-model="search"
@@ -20,79 +21,89 @@
         md="4"
         lg="3"
       >
-        <v-card class="user-image-padding" max-width="400">
-          <!-- Set max-width for card -->
-          <v-row>
-            <!-- User Image -->
-            <v-col cols="4" class="user-image-padding">
-              <div class="user-image-container">
-                <v-img
-                  :src="getBase64Image(user.user_pic)"
-                  alt="User Image"
-                  height="100px"
-                  width="100px"
-                  class="rounded-circle"
-                ></v-img>
-              </div>
-            </v-col>
-
-            <!-- User Details -->
-            <v-col cols="8" class="my-card-Details">
-              <v-card-title>
-                {{ user.user_firstname }} {{ user.user_lastname }}
-              </v-card-title>
-              <v-card-subtitle>
-                {{ user.user_position }} - {{ user.user_department }}
-              </v-card-subtitle>
-              <v-card-text>
-                <div>
-                  <v-chip
-                    class="ma-2"
-                    color="blue lighten-3"
-                    text-color="blue darken-2"
-                    outlined
-                    @click="openDialogtask_count(user)"
-                  >
-                    <v-icon left small>mdi-clipboard-text-outline</v-icon>
-                    Task Count: {{ user.task_count }}
-                  </v-chip>
-
-                  <v-chip
-                    class="ma-2"
-                    color="amber lighten-3"
-                    text-color="amber darken-2"
-                    outlined
-                    @click="openDialogtask_count_inprogress(user)"
-                  >
-                    <v-icon left small>mdi-progress-clock</v-icon>
-                    In Progress: {{ user.task_count_inprogress }}
-                  </v-chip>
-
-                  <v-chip
-                    class="ma-2"
-                    color="red lighten-3"
-                    text-color="red darken-2"
-                    outlined
-                    @click="openDialogtask_count_late(user)"
-                  >
-                    <v-icon left small>mdi-alert-circle-outline</v-icon>
-                    Late: {{ user.task_count_late }}
-                  </v-chip>
-
-                  <v-chip
-                    class="ma-2"
-                    color="green lighten-3"
-                    text-color="green darken-2"
-                    outlined
-                    @click="openDialogtask_count_complete(user)"
-                  >
-                    <v-icon left small>mdi-check-circle-outline</v-icon>
-                    Complete: {{ user.task_count_complete }}
-                  </v-chip>
+        <v-card>
+          <!-- แถวที่ 1 -->
+          <v-card-text>
+            <v-row>
+              <!-- คอลัมน์ซ้าย: รูปภาพ -->
+              <v-col cols="4" class="d-flex justify-center align-center">
+                <div class="user-image-container">
+                  <v-img
+                    :src="getBase64Image(user.user_pic)"
+                    alt="User Image"
+                    class="rounded-circle"
+                    height="100px"
+                    width="100px"
+                  ></v-img>
                 </div>
-              </v-card-text>
-            </v-col>
-          </v-row>
+              </v-col>
+
+              <!-- คอลัมน์ขวา: ชื่อ, ตำแหน่ง และแผนก -->
+              <v-col cols="8">
+                <v-card-title>
+                  {{ user.user_firstname }} {{ user.user_lastname }}
+                </v-card-title>
+                <v-card-subtitle>
+                  {{ user.user_position }} - {{ user.user_department }}
+                </v-card-subtitle>
+              </v-col>
+            </v-row>
+          </v-card-text>
+
+          <!-- แถวที่ 3 -->
+          <v-card-text>
+            <v-row>
+              <!-- คอลัมน์ซ้าย -->
+              <v-col cols="6">
+                <v-chip
+                  class="ma-2 full-width-chip"
+                  color="blue lighten-3"
+                  text-color="blue darken-2"
+                  outlined
+                  @click="openDialogtask_count(user)"
+                >
+                  <v-icon left small>mdi-clipboard-text-outline</v-icon>
+                  Total: {{ user.task_count }}
+                </v-chip>
+
+                <v-chip
+                  class="ma-2 full-width-chip"
+                  color="amber lighten-3"
+                  text-color="amber darken-2"
+                  outlined
+                  @click="openDialogtask_count_inprogress(user)"
+                >
+                  <v-icon left small>mdi-progress-clock</v-icon>
+                  In Progress: {{ user.task_count_inprogress }}
+                </v-chip>
+              </v-col>
+
+              <!-- คอลัมน์ขวา -->
+              <v-col cols="6">
+                <v-chip
+                  class="ma-2 full-width-chip"
+                  color="red lighten-3"
+                  text-color="red darken-2"
+                  outlined
+                  @click="openDialogtask_count_late(user)"
+                >
+                  <v-icon left small>mdi-alert-circle-outline</v-icon>
+                  Late: {{ user.task_count_late }}
+                </v-chip>
+
+                <v-chip
+                  class="ma-2 full-width-chip"
+                  color="green lighten-3"
+                  text-color="green darken-2"
+                  outlined
+                  @click="openDialogtask_count_complete(user)"
+                >
+                  <v-icon left small>mdi-check-circle-outline</v-icon>
+                  Complete: {{ user.task_count_complete }}
+                </v-chip>
+              </v-col>
+            </v-row>
+          </v-card-text>
         </v-card>
       </v-col>
     </v-row>
@@ -206,32 +217,46 @@ export default {
 </script>
 
 <style scoped>
-.my-card {
-  margin-bottom: 16px;
+.full-width-chip {
+  width: 100%;
 }
 
-.rounded-circle {
-  border-radius: 50%;
+.centered-heading {
+  text-align: center;
+  margin: 0;
+  color: #009933 !important;
 }
 
-/* Padding for user images */
-.user-image-padding {
-  padding: 16px;
-  overflow: hidden;
-  display: flex;
-  height: 100%;
+@media screen and (max-width: 1200px) {
+  .centered-heading {
+    font-size: 1.5rem; /* ปรับขนาดหัวข้อให้เล็กลงเล็กน้อย */
+  }
+
+  .full-width-chip {
+    font-size: 0.875rem; /* ลดขนาดข้อความใน v-chip */
+  }
 }
 
-/* Custom styles for card details */
-.my-card-Details {
-  /* Custom styles can go here */
+@media screen and (max-width: 768px) {
+  /* สำหรับหน้าจอขนาดกลาง เช่น tablet */
+  .centered-heading {
+    font-size: 1.2rem; /* ปรับขนาดหัวข้อให้เล็กลง */
+  }
+
+  .full-width-chip {
+    font-size: 0.75rem; /* ลดขนาดข้อความใน v-chip */
+  }
 }
 
-/* Centering the user image container */
-.user-image-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
+@media screen and (max-width: 480px) {
+  /* สำหรับหน้าจอขนาดเล็ก เช่น มือถือ */
+  .centered-heading {
+    font-size: 1rem; /* ปรับขนาดหัวข้อให้เล็กลง */
+  }
+
+  .full-width-chip {
+    font-size: 0.7rem; /* ลดขนาดข้อความใน v-chip */
+  }
 }
 </style>
+

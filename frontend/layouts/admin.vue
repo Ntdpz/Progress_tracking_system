@@ -61,7 +61,7 @@
             <v-icon color="black">mdi-account-cog</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title>User tasks</v-list-item-title>
+            <v-list-item-title>User Tasks</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -77,7 +77,7 @@
             <!-- ใส่ไอคอนที่ต้องการ -->
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title color="red">ManageUsers</v-list-item-title>
+            <v-list-item-title color="red">Manage Users</v-list-item-title>
             <!-- ข้อความที่ต้องการ -->
           </v-list-item-content>
         </v-list-item>
