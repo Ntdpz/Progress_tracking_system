@@ -807,6 +807,11 @@
       </v-card>
     </v-dialog>
 
+<v-tabs v-model="selectedTab" class="custom-tabs">
+  <v-tab class="custom-tab">Working Task</v-tab>
+  <v-tab class="custom-tab">Finish Task</v-tab>
+</v-tabs>
+
     <v-data-table
       :headers="taskHeaders"
       :items="filteredTasks"
@@ -982,6 +987,7 @@ export default {
   },
   data() {
     return {
+      selectedTab: 0,
       screenDetails: {
         screenId: null,
         system_id: null,
@@ -1242,47 +1248,54 @@ export default {
       return Math.ceil(this.tasks.length / this.pageSize);
     },
     filteredTasks() {
-      if (this.tasks && Array.isArray(this.tasks)) {
-        // ทำการกรองข้อมูลตาม searchQuery
-        let filtered = this.tasks.filter((task) => {
-          if (task.task_name && task.task_id) {
-            const searchText =
-              `${task.task_name} ${task.task_id}`.toLowerCase();
-            return searchText.includes(this.searchQuery.toLowerCase());
-          } else {
-            return false;
-          }
-        });
-
-        // เรียงลำดับข้อมูลที่กรองแล้วตามเงื่อนไขที่กำหนด
-        filtered.sort((a, b) => {
-          // เรียกใช้ฟังก์ชัน sortByPosition ก่อน เพื่อตรวจสอบตำแหน่งงาน
-          const positionOrder = this.sortByPosition(
-            a.task_member_position,
-            b.task_member_position
-          );
-          if (positionOrder !== 0) {
-            return positionOrder;
-          }
-
-          // ถ้าหาก task_type เหมือนกัน ให้จัดเรียงตาม task_progress จากน้อยไปมาก
-          const progressA = parseInt(a.task_progress);
-          const progressB = parseInt(b.task_progress);
-          if (progressA !== progressB) {
-            return progressA - progressB;
-          }
-
-          // ถ้าหาก task_progress เหมือนกัน ให้จัดเรียงตาม task_type โดยใช้ลำดับที่กำหนดไว้ใน taskTypeOrder
-          const typeOrderA = this.taskTypeOrder.indexOf(a.task_type);
-          const typeOrderB = this.taskTypeOrder.indexOf(b.task_type);
-          return typeOrderA - typeOrderB;
-        });
-
-        return filtered;
+  if (this.tasks && Array.isArray(this.tasks)) {
+    // กรองข้อมูลตาม searchQuery
+    let filtered = this.tasks.filter((task) => {
+      if (task.task_name && task.task_id) {
+        const searchText = `${task.task_name} ${task.task_id}`.toLowerCase();
+        return searchText.includes(this.searchQuery.toLowerCase());
       } else {
-        return [];
+        return false;
       }
-    },
+    });
+
+    // กรองตาม selectedTab: 0 สำหรับ Working Task (progress 0-99), 1 สำหรับ Finish Task (progress 100)
+    filtered = filtered.filter(task => {
+      const taskProgress = parseInt(task.task_progress); // ทำให้แน่ใจว่าเป็นตัวเลข
+      if (this.selectedTab === 0) {
+        return taskProgress >= 0 && taskProgress < 100;
+      } else if (this.selectedTab === 1) {
+        return taskProgress === 100;
+      }
+      return true;
+    });
+
+    // เรียงลำดับข้อมูลที่กรองแล้วตามเงื่อนไขที่กำหนด
+    filtered.sort((a, b) => {
+      const positionOrder = this.sortByPosition(
+        a.task_member_position,
+        b.task_member_position
+      );
+      if (positionOrder !== 0) {
+        return positionOrder;
+      }
+
+      const progressA = parseInt(a.task_progress);
+      const progressB = parseInt(b.task_progress);
+      if (progressA !== progressB) {
+        return progressA - progressB;
+      }
+
+      const typeOrderA = this.taskTypeOrder.indexOf(a.task_type);
+      const typeOrderB = this.taskTypeOrder.indexOf(b.task_type);
+      return typeOrderA - typeOrderB;
+    });
+
+    return filtered;
+  } else {
+    return [];
+  }
+},
   },
 
   mounted() {
@@ -2446,5 +2459,25 @@ export default {
   /* กำหนดขนาดของปุ่ม */
   padding: 0;
   /* ลบ Padding เพื่อป้องกันการขยับของปุ่ม */
+}
+.custom-tabs {
+  /* ระยะห่างรอบๆแท็บ */
+  margin: 0 16px;
+}
+
+.custom-tab {
+  font-weight: bold; /* ทำให้ตัวอักษรหนา */
+  padding: 0 24px;   /* เพิ่มระยะห่างซ้ายขวา */
+  font-size: 1rem;   /* ขนาดตัวอักษร */
+  color: black;      /* กำหนดสีตัวอักษรเป็นสีดำ */
+
+}
+
+.custom-tab .v-tab {
+  min-width: 120px;  /* ระยะห่างระหว่างแท็บ */
+}
+
+.custom-tab.v-tab--active {
+  color: #000000;    /* สีของแท็บที่ถูกเลือก */
 }
 </style>
