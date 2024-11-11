@@ -24,7 +24,7 @@
           <h4>Create User</h4>
         </v-btn>
         <v-btn v-else class="mr-10" elevation="2" right absolute style="color: white; border-radius: 10px" disabled>
-          Addmin Only
+          Admin Only
         </v-btn>
       </v-col>
     </v-row>
@@ -113,6 +113,7 @@
                   <!--  -->
                 </v-card>
               </v-tab-item>
+              
               <!-- Tab2 Developer -->
               <v-tab-item>
                 <v-card flat>

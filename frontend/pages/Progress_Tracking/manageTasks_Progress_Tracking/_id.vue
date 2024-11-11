@@ -808,7 +808,7 @@
     </v-dialog>
 
 <v-tabs v-model="selectedTab" class="custom-tabs">
-  <v-tab class="custom-tab">Working Task</v-tab>
+  <v-tab class="custom-tab">In-progress Task</v-tab>
   <v-tab class="custom-tab">Finish Task</v-tab>
 </v-tabs>
 
