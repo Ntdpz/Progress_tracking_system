@@ -196,10 +196,15 @@ export default {
       const taskPlanEnd = new Date(item.task_plan_end);
       const taskPlanStart = new Date(item.task_plan_start);
 
+      // Set the time to midnight for accurate date-only comparisons
+      currentDate.setHours(0, 0, 0, 0);
+      taskPlanEnd.setHours(0, 0, 0, 0);
+      taskPlanStart.setHours(0, 0, 0, 0);
+
       if (taskProgress === 100) {
         return "Complete"; // Task is complete
       } else if (taskPlanEnd < currentDate && taskProgress < 100) {
-        return "Late"; // Task is overdue and not completed
+        return "Late"; // Task is overdue (taskPlanEnd is before today and not completed)
       } else if (
         taskPlanStart <= currentDate &&
         taskPlanEnd >= currentDate &&
@@ -210,7 +215,6 @@ export default {
         return "Not Started"; // Task has not started yet
       }
     },
-
     // Function to determine the color for the status
     getStatusColor(item) {
       const status = this.getStatusLabel(item);

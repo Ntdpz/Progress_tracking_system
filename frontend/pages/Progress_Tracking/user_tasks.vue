@@ -52,6 +52,12 @@
 
           <!-- แถวที่ 3 -->
           <v-card-text>
+            <span
+              style="text-decoration: underline; text-align: center"
+              class="d-flex justify-center align-center"
+            >
+              Task Status
+            </span>
             <v-row>
               <!-- คอลัมน์ซ้าย -->
               <v-col cols="6">
@@ -68,20 +74,6 @@
 
                 <v-chip
                   class="ma-2 full-width-chip"
-                  color="amber lighten-3"
-                  text-color="amber darken-2"
-                  outlined
-                  @click="openDialogtask_count_inprogress(user)"
-                >
-                  <v-icon left small>mdi-progress-clock</v-icon>
-                  In Progress: {{ user.task_count_inprogress }}
-                </v-chip>
-              </v-col>
-
-              <!-- คอลัมน์ขวา -->
-              <v-col cols="6">
-                <v-chip
-                  class="ma-2 full-width-chip"
                   color="red lighten-3"
                   text-color="red darken-2"
                   outlined
@@ -89,6 +81,20 @@
                 >
                   <v-icon left small>mdi-alert-circle-outline</v-icon>
                   Late: {{ user.task_count_late }}
+                </v-chip>
+              </v-col>
+
+              <!-- คอลัมน์ขวา -->
+              <v-col cols="6">
+                <v-chip
+                  class="ma-2 full-width-chip"
+                  color="amber lighten-3"
+                  text-color="amber darken-2"
+                  outlined
+                  @click="openDialogtask_count_inprogress(user)"
+                >
+                  <v-icon left small>mdi-progress-clock</v-icon>
+                  In Progress: {{ user.task_count_inprogress }}
                 </v-chip>
 
                 <v-chip
@@ -215,18 +221,24 @@ export default {
   },
 };
 </script>
-
 <style scoped>
+/* กำหนดให้ V-chip ใช้ความกว้างเต็มที่ */
 .full-width-chip {
   width: 100%;
+  overflow: hidden; /* ซ่อนข้อความที่เกินออกมา */
+  text-overflow: ellipsis; /* ใช้ ... แทนข้อความที่เกิน */
+  white-space: nowrap; /* ป้องกันไม่ให้ข้อความขยายออกไปหลายบรรทัด */
 }
 
+/* ปรับแต่งหัวข้อให้จัดกลาง */
 .centered-heading {
   text-align: center;
   margin: 0;
   color: #009933 !important;
+  font-size: 2rem; /* ขนาดหัวข้อให้เหมาะสม */
 }
 
+/* ปรับขนาดสำหรับหน้าจอที่มีขนาดกว้างกว่า 1200px */
 @media screen and (max-width: 1200px) {
   .centered-heading {
     font-size: 1.5rem; /* ปรับขนาดหัวข้อให้เล็กลงเล็กน้อย */
@@ -237,8 +249,8 @@ export default {
   }
 }
 
+/* สำหรับหน้าจอขนาดกลาง เช่น tablet */
 @media screen and (max-width: 768px) {
-  /* สำหรับหน้าจอขนาดกลาง เช่น tablet */
   .centered-heading {
     font-size: 1.2rem; /* ปรับขนาดหัวข้อให้เล็กลง */
   }
@@ -248,8 +260,8 @@ export default {
   }
 }
 
+/* สำหรับหน้าจอขนาดเล็ก เช่น มือถือ */
 @media screen and (max-width: 480px) {
-  /* สำหรับหน้าจอขนาดเล็ก เช่น มือถือ */
   .centered-heading {
     font-size: 1rem; /* ปรับขนาดหัวข้อให้เล็กลง */
   }
@@ -258,5 +270,16 @@ export default {
     font-size: 0.7rem; /* ลดขนาดข้อความใน v-chip */
   }
 }
-</style>
 
+/* กำหนดให้ v-card ขยายเต็มความสูง */
+.v-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* กำหนดให้ข้อความใน v-card ขยายเต็มพื้นที่ */
+.v-card-text {
+  flex-grow: 1; /* ทำให้เนื้อหาภายในขยายตามความสูงของ v-card */
+}
+</style>
