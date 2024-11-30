@@ -56,7 +56,7 @@
         dense
         rounded
       >
-        <v-list-item @click="navigateTo('/Progress_Tracking/user_tasks')">
+        <v-list-item @click="navigateTo('/Progress_Tracking/User_tasks')">
           <v-list-item-action>
             <v-icon color="black">mdi-account-cog</v-icon>
           </v-list-item-action>

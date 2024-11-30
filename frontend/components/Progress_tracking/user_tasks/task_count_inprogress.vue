@@ -38,7 +38,7 @@
       </v-data-table>
     </v-card-text>
     <v-card-actions>
-      <v-btn color="blue darken-1" text @click="closeDialog">ปิด</v-btn>
+      <v-btn color="green darken-1" text @click="closeDialog">ปิด</v-btn>
     </v-card-actions>
   </v-card>
 </template>
@@ -119,7 +119,7 @@ export default {
     async fetchTasks(userId) {
       try {
         const response = await this.$axios.get(
-          `/user_tasks/tasks_inprogress/${userId}`
+          `/User_tasks/tasks_inprogress/${userId}`
         );
         this.tasks = Array.isArray(response.data)
           ? response.data
